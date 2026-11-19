@@ -24,6 +24,16 @@ with a code"). It needs the same schema step, with one more type, and the
 type CloudKit keeps shares in (section 5, step 4). Not tried on a device
 either.
 
+**Handoff (November 2026).** Apart from Sync, and needing none of it: the
+Mac offers each photo that hangs, and any photo through Open on iPhone,
+as a Handoff activity (`de.ghazarian.Snapfly.photo`, `Shared/PhotoHandoff.swift`).
+Tapped in the iPhone's app switcher, the iPhone asks for it over Handoff's
+continuation streams and opens it in Protect Picture. What goes is what
+leaves the line, covered, as for Copy Link. It needs the same Apple account
+on both and both apps signed by the same team; a Mac may advertise only for
+the app in front, which is why Open on iPhone brings Snapfly forward. Not
+tried on a device yet.
+
 ## 1. Audit (phase 0)
 
 ### What the repository holds

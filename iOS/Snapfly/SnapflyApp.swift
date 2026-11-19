@@ -20,6 +20,8 @@ struct SnapflyApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                // A screenshot from the Mac nearby, from the app switcher.
+                .onContinueUserActivity(PhotoHandoff.activityType) { MacHandoff.shared.receive($0) }
         }
     }
 }

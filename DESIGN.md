@@ -1015,7 +1015,7 @@ apps.
     - What was covered and where one like it went lately, dimmed, after
       `lock.fill` and `paperplane`.
     - Copy, Copy Text (a photo) and Paste into the app in front, by name;
-      then Copy Link (`link`) where the build has share links, and Delete
+      Open on iPhone (`iphone`, a photo) for Handoff; then Copy Link (`link`) where the build has share links, and Delete
       Link (`minus.circle`) once one was made from the photo. Copy Link says
       "Making the link…" in a working note, then "Link copied" with the days
       it works, the note opening the link when clicked.

@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Bring the iPhone near the Mac: each new photo is offered with Handoff.
+  Tap Snapfly at the bottom of the iPhone's app switcher, and it opens there
+  in Protect Picture, covered as on the Mac. Open on iPhone, in a photo's
+  menu, offers any photo.
 - Capture Whole Chat, in the menu, scrolls the chat in front from its
   first message to its last by itself: a screenshot of each view, and a
   short video of the scroll that stops by itself at the bottom. Both hang

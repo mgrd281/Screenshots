@@ -140,6 +140,9 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   ${SHARE_ENTRY}
   ${CLOUD_ENTRY}
   <key>NSHighResolutionCapable</key><true/>
+  <!-- Handoff: the newest photo, offered to the iPhone nearby (PhotoHandoff). -->
+  <key>NSUserActivityTypes</key>
+  <array><string>de.ghazarian.Snapfly.photo</string></array>
   <key>NSDesktopFolderUsageDescription</key>
   <string>Snapfly watches the folder where macOS saves your screenshots so it can hang them on the line.</string>
   <key>NSDocumentsFolderUsageDescription</key>

@@ -2045,3 +2045,9 @@
 "The chat was longer than %d views, so it was cut there." = "채팅이 %d개 화면보다 길어서 거기서 잘랐습니다.";
 "The whole chat fits in one view: one screenshot, and no video." = "채팅 전체가 한 화면에 들어갑니다. 스크린샷 한 장이며 비디오는 없습니다.";
 "The screenshots were saved, but the video could not be." = "스크린샷은 저장했지만 비디오는 저장하지 못했습니다.";
+"Open on iPhone" = "iPhone에서 열기";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "iPhone에서 앱 전환기를 열고 하단의 Snapfly를 탭하세요.";
+"Sent to your iPhone." = "iPhone으로 보냈습니다.";
+"The photo could not be sent to your iPhone." = "사진을 iPhone으로 보낼 수 없습니다.";
+"Getting the screenshot from your Mac…" = "Mac에서 스크린샷을 받는 중…";
+"The screenshot from your Mac could not be received." = "Mac에서 스크린샷을 받을 수 없습니다.";

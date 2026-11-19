@@ -2045,3 +2045,9 @@
 "The chat was longer than %d views, so it was cut there." = "Le chat dépassait %d vues, il a donc été coupé là.";
 "The whole chat fits in one view: one screenshot, and no video." = "Le chat entier tient dans une vue : une capture, et pas de vidéo.";
 "The screenshots were saved, but the video could not be." = "Les captures ont été enregistrées, mais pas la vidéo.";
+"Open on iPhone" = "Ouvrir sur l’iPhone";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "Sur ton iPhone, ouvre le sélecteur d’apps et touche Snapfly en bas.";
+"Sent to your iPhone." = "Envoyée sur ton iPhone.";
+"The photo could not be sent to your iPhone." = "La photo n’a pas pu être envoyée sur ton iPhone.";
+"Getting the screenshot from your Mac…" = "Réception de la capture depuis ton Mac…";
+"The screenshot from your Mac could not be received." = "La capture de ton Mac n’a pas pu être reçue.";

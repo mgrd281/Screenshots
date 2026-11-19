@@ -2045,3 +2045,9 @@
 "The chat was longer than %d views, so it was cut there." = "聊天超过 %d 屏，因此在那里截断。";
 "The whole chat fits in one view: one screenshot, and no video." = "整个聊天一屏就能放下：一张截屏，没有视频。";
 "The screenshots were saved, but the video could not be." = "截屏已保存，但视频未能保存。";
+"Open on iPhone" = "在 iPhone 上打开";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "在 iPhone 上打开 App 切换器，然后轻点底部的 Snapfly。";
+"Sent to your iPhone." = "已发送到你的 iPhone。";
+"The photo could not be sent to your iPhone." = "无法将照片发送到你的 iPhone。";
+"Getting the screenshot from your Mac…" = "正在从 Mac 接收截屏…";
+"The screenshot from your Mac could not be received." = "无法接收来自 Mac 的截屏。";
