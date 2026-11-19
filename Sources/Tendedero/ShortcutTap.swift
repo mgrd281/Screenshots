@@ -3,8 +3,8 @@ import Carbon
 
 /// While another app shows a menu, macOS holds back hot keys: the key goes
 /// to the menu, which closes, and the shortcut does nothing. With
-/// Accessibility, as pasting has it, this hears the screenshot and
-/// recording shortcuts before any app does, keeps them from the menu and
+/// Accessibility, as pasting has it, this hears the screenshot, recording
+/// and Capture and Ask AI shortcuts before any app does, keeps them from the menu and
 /// does what they do, so a screenshot takes the menu still open. It hears
 /// only these shortcuts; every other key goes on untouched. Used on the
 /// main thread only, where its tap runs too.
