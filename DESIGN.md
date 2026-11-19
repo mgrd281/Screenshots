@@ -243,6 +243,8 @@ components:
     size: "unit × 0.034"           # a caption in Studio's video: SF Pro semibold, white, centred, on black 72% rounded 35% of its size, 0.6 × and 0.3 × its size in, at most 80% of the recording wide, its foot 6% above the recording's; it fades as marks do
   studio-part:
     color: "#FFFFFF"               # the parts over the timeline's pictures: a split is a 2pt white line on a 3pt edge of black 35%; a part cut out, black 60% with `scissors` (11pt semibold white) in its middle; a faster part, its speed ("2×", 10pt semibold white) on an accent capsule 4pt in from its top left
+  studio-page-tab:
+    rounded: "7pt"                 # one of the five pages across the top of Studio's inspector (Edit `timeline.selection`, Draw `pencil.tip.crop.circle`, Captions `captions.bubble`, Appearance `paintpalette`, Save `square.and.arrow.down`), 4pt apart, 12pt in, 8pt above and below: the symbol (14pt medium) over its name (10pt medium); chosen, both in the accent on the accent at 12%, as `studio-shape-tile`
   studio-shape-tile:
     rounded: "7pt"                 # one of Studio's five shapes (the recording's own, 1:1, 16:9, 4:5, 9:16), a row sharing the inspector's width 4pt apart: its outline (1.5pt `.secondary`, rounded 2) drawn to its proportions in 26pt within a 30pt square, over its name in 10pt medium; chosen, both in the accent on the accent at 12%
   phone-dock-icon:
@@ -1408,26 +1410,32 @@ apps.
     "2,0×" in German). A click on the ruler or pictures moves the
     video and keeps what is chosen; on an empty track it chooses nothing.
     The playhead (`studio-playhead`) runs through all of it.
-  - The **inspector** (340 pt, a grouped form over a footer): Zoom, with
+  - The **inspector** (340 pt, a row of five page tabs (`studio-page-tab`)
+    over a grouped form over a footer) shows one page at a time, the last
+    one chosen; choosing a zoom brings Edit, a mark or a tool Draw. Its
+    keys (Z, S, X and the tools' letters) work on every page, and the
+    keyboard button beside the timeline's zoom (`keyboard`, `.secondary`)
+    lists every key in a popover, each in a keycap (6 pt, `.primary` at
+    8%). Edit holds Zoom, with
     Zoom in on clicks and typing, How close (a small slider and "2.0×"),
     and the number of zooms with Add Zoom (Z); a chosen zoom's How close,
     Looks at (The Pointer, One Place, segmented) and Delete; Cut and Speed,
     for the part the video stands in: Split Here (S, `square.split.2x1`),
     Cut Out (X, `scissors`; Put Back, `arrow.uturn.backward`, on a part cut
     out) and Join with Next, small, in one row, then Speed (1×, 1.5×, 2×,
-    4×, 8×, segmented), with how long the video will be in its footer; Draw, the six
+    4×, 8×, segmented), with how long the video will be in its footer. Draw holds the six
     tools of Draw on Photo that a video takes (Select, Arrow, Box, Circle,
     Numbered Steps, Text, with their keys) and Blur (B, `eye.slash`), then
     Color and Size as there; a
     chosen mark's name, when it shows, its words for words, and Delete;
-    Show clicks; Captions, the Language (those this Mac hears by itself,
+    Show clicks. Captions holds the Language (those this Mac hears by itself,
     its own first), Make Captions (Make Again once made) with how many,
     the caption where the video stands in a field to correct it, and
-    Remove Captions; Size, a row of five shape tiles (`studio-shape-tile`) with
+    Remove Captions. Appearance holds Size, a row of five shape tiles (`studio-shape-tile`) with
     the video's size in pixels under it ("1080 × 1920", `.secondary`,
     monospaced digits); Background, a switch and, when on, Background…'s
-    grid of eight swatches, small Padding and Corners sliders and Shadow;
-    Save, File Type (MOV, MP4, GIF, segmented), Quality (Original, 4K,
+    grid of eight swatches, small Padding and Corners sliders and Shadow.
+    Save holds File Type (MOV, MP4, GIF, segmented), Quality (Original, 4K,
     1080p, 720p, a menu, hidden for a GIF) and a line on what the file is
     for. A shape other than the recording's own turns the background on.
     The footer has Undo and Redo, then Cancel and Save Video; while saving,

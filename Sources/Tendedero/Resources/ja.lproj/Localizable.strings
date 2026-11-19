@@ -2094,3 +2094,7 @@
 "This Mac cannot hear this language by itself. Choose another one." = "この Mac はこの言語を単独で聞き取れません。ほかの言語を選んでください。";
 "No words were heard in this recording." = "この収録では言葉が聞き取れませんでした。";
 "Could not make captions." = "字幕を作成できませんでした。";
+"Appearance" = "外観";
+"Keyboard Shortcuts" = "キーボードショートカット";
+"Play or pause" = "再生または一時停止";
+"A second back or on" = "1秒戻る／進む";

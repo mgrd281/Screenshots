@@ -2094,3 +2094,7 @@
 "This Mac cannot hear this language by itself. Choose another one." = "لا يستطيع جهاز Mac هذا فهم هذه اللغة وحده. اختر لغة أخرى.";
 "No words were heard in this recording." = "لم تُسمع أي كلمات في هذا التسجيل.";
 "Could not make captions." = "تعذّر إنشاء الترجمة النصية.";
+"Appearance" = "المظهر";
+"Keyboard Shortcuts" = "اختصارات لوحة المفاتيح";
+"Play or pause" = "تشغيل أو إيقاف مؤقت";
+"A second back or on" = "ثانية للخلف أو للأمام";

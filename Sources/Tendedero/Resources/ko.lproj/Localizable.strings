@@ -2094,3 +2094,7 @@
 "This Mac cannot hear this language by itself. Choose another one." = "이 Mac은 이 언어를 자체적으로 알아들을 수 없습니다. 다른 언어를 선택하세요.";
 "No words were heard in this recording." = "이 녹화에서 들린 단어가 없습니다.";
 "Could not make captions." = "자막을 만들 수 없습니다.";
+"Appearance" = "모양";
+"Keyboard Shortcuts" = "키보드 단축키";
+"Play or pause" = "재생 또는 일시 정지";
+"A second back or on" = "1초 뒤로 또는 앞으로";

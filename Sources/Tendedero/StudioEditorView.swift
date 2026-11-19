@@ -13,6 +13,9 @@ struct StudioEditorView: View {
     let stop: () -> Void
 
     @FocusState private var fieldFocused: Bool
+    /// The inspector's page, as last chosen.
+    @AppStorage("studioPage") private var page = StudioPage.edit
+    @State private var showsKeys = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -69,6 +72,19 @@ struct StudioEditorView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
+            Button {
+                showsKeys.toggle()
+            } label: {
+                Image(systemName: "keyboard")
+                    .font(.system(size: 13))
+                    .frame(width: 26, height: 24)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+            .help(L("Keyboard Shortcuts"))
+            .accessibilityLabel(L("Keyboard Shortcuts"))
+            .popover(isPresented: $showsKeys, arrowEdge: .top) { StudioKeysView() }
             Image(systemName: "minus.magnifyingglass")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
@@ -89,18 +105,25 @@ struct StudioEditorView: View {
 
     private var inspector: some View {
         VStack(spacing: 0) {
+            pages
+            Divider()
             Form {
-                zooms
-                if let zoom = model.selectedZoom { chosen(zoom) }
-                cutting
-                tools
-                style
-                if let item = model.selectedMark { chosen(item) }
-                clicks
-                captioning
-                Group {
+                switch page {
+                case .edit:
+                    zooms
+                    if let zoom = model.selectedZoom { chosen(zoom) }
+                    cutting
+                case .draw:
+                    tools
+                    style
+                    if let item = model.selectedMark { chosen(item) }
+                    clicks
+                case .captions:
+                    captioning
+                case .look:
                     shapes
                     backdropSettings
+                case .save:
                     saving
                 }
             }
@@ -110,6 +133,77 @@ struct StudioEditorView: View {
             footer
         }
         .frame(width: StudioLayout.panelWidth)
+        .background(keys.disabled(model.exporting != nil))
+        // What is chosen, or a tool taken up, brings its page.
+        .onChange(of: model.selection) { _, chosen in
+            switch chosen {
+            case .zoom?: page = .edit
+            case .mark?: page = .draw
+            case nil: break
+            }
+        }
+        .onChange(of: model.tool) { _, _ in page = .draw }
+    }
+
+    /// The inspector's pages, as tabs across its top: the symbol over the name.
+    private var pages: some View {
+        HStack(spacing: 4) {
+            ForEach(StudioPage.allCases) { item in
+                pageTab(item)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+    }
+
+    private func pageTab(_ item: StudioPage) -> some View {
+        let chosen = page == item
+        return Button {
+            page = item
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: item.symbol)
+                    .font(.system(size: 14, weight: .medium))
+                    .frame(height: 18)
+                Text(item.title)
+                    .font(.system(size: 10, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(chosen ? Color.accentColor : Color.secondary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(chosen ? Color.accentColor.opacity(0.12) : Color.clear))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(item.title)
+        .accessibilityLabel(item.title)
+        .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+    }
+
+    /// The keys, which work whichever page shows: the tools, Add Zoom,
+    /// Split Here and Cut Out.
+    private var keys: some View {
+        ZStack {
+            ForEach(StudioModel.tools) { tool in
+                Button { model.tool = tool } label: { EmptyView() }
+                    .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut(KeyEquivalent(tool.key), modifiers: []))
+            }
+            Button { model.addZoom() } label: { EmptyView() }
+                .disabled(!model.canAddZoom)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("z", modifiers: []))
+            Button { model.split() } label: { EmptyView() }
+                .disabled(!model.canSplit)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("s", modifiers: []))
+            Button { model.toggleCut() } label: { EmptyView() }
+                .disabled(!model.canCut)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("x", modifiers: []))
+        }
+        .frame(width: 0, height: 0)
+        .opacity(0)
+        .accessibilityHidden(true)
     }
 
     private var zooms: some View {
@@ -134,7 +228,7 @@ struct StudioEditorView: View {
             LabeledContent {
                 Button(L("Add Zoom")) { model.addZoom() }
                     .disabled(!model.canAddZoom)
-                    .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("z", modifiers: []))
+                    .help(L("Add Zoom") + " (Z)")
             } label: {
                 Text(String(format: L("Zooms: %d"), model.project.zooms.count))
                 Text(L("From where the video is, for three seconds."))
@@ -240,10 +334,9 @@ struct StudioEditorView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help(tool.title)
+        .help(tool.title + " (" + String(tool.key).uppercased() + ")")
         .accessibilityLabel(tool.title)
         .accessibilityAddTraits(chosen ? .isSelected : [])
-        .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut(KeyEquivalent(tool.key), modifiers: []))
     }
 
     /// The ink as swatches and the size, for the chosen mark and the next.
@@ -385,14 +478,14 @@ struct StudioEditorView: View {
                     Label(L("Split Here"), systemImage: "square.split.2x1")
                 }
                 .disabled(!model.canSplit)
-                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("s", modifiers: []))
+                .help(L("Split Here") + " (S)")
                 Button {
                     model.toggleCut()
                 } label: {
                     Label(removed ? L("Put Back") : L("Cut Out"), systemImage: removed ? "arrow.uturn.backward" : "scissors")
                 }
                 .disabled(!model.canCut)
-                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("x", modifiers: []))
+                .help((removed ? L("Put Back") : L("Cut Out")) + " (X)")
                 Spacer(minLength: 0)
                 Button(L("Join with Next")) { model.joinNext() }
                     .disabled(!model.canJoin)
@@ -556,6 +649,68 @@ struct StudioEditorView: View {
             }
         }
         .padding(16)
+    }
+}
+
+/// Studio's keys, listed: each in a keycap, then what it does.
+private struct StudioKeysView: View {
+    private var rows: [(key: String, does: String)] {
+        [("␣", L("Play or pause")), ("← →", L("A second back or on")), ("Z", L("Add Zoom")),
+         ("S", L("Split Here")), ("X", L("Cut Out"))]
+            + StudioModel.tools.map { (String($0.key).uppercased(), $0.title) }
+            + [("⌫", L("Delete")), ("⌘Z", L("Undo")), ("⇧⌘Z", L("Redo"))]
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L("Keyboard Shortcuts"))
+                .font(.headline)
+            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
+                ForEach(rows.indices, id: \.self) { i in
+                    GridRow {
+                        Text(verbatim: rows[i].key)
+                            .font(.system(size: 11, weight: .semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .frame(minWidth: 30)
+                            .background(RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color.primary.opacity(0.08)))
+                            .gridColumnAlignment(.trailing)
+                        Text(rows[i].does)
+                            .font(.system(size: 12))
+                    }
+                }
+            }
+        }
+        .padding(16)
+    }
+}
+
+/// The inspector's pages: changing the recording, drawing on it, what is
+/// said, how it looks, and how it is saved.
+enum StudioPage: String, CaseIterable, Identifiable {
+    case edit, draw, captions, look, save
+
+    var id: String { rawValue }
+
+    var symbol: String {
+        switch self {
+        case .edit: "timeline.selection"
+        case .draw: "pencil.tip.crop.circle"
+        case .captions: "captions.bubble"
+        case .look: "paintpalette"
+        case .save: "square.and.arrow.down"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .edit: L("Edit")
+        case .draw: L("Draw")
+        case .captions: L("Captions")
+        case .look: L("Appearance")
+        case .save: L("Save")
+        }
     }
 }
 

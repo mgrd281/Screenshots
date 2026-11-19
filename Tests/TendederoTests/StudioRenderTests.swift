@@ -333,6 +333,8 @@ final class StudioRenderTests: XCTestCase {
                                    StudioPart(start: 4.2, end: StudioSample.length, speed: 2)]
                     shown.captions = [StudioCaption(text: "Type the invoice number, then send it.", start: 2.2, end: 4)]
                 }
+                // The background on its page; a mark or a zoom chosen brings its own.
+                UserDefaults.standard.set(chosen == "background" ? "look" : "edit", forKey: "studioPage")
                 let model = StudioModel(url: source, duration: StudioSample.length, pixels: CGSize(width: 1280, height: 800),
                                         events: events, project: shown)
                 let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1320, height: 860),

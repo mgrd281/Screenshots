@@ -261,6 +261,12 @@ would, moving only when it nears the edge, and goes back out after. Nothing
 to set up: the zooms are made from what you did while recording. A ring
 spreads at each click, so viewers see where it went.
 
+The inspector beside it has five pages, as tabs across its top: Edit
+(zooms, cut and speed), Draw, Captions, Appearance (size and background)
+and Save. Choosing a zoom or a drawing brings its page, and every key
+works on every page; the keyboard button beside the timeline's zoom lists
+them all.
+
 Under the picture is the timeline: pictures along the recording with its
 sound, the zooms, and what you drew. Drag a zoom to move it, or its ends to
 make it longer or shorter; choose one to set how close it comes, and whether

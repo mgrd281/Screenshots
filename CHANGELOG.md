@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio's inspector has pages, as tabs across its top: Edit, Draw,
+  Captions, Appearance and Save. Choosing something brings its page, every
+  key works on every page, and the keyboard button lists them all.
 - Studio writes captions: what is said in a recording, heard on your Mac
   alone, shown line by line at the foot of the video, in the language you
   choose. Correct any line where the video stands.
