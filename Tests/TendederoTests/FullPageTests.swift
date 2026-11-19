@@ -105,14 +105,24 @@ final class FullPageTests: XCTestCase {
     /// page scrolled `page` rows: a header of 40, a chat's box of 250
     /// scrolled `box` rows inside, then its message box and the page's foot.
     private func boxedPage(page: Int, box: Int) -> PageStitch.Rows {
-        let toolbar: PageStitch.Rows = (0..<30).map { i in (0..<PageStitch.samples).map { j in UInt8(220 + (i + j) % 30) } }
-        let header: PageStitch.Rows = (0..<40).map { i in (0..<PageStitch.samples).map { j in UInt8((i * 37 + j * 5 + 3) % 190) } }
-        let messages: PageStitch.Rows = (0..<250).map { i in
-            (0..<PageStitch.samples).map { j in UInt8((((box + i) * 131) + j * 17) % 200) }
-        }
-        let foot: PageStitch.Rows = (0..<300).map { i in (0..<PageStitch.samples).map { j in UInt8((i * 89 + j * 11 + 7) % 180) } }
-        let content = header + messages + foot
+        let toolbar: PageStitch.Rows = (0..<30).map { (i: Int) -> [UInt8] in pattern(i, 1, 1, 0, 30, plus: 220) }
+        let header: PageStitch.Rows = (0..<40).map { (i: Int) -> [UInt8] in pattern(i, 37, 5, 3, 190) }
+        let messages: PageStitch.Rows = (0..<250).map { (i: Int) -> [UInt8] in pattern(box + i, 131, 17, 0, 200) }
+        let foot: PageStitch.Rows = (0..<300).map { (i: Int) -> [UInt8] in pattern(i, 89, 11, 7, 180) }
+        let content: PageStitch.Rows = header + messages + foot
         return toolbar + Array(content[page..<(page + 370)])
+    }
+
+    /// Row `i` of a pattern: each column's sample is
+    /// `(i * down + column * across + start) % range + plus`.
+    private func pattern(_ i: Int, _ down: Int, _ across: Int, _ start: Int, _ range: Int,
+                         plus: Int = 0) -> [UInt8] {
+        var row: [UInt8] = []
+        for j in 0..<PageStitch.samples {
+            let value: Int = i * down + j * across + start
+            row.append(UInt8(value % range + plus))
+        }
+        return row
     }
 
     func testTheBoxsHeightIsWhatMovesBetweenWhatStays() {
