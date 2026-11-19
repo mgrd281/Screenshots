@@ -466,11 +466,12 @@ final class Recorder: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked Sen
     init(filter: SCContentFilter, configuration: SCStreamConfiguration, url: URL,
          sound: RecordingSound = .none) throws {
         writer = try AVAssetWriter(outputURL: url, fileType: .mov)
-        input = AVAssetWriterInput(mediaType: .video, outputSettings: [
-            AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: configuration.width,
-            AVVideoHeightKey: configuration.height,
-        ])
+        // As small as it can be while text stays crisp (`VideoQuality`).
+        let frameRate = configuration.minimumFrameInterval.seconds > 0
+            ? 1 / configuration.minimumFrameInterval.seconds : 30
+        input = AVAssetWriterInput(mediaType: .video, outputSettings: VideoQuality.settings(
+            for: writer, width: configuration.width, height: configuration.height,
+            frameRate: min(60, frameRate), bitsPerPixel: VideoQuality.recording))
         input.expectsMediaDataInRealTime = true
         super.init()
         // Written in pieces, so a recording cut short, by a quit that could

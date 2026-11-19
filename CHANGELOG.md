@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Recordings and Studio's videos are saved in HEVC, about half the size at
+  the same sharpness, with small text kept crisp.
 - Bring the iPhone near the Mac: each new photo is offered with Handoff.
   Tap Snapfly at the bottom of the iPhone's app switcher, and it opens there
   in Protect Picture, covered as on the Mac. Open on iPhone, in a photo's
