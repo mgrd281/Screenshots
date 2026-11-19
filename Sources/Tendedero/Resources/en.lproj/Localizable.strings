@@ -2082,3 +2082,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Split where the video stands, then cut a part out or play it faster. The video will be %@ long.";
 "This part is cut out." = "This part is cut out.";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "Drag over what should not be seen. It is blurred in the video while it shows.";
+"Language" = "Language";
+"Making captions…" = "Making captions…";
+"Make Captions" = "Make Captions";
+"Make Again" = "Make Again";
+"Captions: %d" = "Captions: %d";
+"Caption" = "Caption";
+"Remove Captions" = "Remove Captions";
+"Captions" = "Captions";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words.";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition.";
+"This recording has no sound to make captions from." = "This recording has no sound to make captions from.";
+"This Mac cannot hear this language by itself. Choose another one." = "This Mac cannot hear this language by itself. Choose another one.";
+"No words were heard in this recording." = "No words were heard in this recording.";
+"Could not make captions." = "Could not make captions.";

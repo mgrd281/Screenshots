@@ -2080,3 +2080,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Teile dort, wo das Video steht, und schneide dann einen Teil heraus oder spiel ihn schneller ab. Das Video wird %@ lang.";
 "This part is cut out." = "Dieser Teil ist herausgeschnitten.";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "Zieh über das, was nicht zu sehen sein soll. Es wird im Video unscharf, solange es sichtbar ist.";
+"Language" = "Sprache";
+"Making captions…" = "Untertitel werden erstellt …";
+"Make Captions" = "Untertitel erstellen";
+"Make Again" = "Neu erstellen";
+"Captions: %d" = "Untertitel: %d";
+"Caption" = "Untertitel";
+"Remove Captions" = "Untertitel entfernen";
+"Captions" = "Untertitel";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "Auf diesem Mac aus dem erstellt, was in der Aufnahme gesagt wird; nichts wird gesendet. Halte bei einem Untertitel an, um seine Wörter zu korrigieren.";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "Snapfly darf die Spracherkennung nicht benutzen. Erlaube es unter Systemeinstellungen › Datenschutz & Sicherheit › Spracherkennung.";
+"This recording has no sound to make captions from." = "Diese Aufnahme hat keinen Ton, aus dem Untertitel entstehen könnten.";
+"This Mac cannot hear this language by itself. Choose another one." = "Dieser Mac versteht diese Sprache nicht allein. Wähl eine andere.";
+"No words were heard in this recording." = "In dieser Aufnahme wurden keine Wörter erkannt.";
+"Could not make captions." = "Untertitel konnten nicht erstellt werden.";

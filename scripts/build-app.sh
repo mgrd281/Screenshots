@@ -151,6 +151,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <string>Snapfly watches the folder you chose so it can hang new images on the line.</string>
   <key>NSMicrophoneUsageDescription</key>
   <string>Snapfly records your voice with a screen recording, only when you chose the microphone under Settings › General.</string>
+  <key>NSSpeechRecognitionUsageDescription</key>
+  <string>Snapfly hears what is said in a screen recording, on this Mac alone, to make captions in Studio, only when you choose Make Captions.</string>
   <key>NSAppleEventsUsageDescription</key>
   <string>Snapfly asks your browser which page is open, so its send button shows only on chat websites like ChatGPT.</string>
   <!-- Photos and PDFs from anywhere: Finder's "Send Safely with Snapfly" and

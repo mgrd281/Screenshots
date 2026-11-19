@@ -2082,3 +2082,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Videonun dayandığı yerdən böl, sonra bir hissəni kəs at və ya daha sürətli oxut. Video %@ uzunluğunda olacaq.";
 "This part is cut out." = "Bu hissə kəsilib.";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "Görünməməli olanın üzərindən sürüşdür. O, göründüyü müddətdə videoda bulanıq olur.";
+"Language" = "Dil";
+"Making captions…" = "Altyazılar hazırlanır…";
+"Make Captions" = "Altyazı hazırla";
+"Make Again" = "Yenidən hazırla";
+"Captions: %d" = "Altyazılar: %d";
+"Caption" = "Altyazı";
+"Remove Captions" = "Altyazıları sil";
+"Captions" = "Altyazılar";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "Yazıda deyilənlərdən bu Mac-də hazırlanır; heç nə göndərilmir. Sözlərini düzəltmək üçün altyazının üzərində dayan.";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "Snapfly-a nitqin tanınmasından istifadəyə icazə verilməyib. Sistem Ayarları › Məxfilik və Təhlükəsizlik › Nitqin tanınması bölməsində icazə ver.";
+"This recording has no sound to make captions from." = "Bu yazıda altyazı hazırlamaq üçün səs yoxdur.";
+"This Mac cannot hear this language by itself. Choose another one." = "Bu Mac bu dili özü başa düşə bilmir. Başqa dil seç.";
+"No words were heard in this recording." = "Bu yazıda heç bir söz eşidilmədi.";
+"Could not make captions." = "Altyazı hazırlamaq mümkün olmadı.";

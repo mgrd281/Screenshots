@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "O Snapfly observa a pasta que você escolheu para pendurar as novas imagens no varal.";
 "NSDownloadsFolderUsageDescription" = "O Snapfly observa a pasta que você escolheu para pendurar as novas imagens no varal.";
 "NSMicrophoneUsageDescription" = "O Snapfly grava sua voz com uma gravação de tela, só quando você escolheu o microfone em Ajustes › Geral.";
+"NSSpeechRecognitionUsageDescription" = "O Snapfly ouve o que é dito numa gravação de tela, só neste Mac, para criar legendas no Studio, apenas quando você escolhe Criar legendas.";

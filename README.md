@@ -64,7 +64,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a red circle, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
-| Right-click a recording, then Edit › Edit in Studio… | Zoomed in where you clicked and typed, a ring at each click, and arrows, boxes, circles, numbered steps and words for as long as you want each, parts blurred, cut out or sped up, on a background in a post's shape if you like. Save Video hangs the new video beside the recording, as MOV, MP4 or GIF, at its own size, 4K, 1080p or 720p. |
+| Right-click a recording, then Edit › Edit in Studio… | Zoomed in where you clicked and typed, a ring at each click, and arrows, boxes, circles, numbered steps and words for as long as you want each, parts blurred, cut out or sped up, captions of what is said, on a background in a post's shape if you like. Save Video hangs the new video beside the recording, as MOV, MP4 or GIF, at its own size, 4K, 1080p or 720p. |
 | Right-click, then Edit › Background… | Set it on a colour, with room round it, rounded corners and a soft shadow, square or the shape a post or a story wants, so it looks finished in a post, a shop or a slide. It goes out that way; the file stays as it is. Remove Background takes it off again. |
 | Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
@@ -277,6 +277,12 @@ shows, in the picture and in the saved video, moving with the camera. Each shows
 as it comes; drag it on the timeline to change when and for how long. Steps
 are numbered in the order they show. Marks stay on what they point at as the
 camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
+
+Captions writes what is said at the foot of the video. Choose the
+language, then Make Captions: the recording's sound is heard on your Mac
+alone, with macOS's own speech recognition, and nothing is sent. Each line
+shows while it is said; stop on one to correct its words. macOS asks once
+before Snapfly may use speech recognition.
 
 Cut and Speed works on the part where the video stands: Split Here (S)
 splits it there, Cut Out (X) leaves a part out of the video, and Speed
@@ -1997,6 +2003,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Trim.swift` | Trims a screen recording and saves the result |
 | `StudioPlanning.swift` | Studio without a screen: what was done while recording, where to zoom, the camera's path, how marks and clicks come and go, and the timeline's rules |
 | `StudioStore.swift` | Studio's work on each recording and what was done while recording, kept on the Mac; notes the pointer, clicks and key times while recording |
+| `StudioCaptions.swift` | Studio's captions: what is said in a recording heard on the Mac, made into short timed lines |
 | `StudioCuts.swift` | Studio's parts: splitting the recording, cutting parts out and speeding them up, how long the video is and which moment of the recording shows when |
 | `StudioFraming.swift` | Where the recording sits in Studio's video on a background, in a post's shape and at the size chosen, and how Save Video writes it (MOV, MP4 or GIF) |
 | `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks on its background, writes the video, and reads the timeline's pictures and sound |

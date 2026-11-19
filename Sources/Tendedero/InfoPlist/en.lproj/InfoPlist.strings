@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly watches the folder you chose so it can hang new images on the line.";
 "NSDownloadsFolderUsageDescription" = "Snapfly watches the folder you chose so it can hang new images on the line.";
 "NSMicrophoneUsageDescription" = "Snapfly records your voice with a screen recording, only when you chose the microphone under Settings › General.";
+"NSSpeechRecognitionUsageDescription" = "Snapfly hears what is said in a screen recording, on this Mac alone, to make captions in Studio, only when you choose Make Captions.";

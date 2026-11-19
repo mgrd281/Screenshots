@@ -97,9 +97,12 @@ struct StudioEditorView: View {
                 style
                 if let item = model.selectedMark { chosen(item) }
                 clicks
-                shapes
-                backdropSettings
-                saving
+                captioning
+                Group {
+                    shapes
+                    backdropSettings
+                    saving
+                }
             }
             .formStyle(.grouped)
             .disabled(model.exporting != nil)
@@ -318,6 +321,53 @@ struct StudioEditorView: View {
             Text(L("A ring where each click landed."))
                 .foregroundStyle(.secondary)
         }
+    }
+
+    // MARK: Captions
+
+    /// What is said, made into captions on this Mac, and the words of the
+    /// one where the video stands, to correct.
+    private var captioning: some View {
+        Section {
+            if model.languages.isEmpty {
+                LabeledContent(L("Language")) {
+                    ProgressView().controlSize(.small)
+                }
+            } else {
+                Picker(L("Language"), selection: Binding(get: { model.language?.identifier ?? "" },
+                                                         set: { id in model.language = model.languages.first { $0.identifier == id } })) {
+                    ForEach(model.languages, id: \.identifier) { language in
+                        Text(StudioListener.name(of: language)).tag(language.identifier)
+                    }
+                }
+            }
+            LabeledContent {
+                if model.listening {
+                    ProgressView().controlSize(.small)
+                        .accessibilityLabel(L("Making captions…"))
+                } else {
+                    Button(model.project.captions.isEmpty ? L("Make Captions") : L("Make Again")) { model.makeCaptions() }
+                        .disabled(model.language == nil)
+                }
+            } label: {
+                Text(String(format: L("Captions: %d"), model.project.captions.count))
+            }
+            if let caption = model.caption {
+                TextField(L("Caption"), text: Binding(get: { caption.text },
+                                                      set: { model.setCaption(caption.id, text: $0) }), axis: .vertical)
+                    .lineLimit(1...3)
+                    .focused($fieldFocused)
+            }
+            if !model.project.captions.isEmpty {
+                Button(L("Remove Captions")) { model.removeCaptions() }
+            }
+        } header: {
+            Text(L("Captions"))
+        } footer: {
+            Text(L("Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words."))
+                .foregroundStyle(.secondary)
+        }
+        .onAppear { model.loadLanguages() }
     }
 
     // MARK: Cut and speed

@@ -239,6 +239,8 @@ components:
     color: "#FF3B30"               # Color.red: a 1.5pt line under a 9 × 12pt head, rounded 2
   studio-click-ring:
     size: "unit × 0.034"           # a click in Studio's video: white at 95% over a dark edge at 28%, white at 18% inside, spreading from 0.45 to 1 and fading over 0.45s
+  studio-caption:
+    size: "unit × 0.034"           # a caption in Studio's video: SF Pro semibold, white, centred, on black 72% rounded 35% of its size, 0.6 × and 0.3 × its size in, at most 80% of the recording wide, its foot 6% above the recording's; it fades as marks do
   studio-part:
     color: "#FFFFFF"               # the parts over the timeline's pictures: a split is a 2pt white line on a 3pt edge of black 35%; a part cut out, black 60% with `scissors` (11pt semibold white) in its middle; a faster part, its speed ("2×", 10pt semibold white) on an accent capsule 4pt in from its top left
   studio-shape-tile:
@@ -1418,7 +1420,10 @@ apps.
     Numbered Steps, Text, with their keys) and Blur (B, `eye.slash`), then
     Color and Size as there; a
     chosen mark's name, when it shows, its words for words, and Delete;
-    Show clicks; Size, a row of five shape tiles (`studio-shape-tile`) with
+    Show clicks; Captions, the Language (those this Mac hears by itself,
+    its own first), Make Captions (Make Again once made) with how many,
+    the caption where the video stands in a field to correct it, and
+    Remove Captions; Size, a row of five shape tiles (`studio-shape-tile`) with
     the video's size in pixels under it ("1080 × 1920", `.secondary`,
     monospaced digits); Background, a switch and, when on, Background…'s
     grid of eight swatches, small Padding and Corners sliders and Shadow;
@@ -1433,6 +1438,12 @@ apps.
     marks do. It sits on the recording, so the camera takes it along, and
     the preview's video is blurred by the same code (`StudioDraw.blurred`).
     Nothing is drawn over it; chosen, it shows the outline and handles.
+  - **Captions** (`StudioCaptions`) are made on the Mac from what is said
+    (on-device speech recognition only), in lines of at most 42 letters
+    and 4.5 s, broken at a pause of 0.7 s or a sentence's end, each shown
+    at least 0.8 s (`studio-caption`). They are drawn by the code that
+    draws the marks, so the preview and the video agree, and stay on the
+    recording's time like them.
   - **Parts** (`StudioCuts`): the recording is split into parts, each
     kept at its speed or cut out; zooms, marks and clicks stay on the
     recording's time. Playing skips the parts cut out and plays each part

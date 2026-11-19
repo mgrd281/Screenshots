@@ -2080,3 +2080,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "在视频当前位置拆分，然后剪掉某段或让它播放得更快。视频时长将为 %@。";
 "This part is cut out." = "此段已剪掉。";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "在不应被看到的内容上拖动。它显示期间会在视频中被模糊。";
+"Language" = "语言";
+"Making captions…" = "正在生成字幕…";
+"Make Captions" = "生成字幕";
+"Make Again" = "重新生成";
+"Captions: %d" = "字幕：%d";
+"Caption" = "字幕";
+"Remove Captions" = "移除字幕";
+"Captions" = "字幕";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "在这台 Mac 上根据录制内容中所说的话生成；不会发送任何内容。停在某条字幕上即可修改文字。";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "Snapfly 无权使用语音识别。请在“系统设置 › 隐私与安全性 › 语音识别”中允许。";
+"This recording has no sound to make captions from." = "此录制内容没有可用于生成字幕的声音。";
+"This Mac cannot hear this language by itself. Choose another one." = "这台 Mac 无法单独识别这种语言。请选择其他语言。";
+"No words were heard in this recording." = "在此录制内容中没有听到任何字词。";
+"Could not make captions." = "无法生成字幕。";

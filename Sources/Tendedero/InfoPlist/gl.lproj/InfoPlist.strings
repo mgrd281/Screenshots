@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly vixía o cartafol que escolliches para poder pendurar as imaxes novas na corda.";
 "NSDownloadsFolderUsageDescription" = "Snapfly vixía o cartafol que escolliches para poder pendurar as imaxes novas na corda.";
 "NSMicrophoneUsageDescription" = "Snapfly grava a túa voz cunha gravación de pantalla, só se escolliches o micrófono en Axustes › Xeral.";
+"NSSpeechRecognitionUsageDescription" = "Snapfly escoita o que se di nunha gravación de pantalla, só neste Mac, para crear subtítulos en Studio, só cando escolles Crear subtítulos.";

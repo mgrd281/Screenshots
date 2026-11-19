@@ -2080,3 +2080,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "اقسم حيث يقف الفيديو، ثم احذف جزءًا أو شغّله أسرع. سيكون طول الفيديو %@.";
 "This part is cut out." = "هذا الجزء محذوف.";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "اسحب فوق ما لا يجب أن يُرى. يُموَّه في الفيديو طوال ظهوره.";
+"Language" = "اللغة";
+"Making captions…" = "يجري إنشاء الترجمة النصية…";
+"Make Captions" = "أنشئ ترجمة نصية";
+"Make Again" = "أنشئها من جديد";
+"Captions: %d" = "الترجمات النصية: %d";
+"Caption" = "النص";
+"Remove Captions" = "أزل الترجمة النصية";
+"Captions" = "الترجمة النصية";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "تُنشأ على جهاز Mac هذا مما يُقال في التسجيل، ولا يُرسل شيء. توقّف عند سطر لتصحيح كلماته.";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "لا يُسمح لـ Snapfly باستخدام التعرف على الكلام. اسمح بذلك من إعدادات النظام › الخصوصية والأمان › التعرف على الكلام.";
+"This recording has no sound to make captions from." = "لا يوجد صوت في هذا التسجيل لإنشاء ترجمة نصية منه.";
+"This Mac cannot hear this language by itself. Choose another one." = "لا يستطيع جهاز Mac هذا فهم هذه اللغة وحده. اختر لغة أخرى.";
+"No words were heard in this recording." = "لم تُسمع أي كلمات في هذا التسجيل.";
+"Could not make captions." = "تعذّر إنشاء الترجمة النصية.";

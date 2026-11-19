@@ -2082,3 +2082,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "जहाँ वीडियो रुका है वहाँ बाँटें, फिर कोई हिस्सा काटें या उसे तेज़ चलाएँ। वीडियो %@ लंबा होगा।";
 "This part is cut out." = "यह हिस्सा काट दिया गया है।";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "जो नहीं दिखना चाहिए उसके ऊपर खींचें। जब तक वह दिखता है, वीडियो में धुंधला रहता है।";
+"Language" = "भाषा";
+"Making captions…" = "कैप्शन बन रहे हैं…";
+"Make Captions" = "कैप्शन बनाएँ";
+"Make Again" = "फिर से बनाएँ";
+"Captions: %d" = "कैप्शन: %d";
+"Caption" = "कैप्शन";
+"Remove Captions" = "कैप्शन हटाएँ";
+"Captions" = "कैप्शन";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "रिकॉर्डिंग में जो कहा गया उससे इसी Mac पर बनते हैं; कुछ भी भेजा नहीं जाता। किसी कैप्शन पर रुककर उसके शब्द ठीक करें।";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "Snapfly को वाक् पहचान का उपयोग करने की अनुमति नहीं है। सिस्टम सेटिंग्स › गोपनीयता और सुरक्षा › वाक् पहचान में अनुमति दें।";
+"This recording has no sound to make captions from." = "इस रिकॉर्डिंग में कैप्शन बनाने के लिए कोई आवाज़ नहीं है।";
+"This Mac cannot hear this language by itself. Choose another one." = "यह Mac इस भाषा को अपने आप नहीं समझ सकता। कोई दूसरी भाषा चुनें।";
+"No words were heard in this recording." = "इस रिकॉर्डिंग में कोई शब्द नहीं सुना गया।";
+"Could not make captions." = "कैप्शन नहीं बन सके।";

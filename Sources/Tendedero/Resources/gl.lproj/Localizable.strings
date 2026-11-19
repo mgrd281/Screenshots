@@ -2080,3 +2080,17 @@
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Divide onde está o vídeo e despois recorta unha parte ou reprodúcea máis rápido. O vídeo durará %@.";
 "This part is cut out." = "Esta parte está recortada.";
 "Drag over what should not be seen. It is blurred in the video while it shows." = "Arrastra sobre o que non se debe ver. Desenfócase no vídeo mentres se amosa.";
+"Language" = "Idioma";
+"Making captions…" = "Creando subtítulos…";
+"Make Captions" = "Crear subtítulos";
+"Make Again" = "Crear de novo";
+"Captions: %d" = "Subtítulos: %d";
+"Caption" = "Subtítulo";
+"Remove Captions" = "Quitar os subtítulos";
+"Captions" = "Subtítulos";
+"Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words." = "Créanse neste Mac a partir do que se di na gravación; non se envía nada. Detente nun subtítulo para corrixir as súas palabras.";
+"Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition." = "Snapfly non ten permiso para usar o recoñecemento de voz. Permíteo en Axustes do Sistema › Privacidade e seguridade › Recoñecemento de voz.";
+"This recording has no sound to make captions from." = "Esta gravación non ten son para crear subtítulos.";
+"This Mac cannot hear this language by itself. Choose another one." = "Este Mac non pode entender este idioma por si só. Escolle outro.";
+"No words were heard in this recording." = "Non se oíron palabras nesta gravación.";
+"Could not make captions." = "Non se puideron crear os subtítulos.";

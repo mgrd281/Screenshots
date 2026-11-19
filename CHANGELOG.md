@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio writes captions: what is said in a recording, heard on your Mac
+  alone, shown line by line at the foot of the video, in the language you
+  choose. Correct any line where the video stands.
 - Studio blurs: drag Blur over a name, an email or anything else that
   should not be seen, and it is blurred in the video for as long as it
   shows, moving with the camera.

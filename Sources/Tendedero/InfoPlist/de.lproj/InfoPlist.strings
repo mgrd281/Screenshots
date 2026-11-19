@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly beobachtet den Ordner, den du gewählt hast, damit es neue Bilder auf die Leine hängen kann.";
 "NSDownloadsFolderUsageDescription" = "Snapfly beobachtet den Ordner, den du gewählt hast, damit es neue Bilder auf die Leine hängen kann.";
 "NSMicrophoneUsageDescription" = "Snapfly nimmt deine Stimme mit einer Bildschirmaufnahme auf, nur wenn du unter Einstellungen › Allgemein das Mikrofon gewählt hast.";
+"NSSpeechRecognitionUsageDescription" = "Snapfly hört, was in einer Bildschirmaufnahme gesagt wird, nur auf diesem Mac, um in Studio Untertitel zu erstellen – nur wenn du Untertitel erstellen wählst.";

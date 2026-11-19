@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly 会关注你选择的文件夹，以便把新图片挂到晾衣绳上。";
 "NSDownloadsFolderUsageDescription" = "Snapfly 会关注你选择的文件夹，以便把新图片挂到晾衣绳上。";
 "NSMicrophoneUsageDescription" = "只有在“设置 › 通用”中选择了麦克风时，Snapfly 才会在屏幕录制时录下你的声音。";
+"NSSpeechRecognitionUsageDescription" = "Snapfly 仅在这台 Mac 上听取屏幕录制中所说的话，以便在 Studio 中生成字幕，且仅在你选择“生成字幕”时才会这样做。";

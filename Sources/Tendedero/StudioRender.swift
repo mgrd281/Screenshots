@@ -15,6 +15,8 @@ struct StudioLook: Sendable {
     /// The recording's parts from its start to its end, some cut out or
     /// faster (`StudioCuts`).
     let parts: [StudioPart]
+    /// What is said, line by line.
+    let captions: [StudioCaption]
 
     /// - Parameter camera: the camera worked out before for the same zooms,
     ///   so a change to the marks alone doesn't work it out again.
@@ -25,6 +27,8 @@ struct StudioLook: Sendable {
         clicks = project.showsClicks ? (events?.clicks ?? []).filter { StudioEvents.isInside($0.x, $0.y) } : []
         self.pixels = pixels
         parts = StudioCuts.parts(project.parts, duration: duration)
+        captions = project.captions.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .sorted { $0.start < $1.start }
     }
 
     /// The unit the marks are measured in, for the recording shown `size`
@@ -38,6 +42,7 @@ struct StudioLook: Sendable {
     func draws(at t: Double) -> Bool {
         marks.contains { t >= $0.start && t < $0.end }
             || clicks.contains { t >= $0.t && t < $0.t + StudioFade.ripple }
+            || captions.contains { $0.contains(t) }
     }
 }
 
@@ -79,6 +84,44 @@ enum StudioDraw {
             Drawing.draw([mark], in: context, size: size, unit: unit, numbered: look.numbers)
             context.restoreGState()
         }
+        if let caption = look.captions.first(where: { $0.contains(t) }),
+           let presence = StudioFade.presence(at: t, start: caption.start, end: caption.end, still: still) {
+            context.saveGState()
+            context.setAlpha(CGFloat(presence.opacity))
+            drawCaption(caption.text, unit: unit, in: context, size: size)
+            context.restoreGState()
+        }
+    }
+
+    /// Words said, at the foot of the picture: white on a dark label,
+    /// centred, as wide as four fifths of the picture at most.
+    static func drawCaption(_ text: String, unit: CGFloat, in context: CGContext, size: CGSize) {
+        let points = max(10, unit * 0.034)
+        let paragraph: CTParagraphStyle = withUnsafePointer(to: CTTextAlignment.center) { alignment in
+            var setting = CTParagraphStyleSetting(spec: .alignment, valueSize: MemoryLayout<CTTextAlignment>.size,
+                                                  value: alignment)
+            return CTParagraphStyleCreate(&setting, 1)
+        }
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key(kCTFontAttributeName as String): NSFont.systemFont(ofSize: points, weight: .semibold),
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: 1, alpha: 1),
+            NSAttributedString.Key(kCTParagraphStyleAttributeName as String): paragraph,
+        ]
+        let setter = CTFramesetterCreateWithAttributedString(NSAttributedString(string: text, attributes: attributes))
+        let widest = size.width * 0.8
+        let fit = CTFramesetterSuggestFrameSizeWithConstraints(setter, CFRange(location: 0, length: 0), nil,
+                                                               CGSize(width: widest, height: size.height * 0.4), nil)
+        let across = points * 0.6, down = points * 0.3
+        let width = ceil(min(widest, fit.width)), height = ceil(fit.height)
+        let label = CGRect(x: (size.width - width) / 2 - across, y: size.height * 0.06,
+                           width: width + 2 * across, height: height + 2 * down)
+        context.addPath(CGPath(roundedRect: label, cornerWidth: points * 0.35, cornerHeight: points * 0.35, transform: nil))
+        context.setFillColor(CGColor(gray: 0, alpha: 0.72))
+        context.fillPath()
+        let frame = CTFramesetterCreateFrame(setter, CFRange(location: 0, length: 0),
+                                             CGPath(rect: label.insetBy(dx: across, dy: down), transform: nil), nil)
+        context.textMatrix = .identity
+        CTFrameDraw(frame, context)
     }
 
     private static func grow(_ context: CGContext, about center: CGPoint, by scale: CGFloat) {

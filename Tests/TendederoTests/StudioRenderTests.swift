@@ -171,6 +171,20 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertTrue(beside.contains { $0 > 205 }, "\(beside)")
     }
 
+    func testACaptionShowsAtTheFootWhileItIsSaid() async throws {
+        let source = folder.appendingPathComponent("seconds.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.seconds)
+        var project = StudioProject()
+        project.captions = [StudioCaption(text: "Then send it", start: 1.2, end: 2)]
+        let made = try await export(source, project)
+        let before = try await StudioSample.frame(of: made, at: 1.1)
+        XCTAssertTrue(StudioSample.pixel(before, x: 0.5, y: 0.075).isGreen)
+        let said = try await StudioSample.frame(of: made, at: 1.6)
+        XCTAssertTrue(StudioSample.pixel(said, x: 0.5, y: 0.075).isDark)
+        // Above it the picture is as it was.
+        XCTAssertTrue(StudioSample.pixel(said, x: 0.5, y: 0.6).isGreen)
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)
@@ -317,6 +331,7 @@ final class StudioRenderTests: XCTestCase {
                     // A part cut out and one faster, for the timeline.
                     shown.parts = [StudioPart(start: 0, end: 0.8, removed: true), StudioPart(start: 0.8, end: 4.2),
                                    StudioPart(start: 4.2, end: StudioSample.length, speed: 2)]
+                    shown.captions = [StudioCaption(text: "Type the invoice number, then send it.", start: 2.2, end: 4)]
                 }
                 let model = StudioModel(url: source, duration: StudioSample.length, pixels: CGSize(width: 1280, height: 800),
                                         events: events, project: shown)

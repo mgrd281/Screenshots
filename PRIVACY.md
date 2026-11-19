@@ -240,6 +240,10 @@ or turn on syncing with your iPhone (below).
   kept on your Mac with the recording's Studio work, and goes once the
   recording has left the line and the history. Nothing of it is sent
   anywhere.
+- **Captions are heard on your Mac.** Make Captions in Studio has macOS's
+  speech recognition hear the recording's sound on your Mac alone, never
+  on a server; macOS asks you first. The captions stay with the
+  recording's Studio work, and nothing is sent anywhere.
 
 The full policy, in English, German and Arabic, is at
 https://mgrd281.github.io/Screenshots/privacy.html.

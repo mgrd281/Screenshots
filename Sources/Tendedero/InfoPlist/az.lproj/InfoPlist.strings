@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly seçdiyiniz qovluğu izləyir ki, yeni şəkilləri ipdən assın.";
 "NSDownloadsFolderUsageDescription" = "Snapfly seçdiyiniz qovluğu izləyir ki, yeni şəkilləri ipdən assın.";
 "NSMicrophoneUsageDescription" = "Snapfly səsinizi ekran yazısı ilə birlikdə yazır, yalnız Ayarlar › Ümumi bölməsində mikrofonu seçmisinizsə.";
+"NSSpeechRecognitionUsageDescription" = "Snapfly ekran yazısında deyilənləri yalnız bu Mac-də eşidir ki, Studio-da altyazı hazırlasın, yalnız Altyazı hazırla seçəndə.";

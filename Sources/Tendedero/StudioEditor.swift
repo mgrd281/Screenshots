@@ -773,6 +773,76 @@ final class StudioModel: ObservableObject {
         project.backdrop?.ratio ?? .fit
     }
 
+    // MARK: Captions
+
+    private static let languageKey = "studioCaptionLanguage"
+
+    /// The languages this Mac can hear by itself, read once Captions shows.
+    @Published private(set) var languages: [Locale] = []
+    /// The language captions are made in, as last chosen.
+    @Published var language: Locale? = nil {
+        didSet { UserDefaults.standard.set(language?.identifier, forKey: Self.languageKey) }
+    }
+    /// Captions being made.
+    @Published private(set) var listening = false
+
+    func loadLanguages() {
+        guard languages.isEmpty else { return }
+        Task { [weak self] in
+            let found = await Task.detached(priority: .userInitiated) { StudioListener.languages() }.value
+            guard let self else { return }
+            self.languages = found
+            let kept = UserDefaults.standard.string(forKey: Self.languageKey)
+            self.language = found.first { $0.identifier == kept } ?? StudioListener.preferred(among: found)
+        }
+    }
+
+    /// The caption where the video stands.
+    var caption: StudioCaption? {
+        project.captions.first { $0.contains(time) }
+    }
+
+    /// Hears what is said and puts it at the foot of the video, line by line,
+    /// in place of captions made before.
+    func makeCaptions() {
+        guard !listening, let language else { return }
+        pause()
+        listening = true
+        let url = url
+        Task { @MainActor [weak self] in
+            do {
+                let captions = try await StudioListener.captions(for: url, in: language)
+                self?.change { $0.captions = captions }
+            } catch {
+                log.error("Could not make captions: \(String(describing: error), privacy: .public)")
+                Notice.show(Self.why(error))
+            }
+            self?.listening = false
+        }
+    }
+
+    private static func why(_ error: Error) -> String {
+        switch error as? StudioListener.Failure {
+        case .notAllowed?:
+            L("Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition.")
+        case .noSound?: L("This recording has no sound to make captions from.")
+        case .notOnThisMac?: L("This Mac cannot hear this language by itself. Choose another one.")
+        case .nothingHeard?: L("No words were heard in this recording.")
+        case nil: L("Could not make captions.")
+        }
+    }
+
+    /// The words of a caption, as they are typed: one change for Undo.
+    func setCaption(_ id: UUID, text: String) {
+        guard let i = project.captions.firstIndex(where: { $0.id == id }), project.captions[i].text != text else { return }
+        if before == nil { before = project }
+        project.captions[i].text = text
+    }
+
+    func removeCaptions() {
+        change { $0.captions = [] }
+    }
+
     // MARK: Blur
 
     private static func blurred(_ project: StudioProject) -> [StudioProject.Mark] {

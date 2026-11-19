@@ -31,6 +31,8 @@ struct StudioProject: Codable, Equatable, Sendable {
     /// The recording split into parts, some cut out or faster; none for
     /// the whole recording as it is (`StudioCuts`).
     var parts: [StudioPart] = []
+    /// What is said, line by line, shown at the foot of the video.
+    var captions: [StudioCaption] = []
 
     init() {}
 
@@ -44,6 +46,7 @@ struct StudioProject: Codable, Equatable, Sendable {
         showsClicks = try kept.decodeIfPresent(Bool.self, forKey: .showsClicks) ?? true
         backdrop = try? kept.decodeIfPresent(Backdrop.self, forKey: .backdrop)
         parts = (try? kept.decodeIfPresent([StudioPart].self, forKey: .parts)) ?? []
+        captions = (try? kept.decodeIfPresent([StudioCaption].self, forKey: .captions)) ?? []
     }
 
     /// The steps' numbers, in the order they show.
@@ -76,6 +79,7 @@ struct StudioProject: Codable, Equatable, Sendable {
             return mark.end - mark.start >= StudioFade.shortest ? mark : nil
         }
         trimmed.parts = StudioCuts.trimmed(parts, from: offset, keeping: duration)
+        trimmed.captions = StudioCaptions.trimmed(captions, from: offset, keeping: duration)
         return trimmed
     }
 }
