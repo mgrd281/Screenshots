@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "Fotoğraf iPhone’una gönderilemedi.";
 "Getting the screenshot from your Mac…" = "Ekran görüntüsü Mac’ten alınıyor…";
 "The screenshot from your Mac could not be received." = "Mac’ten ekran görüntüsü alınamadı.";
+"Let AI apps use Snapfly" = "Yapay zekâ uygulamalarının Snapfly’ı kullanmasına izin ver";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Bu Mac’teki Claude, Snapfly’dan en yeni ekran görüntüsünü, ipteki herhangi bir fotoğrafı veya PDF’i ya da örtülecek bir metni isteyebilir. Yalnızca Gizlilik’te seçtiğin gibi örtülenleri alır.";
+"Connect Again" = "Yeniden bağla";
+"Connect…" = "Bağla…";
+"Connect to Claude" = "Claude’a bağla";
+"Connected. In Claude, ask about your newest screenshot." = "Bağlandı. Claude’da en yeni ekran görüntünü sor.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Snapfly’ı bu Mac’teki Claude’a ekler. Ardından Claude’dan çık ve yeniden aç.";
+"AI apps on this Mac" = "Bu Mac’teki yapay zekâ uygulamaları";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude, Snapfly’a burada, bu Mac’te sorar; asla Snapfly’ın bir sunucusu üzerinden değil. Claude’a verilen, sohbetinin geri kalanıyla birlikte Anthropic’e gider.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Claude’a bağlandı. Snapfly’ı orada kullanmak için Claude’dan çık ve yeniden aç.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude bu Mac’te yok. claude.com/download adresinden indir, sonra bağla.";
+"Claude’s settings could not be changed, so nothing was." = "Claude’un ayarları değiştirilemedi, bu yüzden hiçbir şey değişmedi.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Snapfly’ın kendini Claude’un ayarlarına ekleyebilmesi için Claude adlı klasörü seç.";

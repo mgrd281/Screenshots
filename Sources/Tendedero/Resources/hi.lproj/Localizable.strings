@@ -2053,3 +2053,16 @@
 "The photo could not be sent to your iPhone." = "फ़ोटो आपके iPhone पर नहीं भेजी जा सकी।";
 "Getting the screenshot from your Mac…" = "आपके Mac से स्क्रीनशॉट लाया जा रहा है…";
 "The screenshot from your Mac could not be received." = "आपके Mac से स्क्रीनशॉट नहीं मिल सका।";
+"Let AI apps use Snapfly" = "AI ऐप्स को Snapfly इस्तेमाल करने दें";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "इस Mac पर Claude, Snapfly से सबसे नया स्क्रीनशॉट, रस्सी पर कोई भी फ़ोटो या PDF, या ढकने के लिए टेक्स्ट माँग सकता है। उसे केवल ढका हुआ ही मिलता है, जैसा आपने गोपनीयता में चुना है।";
+"Connect Again" = "फिर से कनेक्ट करें";
+"Connect…" = "कनेक्ट करें…";
+"Connect to Claude" = "Claude से कनेक्ट करें";
+"Connected. In Claude, ask about your newest screenshot." = "कनेक्ट हो गया। Claude में अपने सबसे नए स्क्रीनशॉट के बारे में पूछें।";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "इस Mac पर Claude में Snapfly जोड़ता है। उसके बाद Claude बंद करके फिर से खोलें।";
+"AI apps on this Mac" = "इस Mac पर AI ऐप्स";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude, Snapfly से यहीं इस Mac पर पूछता है, कभी Snapfly के किसी सर्वर से होकर नहीं। Claude को जो मिलता है वह आपकी बाकी चैट के साथ Anthropic को जाता है।";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Claude से कनेक्ट हो गया। वहाँ Snapfly इस्तेमाल करने के लिए Claude बंद करके फिर से खोलें।";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude इस Mac पर नहीं है। इसे claude.com/download से लें, फिर कनेक्ट करें।";
+"Claude’s settings could not be changed, so nothing was." = "Claude की सेटिंग्स नहीं बदली जा सकीं, इसलिए कुछ नहीं बदला।";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Claude नाम का फ़ोल्डर चुनें, ताकि Snapfly खुद को Claude की सेटिंग्स में जोड़ सके।";

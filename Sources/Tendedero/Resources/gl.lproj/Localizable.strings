@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "Non se puido enviar a foto ao teu iPhone.";
 "Getting the screenshot from your Mac…" = "Recibindo a captura do teu Mac…";
 "The screenshot from your Mac could not be received." = "Non se puido recibir a captura do teu Mac.";
+"Let AI apps use Snapfly" = "Deixar que as apps de IA usen Snapfly";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Claude neste Mac pode pedirlle a Snapfly a captura máis recente, calquera foto ou PDF da corda, ou un texto para tapar. Só recibe o que está tapado, como escolliches en Privacidade.";
+"Connect Again" = "Conectar de novo";
+"Connect…" = "Conectar…";
+"Connect to Claude" = "Conectar con Claude";
+"Connected. In Claude, ask about your newest screenshot." = "Conectado. En Claude, pregunta pola túa captura máis recente.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Engade Snapfly a Claude neste Mac. Despois, pecha Claude e ábreo de novo.";
+"AI apps on this Mac" = "Apps de IA neste Mac";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude pregúntalle a Snapfly aquí, neste Mac, nunca a través dun servidor de Snapfly. O que recibe Claude vai a Anthropic co resto da túa conversa.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Conectado con Claude. Pecha Claude e ábreo de novo para usar Snapfly alí.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude non está neste Mac. Descárgao de claude.com/download e despois conecta.";
+"Claude’s settings could not be changed, so nothing was." = "Non se puideron cambiar os axustes de Claude, así que non se cambiou nada.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Escolle o cartafol chamado Claude para que Snapfly poida engadirse aos axustes de Claude.";

@@ -2053,3 +2053,16 @@
 "The photo could not be sent to your iPhone." = "Şəkli iPhone-a göndərmək mümkün olmadı.";
 "Getting the screenshot from your Mac…" = "Ekran şəkli Mac-dan alınır…";
 "The screenshot from your Mac could not be received." = "Mac-dan ekran şəklini almaq mümkün olmadı.";
+"Let AI apps use Snapfly" = "Süni intellekt tətbiqləri Snapfly-dan istifadə etsin";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Bu Mac-dakı Claude Snapfly-dan ən yeni ekran şəklini, ipdəki istənilən şəkli və ya PDF-i, yaxud örtüləcək mətni istəyə bilər. O, yalnız Məxfilik bölməsində seçdiyin kimi örtülənləri alır.";
+"Connect Again" = "Yenidən qoş";
+"Connect…" = "Qoş…";
+"Connect to Claude" = "Claude ilə qoş";
+"Connected. In Claude, ask about your newest screenshot." = "Qoşuldu. Claude-dan ən yeni ekran şəklin haqqında soruş.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Snapfly-ı bu Mac-dakı Claude-a əlavə edir. Sonra Claude-u bağla və yenidən aç.";
+"AI apps on this Mac" = "Bu Mac-dakı süni intellekt tətbiqləri";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude Snapfly-dan burada, bu Mac-da soruşur, heç vaxt Snapfly serverindən keçmir. Claude-a verilən söhbətinin qalanı ilə birlikdə Anthropic-ə gedir.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Claude ilə qoşuldu. Snapfly-dan orada istifadə etmək üçün Claude-u bağla və yenidən aç.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude bu Mac-da yoxdur. Onu claude.com/download ünvanından yüklə, sonra qoş.";
+"Claude’s settings could not be changed, so nothing was." = "Claude-un parametrlərini dəyişmək mümkün olmadı, ona görə heç nə dəyişmədi.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Snapfly-ın özünü Claude-un parametrlərinə əlavə edə bilməsi üçün Claude adlı qovluğu seç.";

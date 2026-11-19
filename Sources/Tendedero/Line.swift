@@ -145,6 +145,12 @@ final class Line: ObservableObject {
     }
 
     private let storeKey = "pegged"
+
+    /// The photos on the line as last saved, oldest first, for Snapfly
+    /// answering an AI app (`MCPMode`), which runs apart from the line.
+    nonisolated static var savedPaths: [String] {
+        UserDefaults.standard.stringArray(forKey: "pegged") ?? []
+    }
     private let pinnedKey = "pinnedPhotos"
 
     init() {

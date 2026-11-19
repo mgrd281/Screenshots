@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "تعذّر إرسال الصورة إلى الآيفون.";
 "Getting the screenshot from your Mac…" = "يجري جلب لقطة الشاشة من الماك…";
 "The screenshot from your Mac could not be received." = "تعذّر استلام لقطة الشاشة من الماك.";
+"Let AI apps use Snapfly" = "السماح لتطبيقات الذكاء الاصطناعي باستخدام Snapfly";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "يستطيع Claude على هذا الماك أن يطلب من Snapfly أحدث لقطة شاشة، أو أي صورة أو PDF على الحبل، أو نصاً لتغطيته. ولا يحصل إلا على ما غُطّي، كما اخترت في الخصوصية.";
+"Connect Again" = "الربط من جديد";
+"Connect…" = "اربط…";
+"Connect to Claude" = "الربط بـ Claude";
+"Connected. In Claude, ask about your newest screenshot." = "مربوط. اسأل Claude عن أحدث لقطة شاشة.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "يضيف Snapfly إلى Claude على هذا الماك. أغلق Claude وافتحه من جديد بعد ذلك.";
+"AI apps on this Mac" = "تطبيقات الذكاء الاصطناعي على هذا الماك";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "يسأل Claude ‏Snapfly هنا على هذا الماك، ولا يمر أي شيء عبر خادم لـ Snapfly. وما يحصل عليه Claude يذهب إلى Anthropic مع بقية محادثتك.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "تم الربط بـ Claude. أغلق Claude وافتحه من جديد لتستخدم Snapfly فيه.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude غير موجود على هذا الماك. نزّله من claude.com/download، ثم اربط.";
+"Claude’s settings could not be changed, so nothing was." = "تعذّر تغيير إعدادات Claude، فلم يتغيّر شيء.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "اختر المجلد المسمّى Claude، ليضيف Snapfly نفسه إلى إعدادات Claude.";

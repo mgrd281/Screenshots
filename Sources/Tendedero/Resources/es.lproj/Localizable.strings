@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "No se pudo enviar la foto a tu iPhone.";
 "Getting the screenshot from your Mac…" = "Recibiendo la captura de tu Mac…";
 "The screenshot from your Mac could not be received." = "No se pudo recibir la captura de tu Mac.";
+"Let AI apps use Snapfly" = "Permitir que las apps de IA usen Snapfly";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Claude en este Mac puede pedir a Snapfly la captura más reciente, cualquier foto o PDF de la cuerda, o un texto para tapar. Solo recibe lo que está tapado, como elegiste en Privacidad.";
+"Connect Again" = "Volver a conectar";
+"Connect…" = "Conectar…";
+"Connect to Claude" = "Conectar con Claude";
+"Connected. In Claude, ask about your newest screenshot." = "Conectado. En Claude, pregunta por tu captura más reciente.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Añade Snapfly a Claude en este Mac. Después, cierra Claude y vuelve a abrirlo.";
+"AI apps on this Mac" = "Apps de IA en este Mac";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude pregunta a Snapfly aquí, en este Mac, nunca a través de un servidor de Snapfly. Lo que recibe Claude va a Anthropic con el resto de tu chat.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Conectado con Claude. Cierra Claude y vuelve a abrirlo para usar Snapfly allí.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude no está en este Mac. Descárgalo de claude.com/download y luego conecta.";
+"Claude’s settings could not be changed, so nothing was." = "No se pudieron cambiar los ajustes de Claude, así que no se cambió nada.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Elige la carpeta llamada Claude para que Snapfly pueda añadirse a los ajustes de Claude.";

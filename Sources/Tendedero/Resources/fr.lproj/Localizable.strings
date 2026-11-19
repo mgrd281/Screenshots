@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "La photo n’a pas pu être envoyée sur ton iPhone.";
 "Getting the screenshot from your Mac…" = "Réception de la capture depuis ton Mac…";
 "The screenshot from your Mac could not be received." = "La capture de ton Mac n’a pas pu être reçue.";
+"Let AI apps use Snapfly" = "Laisser les apps d’IA utiliser Snapfly";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Claude sur ce Mac peut demander à Snapfly la capture la plus récente, toute photo ou tout PDF sur la corde, ou un texte à masquer. Il ne reçoit que ce qui est masqué, comme tu l’as choisi dans Confidentialité.";
+"Connect Again" = "Reconnecter";
+"Connect…" = "Connecter…";
+"Connect to Claude" = "Connecter à Claude";
+"Connected. In Claude, ask about your newest screenshot." = "Connecté. Dans Claude, demande ta capture la plus récente.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Ajoute Snapfly à Claude sur ce Mac. Quitte puis rouvre Claude ensuite.";
+"AI apps on this Mac" = "Apps d’IA sur ce Mac";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude interroge Snapfly ici, sur ce Mac, jamais via un serveur de Snapfly. Ce que Claude reçoit part chez Anthropic avec le reste de ta conversation.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Connecté à Claude. Quitte Claude et rouvre-le pour y utiliser Snapfly.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude n’est pas sur ce Mac. Télécharge-le sur claude.com/download, puis connecte.";
+"Claude’s settings could not be changed, so nothing was." = "Les réglages de Claude n’ont pas pu être modifiés, donc rien n’a changé.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Choisis le dossier nommé Claude pour que Snapfly puisse s’ajouter aux réglages de Claude.";

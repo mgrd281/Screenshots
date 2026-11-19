@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Claude on your Mac can ask Snapfly for the newest screenshot, any photo
+  or PDF on the line, or text to cover, and gets only what is covered, with
+  details in text as tags like [NAME 1]. Connect it in Settings › AI
+  Assistant, under AI apps on this Mac.
 - Recordings and Studio's videos are saved in HEVC, about half the size at
   the same sharpness, with small text kept crisp.
 - Bring the iPhone near the Mac: each new photo is offered with Handoff.

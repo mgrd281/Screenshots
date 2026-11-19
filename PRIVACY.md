@@ -42,6 +42,17 @@ or turn on syncing with your iPhone (below).
   Requests to OpenAI ask it not to store them for later retrieval. What they
   do with it is set by their own privacy policies and your account with them;
   they bill each request to that account. Nothing of it goes to the developer.
+- **Claude on your Mac, only if you connect it.** With Let AI apps use
+  Snapfly on, in Settings › AI Assistant, Claude on your Mac may start
+  Snapfly to ask it for the newest screenshot, a list of what hangs on the
+  line, a photo or PDF from it, or text to cover. It is given only copies
+  with your private details covered as you chose, and text with each detail
+  replaced by a tag like [NAME 1]. This happens on your Mac, never through a
+  server of Snapfly's or the developer's; what Claude is given then goes to
+  Anthropic with the rest of your chat, under their terms and your account
+  with them. Connect to Claude adds one entry to Claude's own settings file,
+  keeping everything else in it. Turn the switch off and Claude gets nothing
+  more.
 - **Your own details, only if you add them.** Under Always Hide, on the
   Mac and the iPhone, you may add your name, your address, bank
   cards and bank accounts, so Snapfly covers them in the ways they are
