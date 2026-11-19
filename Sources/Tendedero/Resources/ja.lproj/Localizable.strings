@@ -2036,3 +2036,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "好きなだけ撮れます。ラインで待ち、チャットに移ると開いている会話にまとめて、入力済みの文の横に入ります。「すぐに」は1枚ごとにチャットを開きます。";
 "It goes into %@ as soon as you open it." = "%@を開くとすぐに入ります。";
 "How %@ works" = "「%@」のしくみ";
+"Capture Whole Chat" = "チャット全体をキャプチャ";
+"Stop Capturing the Chat" = "チャットのキャプチャを停止";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "チャットをスクロールするには、Snapflyが代わりにキーを押す必要があります。システム設定で許可してから、もう一度お試しください。";
+"Open the chat to capture first, then try again." = "キャプチャするチャットを先に開いてから、もう一度お試しください。";
+"Capturing the chat… Click to stop." = "チャットをキャプチャしています…クリックで停止。";
+"The chat could not be captured." = "チャットをキャプチャできませんでした。";
+"The chat was longer than %d views, so it was cut there." = "チャットが%d画面を超えたため、そこで区切りました。";
+"The whole chat fits in one view: one screenshot, and no video." = "チャット全体が1画面に収まります：スクリーンショット1枚で、ビデオはありません。";
+"The screenshots were saved, but the video could not be." = "スクリーンショットは保存されましたが、ビデオは保存できませんでした。";

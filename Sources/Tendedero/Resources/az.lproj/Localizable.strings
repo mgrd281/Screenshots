@@ -2038,3 +2038,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "İstədiyin qədər çək: xətdə gözləyirlər və çata keçəndə açıq olan söhbətə birlikdə, orada yazdığının yanına düşürlər. «Dərhal» hər birindən sonra çatı açır.";
 "It goes into %@ as soon as you open it." = "%@ açan kimi ora düşür.";
 "How %@ works" = "%@ necə işləyir";
+"Capture Whole Chat" = "Bütün söhbəti çək";
+"Stop Capturing the Chat" = "Söhbətin çəkilişini dayandır";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Söhbəti sürüşdürmək üçün Snapfly sənin yerinə düymələri basmalıdır. Sistem Parametrlərində icazə ver, sonra yenidən cəhd et.";
+"Open the chat to capture first, then try again." = "Əvvəlcə çəkmək istədiyin söhbəti aç, sonra yenidən cəhd et.";
+"Capturing the chat… Click to stop." = "Söhbət çəkilir… Dayandırmaq üçün klik et.";
+"The chat could not be captured." = "Söhbəti çəkmək mümkün olmadı.";
+"The chat was longer than %d views, so it was cut there." = "Söhbət %d görünüşdən uzun idi, ona görə orada kəsildi.";
+"The whole chat fits in one view: one screenshot, and no video." = "Bütün söhbət bir görünüşə sığır: bir ekran şəkli, video yoxdur.";
+"The screenshots were saved, but the video could not be." = "Ekran şəkilləri saxlanıldı, amma video saxlanıla bilmədi.";

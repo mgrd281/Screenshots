@@ -119,6 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         FullPage.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        ChatCapture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onChange = { [weak self] in
             self?.updateStatusIcon()
@@ -1618,6 +1619,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             Self.show(Shortcut.current(.page), on: pageItem)
             menu.addItem(pageItem)
+            // A chat from its first message to its last: a picture of each
+            // view, and a video of the scroll that stops by itself.
+            if ChatCapture.shared.isRunning {
+                menu.addItem(ClosureMenuItem(L("Stop Capturing the Chat"), symbol: "stop.circle") {
+                    ChatCapture.shared.stop()
+                })
+            } else {
+                menu.addItem(ClosureMenuItem(L("Capture Whole Chat"), symbol: "bubble.left.and.text.bubble.right") {
+                    ChatCapture.shared.start(after: 0.2)
+                })
+            }
             let recordItem = ClosureMenuItem(L("Record Screen"), symbol: "record.circle") {
                 Capture.shared.start(after: 0.2, mode: .record)
             }

@@ -957,8 +957,9 @@ apps.
   - Permissions Needed… comes first of all, only once a permission was
     refused.
   - SF Symbols on macOS 26 only, as the photo context menu: `paperplane`,
-    `camera.viewfinder`, `timer`, `scroll`, `record.circle` (`stop.circle`
-    while recording), `folder.badge.plus`, `arrow.down.to.line` or
+    `camera.viewfinder`, `timer`, `scroll`,
+    `bubble.left.and.text.bubble.right` (Capture Whole Chat, `stop.circle`
+    while it runs), `record.circle` (`stop.circle` while recording), `folder.badge.plus`, `arrow.down.to.line` or
     `arrow.up.to.line`, `magnifyingglass`, `clock.arrow.circlepath`,
     `eye.slash`, `hand.raised`, `camera.circle`, `menubar.dock.rectangle`
     (Hide Desktop Icons, a switch with a check like the two above it),

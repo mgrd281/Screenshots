@@ -2036,3 +2036,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "Haz las que quieras: esperan en la cuerda y entran juntas en la conversación abierta cuando vas al chat, junto a lo que ya escribiste. «Al momento» abre el chat tras cada una.";
 "It goes into %@ as soon as you open it." = "Entra en %@ en cuanto lo abras.";
 "How %@ works" = "Cómo funciona %@";
+"Capture Whole Chat" = "Capturar el chat entero";
+"Stop Capturing the Chat" = "Detener la captura del chat";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Para desplazar el chat, Snapfly necesita pulsar teclas por ti. Permítelo en Ajustes del Sistema y vuelve a intentarlo.";
+"Open the chat to capture first, then try again." = "Abre primero el chat que quieres capturar y vuelve a intentarlo.";
+"Capturing the chat… Click to stop." = "Capturando el chat… Haz clic para detener.";
+"The chat could not be captured." = "No se pudo capturar el chat.";
+"The chat was longer than %d views, so it was cut there." = "El chat ocupaba más de %d vistas, así que se cortó ahí.";
+"The whole chat fits in one view: one screenshot, and no video." = "El chat entero cabe en una vista: una captura y ningún vídeo.";
+"The screenshots were saved, but the video could not be." = "Las capturas se guardaron, pero el vídeo no.";

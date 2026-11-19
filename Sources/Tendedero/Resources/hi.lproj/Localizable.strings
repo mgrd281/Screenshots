@@ -2038,3 +2038,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "जितने चाहें लें: वे लाइन पर इंतज़ार करते हैं और चैट पर जाते ही खुली बातचीत में साथ जाते हैं, आपके लिखे के पास। «तुरंत» हर एक के बाद चैट खोलता है।";
 "It goes into %@ as soon as you open it." = "%@ खोलते ही यह उसमें जाता है।";
 "How %@ works" = "%@ कैसे काम करता है";
+"Capture Whole Chat" = "पूरी चैट कैप्चर करें";
+"Stop Capturing the Chat" = "चैट कैप्चर करना रोकें";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "चैट स्क्रॉल करने के लिए Snapfly को आपकी जगह कुंजियाँ दबानी होंगी। सिस्टम सेटिंग्स में इसकी अनुमति दें, फिर दोबारा कोशिश करें।";
+"Open the chat to capture first, then try again." = "पहले वह चैट खोलें जिसे कैप्चर करना है, फिर दोबारा कोशिश करें।";
+"Capturing the chat… Click to stop." = "चैट कैप्चर हो रही है… रोकने के लिए क्लिक करें।";
+"The chat could not be captured." = "चैट कैप्चर नहीं हो सकी।";
+"The chat was longer than %d views, so it was cut there." = "चैट %d व्यू से लंबी थी, इसलिए वहीं रोक दी गई।";
+"The whole chat fits in one view: one screenshot, and no video." = "पूरी चैट एक ही व्यू में आ जाती है: एक स्क्रीनशॉट, कोई वीडियो नहीं।";
+"The screenshots were saved, but the video could not be." = "स्क्रीनशॉट सहेज लिए गए, पर वीडियो नहीं सहेजा जा सका।";
