@@ -12,6 +12,11 @@ struct StudioLook: Sendable {
     let clicks: [StudioEvents.Click]
     /// The recording's own pixels, which the marks' sizes are measured in.
     let pixels: CGSize
+    /// The recording's parts from its start to its end, some cut out or
+    /// faster (`StudioCuts`).
+    let parts: [StudioPart]
+    /// What is said, line by line.
+    let captions: [StudioCaption]
 
     /// - Parameter camera: the camera worked out before for the same zooms,
     ///   so a change to the marks alone doesn't work it out again.
@@ -21,6 +26,9 @@ struct StudioLook: Sendable {
         numbers = project.numbers
         clicks = project.showsClicks ? (events?.clicks ?? []).filter { StudioEvents.isInside($0.x, $0.y) } : []
         self.pixels = pixels
+        parts = StudioCuts.parts(project.parts, duration: duration)
+        captions = project.captions.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .sorted { $0.start < $1.start }
     }
 
     /// The unit the marks are measured in, for the recording shown `size`
@@ -34,6 +42,7 @@ struct StudioLook: Sendable {
     func draws(at t: Double) -> Bool {
         marks.contains { t >= $0.start && t < $0.end }
             || clicks.contains { t >= $0.t && t < $0.t + StudioFade.ripple }
+            || captions.contains { $0.contains(t) }
     }
 }
 
@@ -68,13 +77,51 @@ enum StudioDraw {
                                   y: mark.from.y + (mark.to.y - mark.from.y) * drawn)
             case .step, .text:
                 grow(context, about: Drawing.point(mark.from, in: size), by: 0.6 + 0.4 * drawn)
-            case .box, .circle, .highlight:
+            case .box, .circle, .highlight, .blur:
                 let box = Drawing.rect(mark.rect, in: size)
                 grow(context, about: CGPoint(x: box.midX, y: box.midY), by: 0.92 + 0.08 * drawn)
             }
             Drawing.draw([mark], in: context, size: size, unit: unit, numbered: look.numbers)
             context.restoreGState()
         }
+        if let caption = look.captions.first(where: { $0.contains(t) }),
+           let presence = StudioFade.presence(at: t, start: caption.start, end: caption.end, still: still) {
+            context.saveGState()
+            context.setAlpha(CGFloat(presence.opacity))
+            drawCaption(caption.text, unit: unit, in: context, size: size)
+            context.restoreGState()
+        }
+    }
+
+    /// Words said, at the foot of the picture: white on a dark label,
+    /// centred, as wide as four fifths of the picture at most.
+    static func drawCaption(_ text: String, unit: CGFloat, in context: CGContext, size: CGSize) {
+        let points = max(10, unit * 0.034)
+        let paragraph: CTParagraphStyle = withUnsafePointer(to: CTTextAlignment.center) { alignment in
+            var setting = CTParagraphStyleSetting(spec: .alignment, valueSize: MemoryLayout<CTTextAlignment>.size,
+                                                  value: alignment)
+            return CTParagraphStyleCreate(&setting, 1)
+        }
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key(kCTFontAttributeName as String): NSFont.systemFont(ofSize: points, weight: .semibold),
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: 1, alpha: 1),
+            NSAttributedString.Key(kCTParagraphStyleAttributeName as String): paragraph,
+        ]
+        let setter = CTFramesetterCreateWithAttributedString(NSAttributedString(string: text, attributes: attributes))
+        let widest = size.width * 0.8
+        let fit = CTFramesetterSuggestFrameSizeWithConstraints(setter, CFRange(location: 0, length: 0), nil,
+                                                               CGSize(width: widest, height: size.height * 0.4), nil)
+        let across = points * 0.6, down = points * 0.3
+        let width = ceil(min(widest, fit.width)), height = ceil(fit.height)
+        let label = CGRect(x: (size.width - width) / 2 - across, y: size.height * 0.06,
+                           width: width + 2 * across, height: height + 2 * down)
+        context.addPath(CGPath(roundedRect: label, cornerWidth: points * 0.35, cornerHeight: points * 0.35, transform: nil))
+        context.setFillColor(CGColor(gray: 0, alpha: 0.72))
+        context.fillPath()
+        let frame = CTFramesetterCreateFrame(setter, CFRange(location: 0, length: 0),
+                                             CGPath(rect: label.insetBy(dx: across, dy: down), transform: nil), nil)
+        context.textMatrix = .identity
+        CTFrameDraw(frame, context)
     }
 
     private static func grow(_ context: CGContext, about center: CGPoint, by scale: CGFloat) {
@@ -103,20 +150,32 @@ enum StudioDraw {
     }
 
     /// A frame of the video: the recording's picture through the camera at
-    /// that time, at the recording's own size, then what is drawn over it.
-    static func frame(_ source: CVPixelBuffer, into output: CVPixelBuffer, look: StudioLook, at t: Double,
-                      context: CIContext) {
+    /// that time, in its place on the video, on its background when it has
+    /// one, then what is drawn over it.
+    static func frame(_ source: CVPixelBuffer, into output: CVPixelBuffer, look: StudioLook, framing: StudioFraming,
+                      ground: StudioGround?, at t: Double, context: CIContext) {
         let width = CVPixelBufferGetWidth(output), height = CVPixelBufferGetHeight(output)
         let size = CGSize(width: width, height: height)
+        let video = framing.isFramed ? framing.video : CGRect(origin: .zero, size: size)
         let rect = look.camera.rect(at: t)
-        let picture = CIImage(cvPixelBuffer: source)
+        let picture = blurred(CIImage(cvPixelBuffer: source), look: look, at: t)
         let extent = picture.extent
         let crop = CGRect(x: extent.minX + rect.minX * extent.width, y: extent.minY + rect.minY * extent.height,
                           width: rect.width * extent.width, height: rect.height * extent.height)
         let move = CGAffineTransform(translationX: -crop.minX, y: -crop.minY)
-            .concatenating(CGAffineTransform(scaleX: size.width / crop.width, y: size.height / crop.height))
-        let seen = picture.clampedToExtent().cropped(to: crop).transformed(by: move)
-            .cropped(to: CGRect(origin: .zero, size: size))
+            .concatenating(CGAffineTransform(scaleX: video.width / crop.width, y: video.height / crop.height))
+            .concatenating(CGAffineTransform(translationX: video.minX, y: video.minY))
+        var seen = picture.clampedToExtent().cropped(to: crop).transformed(by: move).cropped(to: video)
+        if let ground {
+            // Cut to its rounded corners, on its colour and shadow.
+            if let mask = ground.mask {
+                seen = seen.applyingFilter("CIBlendWithAlphaMask", parameters: [
+                    kCIInputBackgroundImageKey: ground.image, kCIInputMaskImageKey: mask,
+                ])
+            } else {
+                seen = seen.composited(over: ground.image)
+            }
+        }
         context.render(seen, to: output, bounds: CGRect(origin: .zero, size: size), colorSpace: nil)
         guard look.draws(at: t) else { return }
         CVPixelBufferLockBaseAddress(output, [])
@@ -126,13 +185,115 @@ enum StudioDraw {
                                       bytesPerRow: CVPixelBufferGetBytesPerRow(output), space: space,
                                       bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue
                                           | CGBitmapInfo.byteOrder32Little.rawValue) else { return }
-        overlay(look, at: t, rect: rect, in: drawing, size: size)
+        // Marks stay on the recording, inside its corners.
+        drawing.translateBy(x: video.minX, y: video.minY)
+        if framing.isFramed {
+            let inside = CGRect(origin: .zero, size: video.size)
+            drawing.addPath(CGPath(roundedRect: inside, cornerWidth: framing.radius, cornerHeight: framing.radius,
+                                   transform: nil))
+            drawing.clip()
+        }
+        overlay(look, at: t, rect: rect, in: drawing, size: video.size)
+    }
+}
+
+extension StudioDraw {
+    /// The recording's picture with the parts to blur blurred while each
+    /// shows, fading in and out as marks do. They are in the recording's
+    /// own place, so the camera takes them along; the preview's video goes
+    /// through the same (`StudioModel`).
+    static func blurred(_ picture: CIImage, look: StudioLook, at t: Double) -> CIImage {
+        let extent = picture.extent
+        var made = picture
+        var any = false
+        for item in look.marks where item.mark.kind == .blur {
+            guard let presence = StudioFade.presence(at: t, start: item.start, end: item.end) else { continue }
+            let area = Drawing.rect(item.mark.rect, in: extent.size).offsetBy(dx: extent.minX, dy: extent.minY)
+                .integral.intersection(extent)
+            guard !area.isNull, !area.isEmpty else { continue }
+            // Strong enough that words under it cannot be read, on any screen.
+            let strength = max(10, Drawing.unit(width: extent.width, height: extent.height) * blurStrength)
+            var blur = picture.clampedToExtent().applyingGaussianBlur(sigma: Double(strength)).cropped(to: area)
+            if presence.opacity < 1 {
+                blur = blur.applyingFilter("CIColorMatrix", parameters: [
+                    "inputAVector": CIVector(x: 0, y: 0, z: 0, w: CGFloat(presence.opacity)),
+                ])
+            }
+            made = blur.composited(over: made)
+            any = true
+        }
+        return any ? made.cropped(to: extent) : picture
+    }
+
+    /// The blur's radius, as a share of the recording's unit.
+    static let blurStrength: CGFloat = 0.015
+}
+
+/// What the preview's video blurs, as the look changes, read on the video's
+/// own queue.
+final class StudioBlurs: @unchecked Sendable {
+    private let lock = NSLock()
+    private var current: StudioLook?
+
+    var look: StudioLook? {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return current
+        }
+        set {
+            lock.lock()
+            current = newValue
+            lock.unlock()
+        }
+    }
+}
+
+/// What is drawn round the recording, made once for a whole video: its
+/// colour with the shadow, and the rounded shape the recording is cut to.
+struct StudioGround {
+    let image: CIImage
+    /// Opaque where the recording shows; nil with square corners.
+    let mask: CIImage?
+
+    init?(_ framing: StudioFraming) {
+        guard let fill = framing.fill else { return nil }
+        let size = framing.canvas
+        guard let ground = Self.picture(size, draw: { context in
+            Backdrop.paint(fill, in: context, size: size)
+            // Under the recording's opaque part only, so no edge of it shows.
+            let under = framing.video.insetBy(dx: 1, dy: 1)
+            let radius = max(0, framing.radius - 1)
+            Backdrop.castShadow(of: CGPath(roundedRect: under, cornerWidth: radius, cornerHeight: radius, transform: nil),
+                                blur: framing.blur, drop: framing.drop, in: context)
+        }) else { return nil }
+        image = CIImage(cgImage: ground)
+        guard framing.radius > 0 else {
+            mask = nil
+            return
+        }
+        guard let shape = Self.picture(size, draw: { context in
+            context.addPath(CGPath(roundedRect: framing.video, cornerWidth: framing.radius, cornerHeight: framing.radius,
+                                   transform: nil))
+            context.setFillColor(CGColor(gray: 1, alpha: 1))
+            context.fillPath()
+        }) else { return nil }
+        mask = CIImage(cgImage: shape)
+    }
+
+    private static func picture(_ size: CGSize, draw: (CGContext) -> Void) -> CGImage? {
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: 8,
+                                      bytesPerRow: 0, space: space,
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+        draw(context)
+        return context.makeImage()
     }
 }
 
 /// Writes the recording as Studio shows it: sixty frames a second, each
-/// through the camera with the marks and clicks drawn on, at the
-/// recording's own size, and its sound as it was.
+/// through the camera with the marks and clicks drawn on, on its
+/// background at the size chosen, and its sound as it was.
 enum StudioExport {
     enum Failure: Error {
         case noPicture, cannotRead, cannotWrite, cancelled
@@ -186,8 +347,11 @@ enum StudioExport {
     static let rate: Int32 = 60
 
     /// Writes `source` as Studio shows it to `target`, by way of a hidden
-    /// file beside it so the folder watcher ignores it until it is done.
-    static func run(_ source: URL, look: StudioLook, to target: URL, stop: Stop,
+    /// file beside it so the folder watcher ignores it until it is done: a
+    /// QuickTime movie, or an MP4 for `.mp4`, in H.264, which every player
+    /// and website takes.
+    static func run(_ source: URL, look: StudioLook, backdrop: Backdrop? = nil,
+                    quality: StudioOutput.Quality = .original, to target: URL, stop: Stop,
                     progress: @escaping @Sendable (Double) -> Void) async throws {
         let asset = AVURLAsset(url: source)
         let duration = try await asset.load(.duration).seconds
@@ -200,13 +364,21 @@ enum StudioExport {
         for sound in sounds { found.append(try await sound.load(.formatDescriptions).first) }
         let hints = found
         let temp = target.deletingLastPathComponent()
-            .appendingPathComponent(".studio-\(UUID().uuidString)").appendingPathExtension("mov")
+            .appendingPathComponent(".studio-\(UUID().uuidString)").appendingPathExtension(target.pathExtension)
+        let mp4 = target.pathExtension.lowercased() == "mp4"
+        let framing = StudioFraming(pixels: natural, backdrop: backdrop, quality: quality)
+        // With parts cut out or faster, the sound is put together as the
+        // video has them.
+        var made: EditedSound?
+        if StudioCuts.edits(look.parts), !sounds.isEmpty { made = try await editedSound(sounds, parts: look.parts) }
+        let edited = made
         do {
             try await withCheckedThrowingContinuation { (done: CheckedContinuation<Void, Error>) in
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
-                        try write(asset: asset, track: track, size: natural, sounds: sounds, hints: hints,
-                                  duration: duration, look: look, to: temp, stop: stop, progress: progress)
+                        try write(asset: asset, track: track, framing: framing, mp4: mp4, sounds: sounds, hints: hints,
+                                  edited: edited, duration: duration, look: look, to: temp, stop: stop,
+                                  progress: progress)
                         done.resume()
                     } catch {
                         done.resume(throwing: error)
@@ -223,11 +395,64 @@ enum StudioExport {
         }
     }
 
+    /// The recording's sound as the video has it: the parts cut out gone,
+    /// one after another, the faster ones made as fast.
+    private struct EditedSound: @unchecked Sendable {
+        let composition: AVComposition
+        let tracks: [AVAssetTrack]
+    }
+
+    private static func editedSound(_ sounds: [AVAssetTrack], parts: [StudioPart]) async throws -> EditedSound? {
+        let composition = AVMutableComposition()
+        let scale: CMTimeScale = 6000
+        var tracks: [AVAssetTrack] = []
+        for sound in sounds {
+            let range = try await sound.load(.timeRange)
+            guard let track = composition.addMutableTrack(withMediaType: .audio,
+                                                          preferredTrackID: kCMPersistentTrackID_Invalid) else { continue }
+            var at = CMTime.zero
+            var filled = CMTime.zero
+            for part in parts where !part.removed {
+                let wanted = CMTimeRange(start: CMTime(seconds: part.start, preferredTimescale: scale),
+                                         end: CMTime(seconds: part.end, preferredTimescale: scale))
+                // Only where the sound is: it may start late or end early.
+                let there = CMTimeRangeGetIntersection(wanted, otherRange: range)
+                if there.duration > .zero {
+                    let place = at + (there.start - wanted.start)
+                    if place > filled { track.insertEmptyTimeRange(CMTimeRange(start: filled, end: place)) }
+                    try track.insertTimeRange(there, of: sound, at: place)
+                    filled = place + there.duration
+                }
+                at = at + wanted.duration
+            }
+            tracks.append(track)
+        }
+        guard !tracks.isEmpty else { return nil }
+        // Each faster part made as fast, from the last, so the places before it stay.
+        var faster: [(range: CMTimeRange, to: CMTime)] = []
+        var at = CMTime.zero
+        for part in parts where !part.removed {
+            let length = CMTime(seconds: part.duration, preferredTimescale: scale)
+            if part.speed != 1 {
+                faster.append((CMTimeRange(start: at, duration: length),
+                               CMTime(seconds: part.duration / part.speed, preferredTimescale: scale)))
+            }
+            at = at + length
+        }
+        for part in faster.reversed() { composition.scaleTimeRange(part.range, toDuration: part.to) }
+        return EditedSound(composition: composition, tracks: tracks)
+    }
+
     // The reader and writer are kept to this one queue's work and the
     // inputs' own queues, so they are never used from two places at once.
-    private static func write(asset: AVAsset, track: AVAssetTrack, size natural: CGSize, sounds: [AVAssetTrack],
-                              hints: [CMFormatDescription?], duration: Double, look: StudioLook, to temp: URL,
-                              stop: Stop, progress: @escaping @Sendable (Double) -> Void) throws {
+    private static func write(asset: AVAsset, track: AVAssetTrack, framing: StudioFraming, mp4: Bool, sounds: [AVAssetTrack],
+                              hints: [CMFormatDescription?], edited: EditedSound?, duration: Double, look: StudioLook,
+                              to temp: URL, stop: Stop, progress: @escaping @Sendable (Double) -> Void) throws {
+        // How long the video is, with parts cut out or faster.
+        let parts = look.parts
+        let cut = StudioCuts.edits(parts)
+        let length = cut ? StudioCuts.length(of: parts) : duration
+        guard length >= 1 / Double(rate) else { throw Failure.noPicture }
         let reader = try AVAssetReader(asset: asset)
         let pictures = AVAssetReaderTrackOutput(track: track, outputSettings: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
@@ -236,13 +461,18 @@ enum StudioExport {
         guard reader.canAdd(pictures) else { throw Failure.cannotRead }
         reader.add(pictures)
 
-        let width = max(2, Int((natural.width / 2).rounded()) * 2)
-        let height = max(2, Int((natural.height / 2).rounded()) * 2)
-        let writer = try AVAssetWriter(outputURL: temp, fileType: .mov)
+        let width = Int(framing.canvas.width), height = Int(framing.canvas.height)
+        let writer = try AVAssetWriter(outputURL: temp, fileType: mp4 ? .mp4 : .mov)
+        // An MP4 is for websites: it starts playing before it has all come.
+        writer.shouldOptimizeForNetworkUse = mp4
         // About as sharp as the recording, for text that stays crisp when
         // zoomed in on, and as small as that allows (`VideoQuality`).
-        let picture = AVAssetWriterInput(mediaType: .video, outputSettings: VideoQuality.settings(
-            for: writer, width: width, height: height, frameRate: Double(rate), bitsPerPixel: VideoQuality.studio))
+        let settings = mp4
+            ? VideoQuality.compatibleSettings(for: writer, width: width, height: height, frameRate: Double(rate),
+                                              bitsPerPixel: VideoQuality.studio)
+            : VideoQuality.settings(for: writer, width: width, height: height, frameRate: Double(rate),
+                                    bitsPerPixel: VideoQuality.studio)
+        let picture = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
         picture.expectsMediaDataInRealTime = false
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: picture, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
@@ -253,30 +483,68 @@ enum StudioExport {
         guard writer.canAdd(picture) else { throw Failure.cannotWrite }
         writer.add(picture)
 
-        // The sound is copied as it is, track by track.
-        var copies: [(from: AVAssetReaderTrackOutput, to: AVAssetWriterInput)] = []
-        for (i, sound) in sounds.enumerated() {
-            let from = AVAssetReaderTrackOutput(track: sound, outputSettings: nil)
-            let to = AVAssetWriterInput(mediaType: .audio, outputSettings: nil, sourceFormatHint: hints[i])
+        // The sound is copied as it is, track by track; with parts cut out
+        // or faster, it is read as the video has it, at its own pitch, and
+        // written again.
+        var copies: [(from: AVAssetReaderOutput, to: AVAssetWriterInput)] = []
+        var soundReader: AVAssetReader?
+        if let edited {
+            let mixed = try AVAssetReader(asset: edited.composition)
+            let from = AVAssetReaderAudioMixOutput(audioTracks: edited.tracks, audioSettings: [
+                AVFormatIDKey: kAudioFormatLinearPCM,
+                AVLinearPCMBitDepthKey: 16,
+                AVLinearPCMIsFloatKey: false,
+                AVLinearPCMIsBigEndianKey: false,
+                AVLinearPCMIsNonInterleaved: false,
+                AVSampleRateKey: 48_000,
+                AVNumberOfChannelsKey: 2,
+            ])
+            from.audioTimePitchAlgorithm = .spectral
+            let to = AVAssetWriterInput(mediaType: .audio, outputSettings: [
+                AVFormatIDKey: kAudioFormatMPEG4AAC,
+                AVSampleRateKey: 48_000,
+                AVNumberOfChannelsKey: 2,
+                AVEncoderBitRateKey: 160_000,
+            ])
             to.expectsMediaDataInRealTime = false
-            guard reader.canAdd(from), writer.canAdd(to) else { continue }
-            reader.add(from)
-            writer.add(to)
-            copies.append((from, to))
+            if mixed.canAdd(from), writer.canAdd(to) {
+                mixed.add(from)
+                writer.add(to)
+                copies.append((from, to))
+                soundReader = mixed
+            }
+        } else if !cut {
+            for (i, sound) in sounds.enumerated() {
+                let from = AVAssetReaderTrackOutput(track: sound, outputSettings: nil)
+                let to = AVAssetWriterInput(mediaType: .audio, outputSettings: nil, sourceFormatHint: hints[i])
+                to.expectsMediaDataInRealTime = false
+                guard reader.canAdd(from), writer.canAdd(to) else { continue }
+                reader.add(from)
+                writer.add(to)
+                copies.append((from, to))
+            }
         }
 
         guard reader.startReading() else { throw reader.error ?? Failure.cannotRead }
+        if let soundReader, !soundReader.startReading() {
+            reader.cancelReading()
+            throw soundReader.error ?? Failure.cannotRead
+        }
         guard writer.startWriting() else {
             reader.cancelReading()
+            soundReader?.cancelReading()
             throw writer.error ?? Failure.cannotWrite
         }
         let next = pictures.copyNextSampleBuffer()
         let start = next?.presentationTimeStamp ?? .zero
-        writer.startSession(atSourceTime: start)
+        // A video put together from parts starts at nought, as its sound does.
+        let origin = cut ? CMTime.zero : start
+        writer.startSession(atSourceTime: origin)
 
         let context = CIContext(options: [.workingColorSpace: NSNull(), .outputColorSpace: NSNull(),
                                           .cacheIntermediates: false])
-        let total = max(1, Int((duration * Double(rate)).rounded(.down)))
+        let ground = StudioGround(framing)
+        let total = max(1, Int((length * Double(rate)).rounded(.down)))
         let group = DispatchGroup()
         let failed = Flag()
 
@@ -298,7 +566,9 @@ enum StudioExport {
             guard !pictureEnded.isSet else { return }
             while picture.isReadyForMoreMediaData {
                 guard !stop.isSet, state.index < total else { return finish(false) }
-                let t = Double(state.index) / Double(rate)
+                // The moment of the video, and the moment of the recording it shows.
+                let time = Double(state.index) / Double(rate)
+                let t = cut ? StudioCuts.source(at: time, in: parts) : time
                 // The newest picture by then: the screen sends one only
                 // when something changed.
                 while let sample = state.next, (sample.presentationTimeStamp - start).seconds <= t + 0.0005 {
@@ -313,12 +583,13 @@ enum StudioExport {
                 guard let pool = adaptor.pixelBufferPool,
                       CVPixelBufferPoolCreatePixelBuffer(nil, pool, &made) == kCVReturnSuccess, let output = made
                 else { return finish(true) }
-                StudioDraw.frame(source, into: output, look: look, at: t, context: context)
-                let time = CMTimeAdd(start, CMTime(value: CMTimeValue(state.index), timescale: rate))
-                guard adaptor.append(output, withPresentationTime: time) else { return finish(true) }
+                StudioDraw.frame(source, into: output, look: look, framing: framing, ground: ground, at: t,
+                                 context: context)
+                let at = CMTimeAdd(origin, CMTime(value: CMTimeValue(state.index), timescale: rate))
+                guard adaptor.append(output, withPresentationTime: at) else { return finish(true) }
                 state.index += 1
                 // A hundred steps at most, so the window keeps up.
-                let share = Int(min(1, t / duration) * 100)
+                let share = Int(min(1, time / length) * 100)
                 if share != state.told {
                     state.told = share
                     progress(Double(share) / 100)
@@ -352,7 +623,7 @@ enum StudioExport {
         // ended yet is ended here, as a group freed while entered stops the app.
         let waiting = endings
         while group.wait(timeout: .now() + .milliseconds(250)) == .timedOut {
-            if writer.status == .failed || reader.status == .failed {
+            if writer.status == .failed || reader.status == .failed || soundReader?.status == .failed {
                 failed.set()
                 for ending in waiting {
                     if ending.setFirst() { group.leave() }
@@ -362,15 +633,17 @@ enum StudioExport {
         }
         if stop.isSet {
             reader.cancelReading()
+            soundReader?.cancelReading()
             writer.cancelWriting()
             throw Failure.cancelled
         }
-        if failed.isSet || reader.status == .failed {
+        if failed.isSet || reader.status == .failed || soundReader?.status == .failed {
             reader.cancelReading()
+            soundReader?.cancelReading()
             writer.cancelWriting()
-            throw writer.error ?? reader.error ?? Failure.cannotWrite
+            throw writer.error ?? reader.error ?? soundReader?.error ?? Failure.cannotWrite
         }
-        writer.endSession(atSourceTime: CMTimeAdd(start, CMTime(seconds: duration, preferredTimescale: 600)))
+        writer.endSession(atSourceTime: CMTimeAdd(origin, CMTime(seconds: length, preferredTimescale: 600)))
         let finished = DispatchSemaphore(value: 0)
         writer.finishWriting { finished.signal() }
         finished.wait()

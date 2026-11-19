@@ -13,6 +13,9 @@ struct StudioEditorView: View {
     let stop: () -> Void
 
     @FocusState private var fieldFocused: Bool
+    /// The inspector's page, as last chosen.
+    @AppStorage("studioPage") private var page = StudioPage.edit
+    @State private var showsKeys = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -69,6 +72,19 @@ struct StudioEditorView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
+            Button {
+                showsKeys.toggle()
+            } label: {
+                Image(systemName: "keyboard")
+                    .font(.system(size: 13))
+                    .frame(width: 26, height: 24)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+            .help(L("Keyboard Shortcuts"))
+            .accessibilityLabel(L("Keyboard Shortcuts"))
+            .popover(isPresented: $showsKeys, arrowEdge: .top) { StudioKeysView() }
             Image(systemName: "minus.magnifyingglass")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
@@ -89,13 +105,27 @@ struct StudioEditorView: View {
 
     private var inspector: some View {
         VStack(spacing: 0) {
+            pages
+            Divider()
             Form {
-                zooms
-                if let zoom = model.selectedZoom { chosen(zoom) }
-                tools
-                style
-                if let item = model.selectedMark { chosen(item) }
-                clicks
+                switch page {
+                case .edit:
+                    zooms
+                    if let zoom = model.selectedZoom { chosen(zoom) }
+                    cutting
+                case .draw:
+                    tools
+                    style
+                    if let item = model.selectedMark { chosen(item) }
+                    clicks
+                case .captions:
+                    captioning
+                case .look:
+                    shapes
+                    backdropSettings
+                case .save:
+                    saving
+                }
             }
             .formStyle(.grouped)
             .disabled(model.exporting != nil)
@@ -103,6 +133,77 @@ struct StudioEditorView: View {
             footer
         }
         .frame(width: StudioLayout.panelWidth)
+        .background(keys.disabled(model.exporting != nil))
+        // What is chosen, or a tool taken up, brings its page.
+        .onChange(of: model.selection) { _, chosen in
+            switch chosen {
+            case .zoom?: page = .edit
+            case .mark?: page = .draw
+            case nil: break
+            }
+        }
+        .onChange(of: model.tool) { _, _ in page = .draw }
+    }
+
+    /// The inspector's pages, as tabs across its top: the symbol over the name.
+    private var pages: some View {
+        HStack(spacing: 4) {
+            ForEach(StudioPage.allCases) { item in
+                pageTab(item)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+    }
+
+    private func pageTab(_ item: StudioPage) -> some View {
+        let chosen = page == item
+        return Button {
+            page = item
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: item.symbol)
+                    .font(.system(size: 14, weight: .medium))
+                    .frame(height: 18)
+                Text(item.title)
+                    .font(.system(size: 10, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(chosen ? Color.accentColor : Color.secondary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(chosen ? Color.accentColor.opacity(0.12) : Color.clear))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(item.title)
+        .accessibilityLabel(item.title)
+        .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+    }
+
+    /// The keys, which work whichever page shows: the tools, Add Zoom,
+    /// Split Here and Cut Out.
+    private var keys: some View {
+        ZStack {
+            ForEach(StudioModel.tools) { tool in
+                Button { model.tool = tool } label: { EmptyView() }
+                    .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut(KeyEquivalent(tool.key), modifiers: []))
+            }
+            Button { model.addZoom() } label: { EmptyView() }
+                .disabled(!model.canAddZoom)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("z", modifiers: []))
+            Button { model.split() } label: { EmptyView() }
+                .disabled(!model.canSplit)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("s", modifiers: []))
+            Button { model.toggleCut() } label: { EmptyView() }
+                .disabled(!model.canCut)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("x", modifiers: []))
+        }
+        .frame(width: 0, height: 0)
+        .opacity(0)
+        .accessibilityHidden(true)
     }
 
     private var zooms: some View {
@@ -127,7 +228,7 @@ struct StudioEditorView: View {
             LabeledContent {
                 Button(L("Add Zoom")) { model.addZoom() }
                     .disabled(!model.canAddZoom)
-                    .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("z", modifiers: []))
+                    .help(L("Add Zoom") + " (Z)")
             } label: {
                 Text(String(format: L("Zooms: %d"), model.project.zooms.count))
                 Text(L("From where the video is, for three seconds."))
@@ -233,10 +334,9 @@ struct StudioEditorView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help(tool.title)
+        .help(tool.title + " (" + String(tool.key).uppercased() + ")")
         .accessibilityLabel(tool.title)
         .accessibilityAddTraits(chosen ? .isSelected : [])
-        .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut(KeyEquivalent(tool.key), modifiers: []))
     }
 
     /// The ink as swatches and the size, for the chosen mark and the next.
@@ -316,6 +416,201 @@ struct StudioEditorView: View {
         }
     }
 
+    // MARK: Captions
+
+    /// What is said, made into captions on this Mac, and the words of the
+    /// one where the video stands, to correct.
+    private var captioning: some View {
+        Section {
+            if model.languages.isEmpty {
+                LabeledContent(L("Language")) {
+                    ProgressView().controlSize(.small)
+                }
+            } else {
+                Picker(L("Language"), selection: Binding(get: { model.language?.identifier ?? "" },
+                                                         set: { id in model.language = model.languages.first { $0.identifier == id } })) {
+                    ForEach(model.languages, id: \.identifier) { language in
+                        Text(StudioListener.name(of: language)).tag(language.identifier)
+                    }
+                }
+            }
+            LabeledContent {
+                if model.listening {
+                    ProgressView().controlSize(.small)
+                        .accessibilityLabel(L("Making captions…"))
+                } else {
+                    Button(model.project.captions.isEmpty ? L("Make Captions") : L("Make Again")) { model.makeCaptions() }
+                        .disabled(model.language == nil)
+                }
+            } label: {
+                Text(String(format: L("Captions: %d"), model.project.captions.count))
+            }
+            if let caption = model.caption {
+                TextField(L("Caption"), text: Binding(get: { caption.text },
+                                                      set: { model.setCaption(caption.id, text: $0) }), axis: .vertical)
+                    .lineLimit(1...3)
+                    .focused($fieldFocused)
+            }
+            if !model.project.captions.isEmpty {
+                Button(L("Remove Captions")) { model.removeCaptions() }
+            }
+        } header: {
+            Text(L("Captions"))
+        } footer: {
+            Text(L("Made on this Mac from what is said in the recording; nothing is sent. Stop on a caption to correct its words."))
+                .foregroundStyle(.secondary)
+        }
+        .onAppear { model.loadLanguages() }
+    }
+
+    // MARK: Cut and speed
+
+    /// The part the video stands in: split it there, cut it out, or play
+    /// it faster.
+    private var cutting: some View {
+        let part = model.part
+        let removed = part?.removed ?? false
+        return Section {
+            HStack(spacing: 8) {
+                Button {
+                    model.split()
+                } label: {
+                    Label(L("Split Here"), systemImage: "square.split.2x1")
+                }
+                .disabled(!model.canSplit)
+                .help(L("Split Here") + " (S)")
+                Button {
+                    model.toggleCut()
+                } label: {
+                    Label(removed ? L("Put Back") : L("Cut Out"), systemImage: removed ? "arrow.uturn.backward" : "scissors")
+                }
+                .disabled(!model.canCut)
+                .help((removed ? L("Put Back") : L("Cut Out")) + " (X)")
+                Spacer(minLength: 0)
+                Button(L("Join with Next")) { model.joinNext() }
+                    .disabled(!model.canJoin)
+            }
+            .controlSize(.small)
+            Picker(L("Speed"), selection: Binding(get: { part?.speed ?? 1 }, set: { model.setSpeed($0) })) {
+                ForEach(StudioPart.speeds, id: \.self) { speed in
+                    Text(Self.speed(speed)).tag(speed)
+                }
+            }
+            .pickerStyle(.segmented)
+            .disabled(removed)
+        } header: {
+            Text(L("Cut and Speed"))
+        } footer: {
+            Text(String(format: L("Split where the video stands, then cut a part out or play it faster. The video will be %@ long."),
+                        StudioTimeline.text(model.savedLength)))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// How fast a part plays, "1.5×", its number as the Mac's region writes it.
+    static func speed(_ speed: Double) -> String {
+        speed.formatted(.number.precision(.fractionLength(0...1))) + "×"
+    }
+
+    // MARK: The video's shape, its background, and saving
+
+    /// The recording's own shape, or a post's, with the size it is saved at.
+    private var shapes: some View {
+        Section {
+            HStack(spacing: 4) {
+                ForEach(Backdrop.Ratio.allCases, id: \.self) { ratio in
+                    StudioShapeTile(ratio: ratio, recording: model.pixels, chosen: model.ratio == ratio) {
+                        model.setRatio(ratio)
+                    }
+                }
+            }
+            .padding(.vertical, 2)
+        } header: {
+            Text(L("Size"))
+        } footer: {
+            let size = model.savedSize
+            Text(verbatim: "\(Int(size.width)) × \(Int(size.height))")
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// The recording on a colour, with room round it, rounded corners and a
+    /// shadow, as Background… sets a photo.
+    private var backdropSettings: some View {
+        Section {
+            Toggle(L("Set on a background"), isOn: Binding(get: { model.project.backdrop != nil },
+                                                           set: { model.setBackdrop($0) }))
+            if let backdrop = model.project.backdrop {
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(32), spacing: 12), count: 4), spacing: 12) {
+                    ForEach(Backdrop.Fill.allCases, id: \.self) { fill in
+                        Swatch(fill: fill, chosen: backdrop.fill == fill) { model.adjustBackdrop { $0.fill = fill } }
+                    }
+                }
+                .padding(.vertical, 4)
+                LabeledContent(L("Padding")) {
+                    Slider(value: backdropValue(\.padding), in: Backdrop.paddings, onEditingChanged: { editing in
+                        if !editing { model.end() }
+                    })
+                    .controlSize(.small)
+                    .accessibilityLabel(L("Padding"))
+                }
+                LabeledContent(L("Corners")) {
+                    Slider(value: backdropValue(\.corners), in: 0...1, onEditingChanged: { editing in
+                        if !editing { model.end() }
+                    })
+                    .controlSize(.small)
+                    .accessibilityLabel(L("Corners"))
+                }
+                Toggle(L("Shadow"), isOn: Binding(get: { backdrop.shadow },
+                                                  set: { on in model.adjustBackdrop { $0.shadow = on } }))
+            }
+        } header: {
+            Text(L("Background"))
+        } footer: {
+            Text(L("Room round the recording, rounded corners and a soft shadow, as a post or a slide wants it."))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func backdropValue(_ key: WritableKeyPath<Backdrop, Double>) -> Binding<Double> {
+        Binding(get: { model.project.backdrop?[keyPath: key] ?? 0 },
+                set: { value in model.adjustBackdrop(going: true) { $0[keyPath: key] = value } })
+    }
+
+    /// As which kind of file, and how large.
+    private var saving: some View {
+        Section {
+            Picker(L("File Type"), selection: $model.output.kind) {
+                Text(verbatim: "MOV").tag(StudioOutput.Kind.mov)
+                Text(verbatim: "MP4").tag(StudioOutput.Kind.mp4)
+                Text(verbatim: "GIF").tag(StudioOutput.Kind.gif)
+            }
+            .pickerStyle(.segmented)
+            if model.output.kind != .gif {
+                Picker(L("Quality"), selection: $model.output.quality) {
+                    Text(L("Original")).tag(StudioOutput.Quality.original)
+                    Text(verbatim: "4K").tag(StudioOutput.Quality.uhd)
+                    Text(verbatim: "1080p").tag(StudioOutput.Quality.fullHD)
+                    Text(verbatim: "720p").tag(StudioOutput.Quality.hd)
+                }
+            }
+        } header: {
+            Text(L("Save"))
+        } footer: {
+            Text(Self.about(model.output.kind))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    static func about(_ kind: StudioOutput.Kind) -> String {
+        switch kind {
+        case .mov: L("The smallest file, as Macs and iPhones play it.")
+        case .mp4: L("Plays everywhere: on websites, Windows and Android.")
+        case .gif: L("Plays in any chat, on a loop, without sound.")
+        }
+    }
+
     /// Undo and Redo on the leading edge; Cancel and Save Video on the
     /// trailing, and how far Save Video has come while it works.
     private var footer: some View {
@@ -357,6 +652,123 @@ struct StudioEditorView: View {
     }
 }
 
+/// Studio's keys, listed: each in a keycap, then what it does.
+private struct StudioKeysView: View {
+    private var rows: [(key: String, does: String)] {
+        [("␣", L("Play or pause")), ("← →", L("A second back or on")), ("Z", L("Add Zoom")),
+         ("S", L("Split Here")), ("X", L("Cut Out"))]
+            + StudioModel.tools.map { (String($0.key).uppercased(), $0.title) }
+            + [("⌫", L("Delete")), ("⌘Z", L("Undo")), ("⇧⌘Z", L("Redo"))]
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(L("Keyboard Shortcuts"))
+                .font(.headline)
+            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
+                ForEach(rows.indices, id: \.self) { i in
+                    GridRow {
+                        Text(verbatim: rows[i].key)
+                            .font(.system(size: 11, weight: .semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .frame(minWidth: 30)
+                            .background(RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color.primary.opacity(0.08)))
+                            .gridColumnAlignment(.trailing)
+                        Text(rows[i].does)
+                            .font(.system(size: 12))
+                    }
+                }
+            }
+        }
+        .padding(16)
+    }
+}
+
+/// The inspector's pages: changing the recording, drawing on it, what is
+/// said, how it looks, and how it is saved.
+enum StudioPage: String, CaseIterable, Identifiable {
+    case edit, draw, captions, look, save
+
+    var id: String { rawValue }
+
+    var symbol: String {
+        switch self {
+        case .edit: "timeline.selection"
+        case .draw: "pencil.tip.crop.circle"
+        case .captions: "captions.bubble"
+        case .look: "paintpalette"
+        case .save: "square.and.arrow.down"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .edit: L("Edit")
+        case .draw: L("Draw")
+        case .captions: L("Captions")
+        case .look: L("Appearance")
+        case .save: L("Save")
+        }
+    }
+}
+
+/// One shape the video can take: its outline drawn to its proportions
+/// over its name, both in the accent on a light accent ground when chosen.
+private struct StudioShapeTile: View {
+    let ratio: Backdrop.Ratio
+    /// The recording's pixels, for the shape of its own.
+    let recording: CGSize
+    let chosen: Bool
+    let choose: () -> Void
+
+    private var title: String {
+        ratio == .fit ? L("Original") : ratio.title
+    }
+
+    private var label: String {
+        switch ratio {
+        case .fit: L("Original")
+        case .square: "1:1"
+        case .wide: "16:9"
+        case .portrait: "4:5"
+        case .story: "9:16"
+        }
+    }
+
+    /// The outline, at most 26 points either way.
+    private var outline: CGSize {
+        let across = ratio.value ?? Double(recording.width / max(recording.height, 1))
+        return across >= 1 ? CGSize(width: 26, height: 26 / across) : CGSize(width: 26 * across, height: 26)
+    }
+
+    var body: some View {
+        Button(action: choose) {
+            VStack(spacing: 5) {
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .strokeBorder(chosen ? Color.accentColor : Color.secondary, lineWidth: 1.5)
+                    .frame(width: outline.width, height: outline.height)
+                    .frame(width: 30, height: 30)
+                Text(verbatim: label)
+                    .font(.system(size: 10, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .foregroundStyle(chosen ? Color.accentColor : Color.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(chosen ? Color.accentColor.opacity(0.12) : Color.clear))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(title)
+        .accessibilityLabel(title)
+        .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+    }
+}
+
 // MARK: - The picture
 
 /// The recording as it will be saved, and what is drawn on it: marks are
@@ -388,27 +800,62 @@ private struct StudioCanvas: View {
     var body: some View {
         GeometryReader { geometry in
             let margin = StudioLayout.margin
-            let size = HidePartLayout.fitted(model.pixels, in: CGSize(width: geometry.size.width - 2 * margin,
-                                                                     height: geometry.size.height - 2 * margin))
-            StudioSurface(model: model)
-                .frame(width: size.width, height: size.height)
-                .clipShape(Rectangle())
-                .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
-                .overlay {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { drag($0, in: size) }
-                                .onEnded { ended($0, in: size) }
-                        )
-                        .onHover { inside in pointer(inside ? cursorShape : nil) }
+            // The whole video, and the recording's place on it, as saved.
+            let framing = model.framing
+            let whole = HidePartLayout.fitted(framing.canvas, in: CGSize(width: geometry.size.width - 2 * margin,
+                                                                        height: geometry.size.height - 2 * margin))
+            let k = whole.width / max(framing.canvas.width, 1)
+            let size = CGSize(width: framing.video.width * k, height: framing.video.height * k)
+            let radius = framing.radius * k
+            ZStack(alignment: .topLeading) {
+                if let fill = framing.fill {
+                    Rectangle().fill(fill.gradient)
+                    if framing.blur > 0 {
+                        // The shadow under the recording, as the video has it.
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color.black)
+                            .frame(width: max(0, size.width - 2), height: max(0, size.height - 2))
+                            .shadow(color: .black.opacity(0.32), radius: framing.blur * k / 2, y: framing.drop * k)
+                            .padding(.leading, framing.video.minX * k + 1)
+                            .padding(.top, (framing.canvas.height - framing.video.maxY) * k + 1)
+                    }
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(title)
-                .accessibilityValue(String(format: L("Zooms: %d"), model.project.zooms.count) + ", "
-                                    + String(format: L("Drawings: %d"), model.project.marks.count))
+                StudioSurface(model: model, radius: radius)
+                    .frame(width: size.width, height: size.height)
+                    .overlay {
+                        // Standing in a part cut out: the saved video skips it.
+                        if !model.playing, model.part?.removed == true {
+                            ZStack {
+                                Color.black.opacity(0.55)
+                                Label(L("This part is cut out."), systemImage: "scissors")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.white)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: radius))
+                            .allowsHitTesting(false)
+                        }
+                    }
+                    .overlay {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { drag($0, in: size) }
+                                    .onEnded { ended($0, in: size) }
+                            )
+                            .onHover { inside in pointer(inside ? cursorShape : nil) }
+                    }
+                    .padding(.leading, framing.video.minX * k)
+                    .padding(.top, (framing.canvas.height - framing.video.maxY) * k)
+            }
+            .frame(width: whole.width, height: whole.height, alignment: .topLeading)
+            .clipShape(Rectangle())
+            .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(title)
+            .accessibilityValue(String(format: L("Zooms: %d"), model.project.zooms.count) + ", "
+                                + String(format: L("Drawings: %d"), model.project.marks.count))
         }
         // Laid out from the left, as the recording is, in every language, so
         // what is drawn lands where the pointer is.
@@ -482,7 +929,7 @@ private struct StudioCanvas: View {
             guard hypot(value.translation.width, value.translation.height) >= 3 else { return }
             let start = recorded(value.startLocation, in: size)
             switch model.tool {
-            case .arrow, .box, .circle:
+            case .arrow, .box, .circle, .blur:
                 guard var mark = model.newMark(at: start) else { return }
                 mark.to = point
                 model.put(mark, keepOpen: true)
@@ -596,15 +1043,19 @@ private struct StudioCanvas: View {
 /// frame by frame while it plays, outside SwiftUI, so playing stays smooth.
 private struct StudioSurface: NSViewRepresentable {
     @ObservedObject var model: StudioModel
+    /// How round its corners are, on a background.
+    var radius: CGFloat = 0
 
     func makeNSView(context: Context) -> StudioSurfaceView {
         let view = StudioSurfaceView()
         view.model = model
+        view.layer?.cornerRadius = radius
         return view
     }
 
     func updateNSView(_ view: StudioSurfaceView, context: Context) {
         view.model = model
+        if view.layer?.cornerRadius != radius { view.layer?.cornerRadius = radius }
         view.refresh()
     }
 
@@ -959,6 +1410,7 @@ private struct StudioTimelineView: View {
                 .background(LinearGradient(colors: [.clear, .black.opacity(0.45)], startPoint: .top, endPoint: .bottom))
                 .accessibilityHidden(true)
             }
+            partMarks(pps: pps)
         }
         .frame(width: width, height: Self.strip)
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -966,6 +1418,39 @@ private struct StudioTimelineView: View {
         .gesture(scrub(pps))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L("Recording"))
+    }
+
+    /// The parts over the pictures: a white line at each split, a part cut
+    /// out darkened under scissors, a faster one with its speed.
+    private func partMarks(pps: CGFloat) -> some View {
+        let parts = model.look.parts
+        return Canvas { context, size in
+            for (i, part) in parts.enumerated() {
+                let x = CGFloat(part.start) * pps
+                let box = CGRect(x: x, y: 0, width: CGFloat(part.duration) * pps, height: size.height)
+                if part.removed {
+                    context.fill(Path(box), with: .color(.black.opacity(0.6)))
+                    if box.width > 18 {
+                        context.draw(Text(Image(systemName: "scissors")).font(.system(size: 11, weight: .semibold))
+                                         .foregroundColor(.white), at: CGPoint(x: box.midX, y: box.midY))
+                    }
+                } else if part.speed != 1, box.width > 30 {
+                    let label = context.resolve(Text(StudioEditorView.speed(part.speed))
+                        .font(.system(size: 10, weight: .semibold)).foregroundColor(.white))
+                    let measured = label.measure(in: size)
+                    let badge = CGRect(x: x + 4, y: 4, width: measured.width + 10, height: measured.height + 2)
+                    context.fill(Path(roundedRect: badge, cornerRadius: badge.height / 2), with: .color(.accentColor))
+                    context.draw(label, at: CGPoint(x: badge.midX, y: badge.midY))
+                }
+                if i > 0 {
+                    context.fill(Path(CGRect(x: x - 1.5, y: 0, width: 3, height: size.height)),
+                                 with: .color(.black.opacity(0.35)))
+                    context.fill(Path(CGRect(x: x - 1, y: 0, width: 2, height: size.height)), with: .color(.white))
+                }
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     // MARK: Zooms and marks

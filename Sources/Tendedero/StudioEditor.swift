@@ -1,5 +1,6 @@
 import AppKit
 import AVFoundation
+import CoreImage
 import SwiftUI
 
 /// Studio: a screen recording made ready to explain something. The window
@@ -134,25 +135,43 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         }
     }
 
-    /// Writes the video as Studio shows it, beside the recording, keeps the
-    /// work for next time, and hangs the video on the line.
+    /// Writes the video as Studio shows it, beside the recording, at the
+    /// size and as the kind of file chosen, keeps the work for next time,
+    /// and hangs the video on the line.
     private func save(_ model: StudioModel) {
         guard export == nil else { return }
         model.pause()
         model.end()
         StudioStore.setProject(model.project, for: model.url)
         model.markKept()
+        if let backdrop = model.project.backdrop { StudioModel.lastBackdrop = backdrop }
         let base = model.url.deletingPathExtension().lastPathComponent
-        let target = Collage.newFile(String(format: L("%@ (edited)"), base), "mov")
+        let name = String(format: L("%@ (edited)"), base)
+        let output = model.output
+        // A GIF is made from a movie made first, out of sight.
+        let gif = output.kind == .gif
+        let movie = gif
+            ? FileManager.default.temporaryDirectory.appendingPathComponent("Snapfly-Studio-\(UUID().uuidString).mov")
+            : Collage.newFile(name, output.kind.rawValue)
         let stop = StudioExport.Stop()
         export = stop
         model.exporting = 0
         let look = model.look
+        let backdrop = model.project.backdrop
         let source = model.url
         Task { @MainActor in
             do {
-                try await StudioExport.run(source, look: look, to: target, stop: stop) { progress in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { StudioEditor.shared.progressed(progress) } }
+                defer { if gif { try? FileManager.default.removeItem(at: movie) } }
+                try await StudioExport.run(source, look: look, backdrop: backdrop, quality: output.size, to: movie,
+                                           stop: stop) { progress in
+                    let shown = gif ? progress * 0.8 : progress
+                    DispatchQueue.main.async { MainActor.assumeIsolated { StudioEditor.shared.progressed(shown) } }
+                }
+                var target = movie
+                if gif {
+                    progressed(0.9)
+                    guard let made = await GIF.make(from: movie, named: name) else { throw StudioExport.Failure.cannotWrite }
+                    target = made
                 }
                 onSaved(target)
                 // The window it was saved from, unless it was closed meanwhile.
@@ -233,6 +252,8 @@ final class StudioModel: ObservableObject {
             // The camera is worked out again only when the zooms change.
             let camera = project.zooms == oldValue.zooms ? look.camera : nil
             look = StudioLook(project: project, events: events, duration: duration, pixels: pixels, camera: camera)
+            blurs.look = look
+            if Self.blurred(project) != Self.blurred(oldValue) { refreshBlurs() }
         }
     }
 
@@ -260,16 +281,26 @@ final class StudioModel: ObservableObject {
     /// A still of the video under it, for pictures of the window made in
     /// CI, where the video itself is not drawn. Nil in use.
     @Published var poster: CGImage?
+    /// How large, and as which kind of file, Save Video writes it.
+    @Published var output: StudioOutput {
+        didSet { Self.lastOutput = output }
+    }
 
     @Published private var undone: [StudioProject] = []
     @Published private var redone: [StudioProject] = []
     private var before: StudioProject?
     private var finished: NSObjectProtocol?
+    /// What the preview's video blurs, and the next time it is made again.
+    private let blurs = StudioBlurs()
+    private var blurRefresh: DispatchWorkItem?
+    /// Follows the video while it plays, past the parts cut out and at the
+    /// speed of each part.
+    private var pacer: Any?
     /// The work as it was opened or last kept with Save Video.
     private var keptWork: StudioProject
 
     /// The tools that draw over a recording, with Select first.
-    static let tools: [DrawTool] = [.select, .arrow, .box, .circle, .step, .text]
+    static let tools: [DrawTool] = [.select, .arrow, .box, .circle, .step, .text, .blur]
     private static let toolKey = "studioTool"
 
     init(url: URL, duration: Double, pixels: CGSize, events: StudioEvents?, project: StudioProject) {
@@ -280,6 +311,7 @@ final class StudioModel: ObservableObject {
         self.project = project
         keptWork = project
         look = StudioLook(project: project, events: events, duration: duration, pixels: pixels)
+        output = Self.lastOutput
         player = AVPlayer(playerItem: AVPlayerItem(url: url))
         player.actionAtItemEnd = .pause
         let defaults = UserDefaults.standard
@@ -288,6 +320,8 @@ final class StudioModel: ObservableObject {
         // The same ink and size as Draw on Photo, kept between the two.
         ink = defaults.string(forKey: "drawInk").flatMap(Drawing.Ink.init(rawValue:)) ?? .red
         size = defaults.string(forKey: "drawSize").flatMap(Drawing.Size.init(rawValue:)) ?? .medium
+        blurs.look = look
+        if !Self.blurred(project).isEmpty { applyBlurs() }
     }
 
     /// Reads the pictures and the sound for the timeline, and follows the
@@ -296,6 +330,9 @@ final class StudioModel: ObservableObject {
         finished = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime,
                                                           object: player.currentItem, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.reachedEnd() }
+        }
+        pacer = player.addPeriodicTimeObserver(forInterval: CMTime(value: 1, timescale: 60), queue: .main) { [weak self] time in
+            MainActor.assumeIsolated { self?.pace(at: time.seconds) }
         }
         let url = url
         Task { [weak self] in
@@ -311,6 +348,32 @@ final class StudioModel: ObservableObject {
         playing = false
         if let finished { NotificationCenter.default.removeObserver(finished) }
         finished = nil
+        if let pacer { player.removeTimeObserver(pacer) }
+        pacer = nil
+    }
+
+    /// While it plays: on past a part cut out, and each part at its speed,
+    /// as the saved video has them.
+    private func pace(at t: Double) {
+        guard playing, t.isFinite else { return }
+        let parts = look.parts
+        guard StudioCuts.edits(parts), let i = StudioCuts.index(at: t, in: parts) else {
+            if player.rate != 1 { player.rate = 1 }
+            return
+        }
+        guard !parts[i].removed else {
+            if let next = StudioCuts.playable(from: t, in: parts) {
+                player.seek(to: CMTime(seconds: next, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+            } else {
+                // Nothing kept follows: it ends here.
+                player.pause()
+                playing = false
+                time = parts[i].start
+            }
+            return
+        }
+        let rate = Float(parts[i].speed)
+        if player.rate != rate { player.rate = rate }
     }
 
     // MARK: Playing
@@ -640,6 +703,7 @@ final class StudioModel: ObservableObject {
         case .highlight: L("Highlight")
         case .step: String(format: L("Step %d"), project.numbers[item.id] ?? 1)
         case .text: L("Text")
+        case .blur: L("Blur")
         }
     }
 
@@ -647,5 +711,232 @@ final class StudioModel: ObservableObject {
 
     func setShowsClicks(_ on: Bool) {
         change { $0.showsClicks = on }
+    }
+
+    // MARK: Background and saving
+
+    private static let backdropKey = "studioBackdrop"
+    private static let outputKey = "studioOutput"
+
+    /// The background last saved with, the one a recording starts from when
+    /// it is turned on.
+    static var lastBackdrop: Backdrop {
+        get {
+            UserDefaults.standard.data(forKey: backdropKey).flatMap { try? JSONDecoder().decode(Backdrop.self, from: $0) }
+                ?? Backdrop()
+        }
+        set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: backdropKey) }
+    }
+
+    /// How Save Video writes the video, as last chosen.
+    static var lastOutput: StudioOutput {
+        get {
+            UserDefaults.standard.data(forKey: outputKey).flatMap { try? JSONDecoder().decode(StudioOutput.self, from: $0) }
+                ?? StudioOutput()
+        }
+        set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: outputKey) }
+    }
+
+    /// Where the recording sits, as the preview shows it.
+    var framing: StudioFraming {
+        StudioFraming(pixels: pixels, backdrop: project.backdrop)
+    }
+
+    /// The video's size in pixels as it will be saved.
+    var savedSize: CGSize {
+        StudioFraming(pixels: pixels, backdrop: project.backdrop, quality: output.size).canvas
+    }
+
+    func setBackdrop(_ on: Bool) {
+        change { $0.backdrop = on ? ($0.backdrop ?? Self.lastBackdrop) : nil }
+    }
+
+    /// A change to the background, turning it on if it was off, as a shape
+    /// other than the recording's needs it: one step for Undo, or, `going`,
+    /// part of one that goes on, like a slider being moved, ended by `end`.
+    func adjustBackdrop(going: Bool = false, _ make: (inout Backdrop) -> Void) {
+        if going { changing() } else { begin() }
+        var backdrop = project.backdrop ?? Self.lastBackdrop
+        make(&backdrop)
+        project.backdrop = backdrop
+        if !going { end() }
+    }
+
+    /// The shape of the video: the recording's own, without a background
+    /// unless one was chosen, or a post's, on its background.
+    func setRatio(_ ratio: Backdrop.Ratio) {
+        guard ratio != .fit || project.backdrop != nil else { return }
+        adjustBackdrop { $0.ratio = ratio }
+    }
+
+    var ratio: Backdrop.Ratio {
+        project.backdrop?.ratio ?? .fit
+    }
+
+    // MARK: Captions
+
+    private static let languageKey = "studioCaptionLanguage"
+
+    /// The languages this Mac can hear by itself, read once Captions shows.
+    @Published private(set) var languages: [Locale] = []
+    /// The language captions are made in, as last chosen.
+    @Published var language: Locale? = nil {
+        didSet { UserDefaults.standard.set(language?.identifier, forKey: Self.languageKey) }
+    }
+    /// Captions being made.
+    @Published private(set) var listening = false
+
+    func loadLanguages() {
+        guard languages.isEmpty else { return }
+        Task { [weak self] in
+            let found = await Task.detached(priority: .userInitiated) { StudioListener.languages() }.value
+            guard let self else { return }
+            self.languages = found
+            let kept = UserDefaults.standard.string(forKey: Self.languageKey)
+            self.language = found.first { $0.identifier == kept } ?? StudioListener.preferred(among: found)
+        }
+    }
+
+    /// The caption where the video stands.
+    var caption: StudioCaption? {
+        project.captions.first { $0.contains(time) }
+    }
+
+    /// Hears what is said and puts it at the foot of the video, line by line,
+    /// in place of captions made before.
+    func makeCaptions() {
+        guard !listening, let language else { return }
+        pause()
+        listening = true
+        let url = url
+        Task { @MainActor [weak self] in
+            do {
+                let captions = try await StudioListener.captions(for: url, in: language)
+                self?.change { $0.captions = captions }
+            } catch {
+                log.error("Could not make captions: \(String(describing: error), privacy: .public)")
+                Notice.show(Self.why(error))
+            }
+            self?.listening = false
+        }
+    }
+
+    private static func why(_ error: Error) -> String {
+        switch error as? StudioListener.Failure {
+        case .notAllowed?:
+            L("Snapfly may not use speech recognition. Allow it in System Settings › Privacy & Security › Speech Recognition.")
+        case .noSound?: L("This recording has no sound to make captions from.")
+        case .notOnThisMac?: L("This Mac cannot hear this language by itself. Choose another one.")
+        case .nothingHeard?: L("No words were heard in this recording.")
+        case nil: L("Could not make captions.")
+        }
+    }
+
+    /// The words of a caption, as they are typed: one change for Undo.
+    func setCaption(_ id: UUID, text: String) {
+        guard let i = project.captions.firstIndex(where: { $0.id == id }), project.captions[i].text != text else { return }
+        if before == nil { before = project }
+        project.captions[i].text = text
+    }
+
+    func removeCaptions() {
+        change { $0.captions = [] }
+    }
+
+    // MARK: Blur
+
+    private static func blurred(_ project: StudioProject) -> [StudioProject.Mark] {
+        project.marks.filter { $0.mark.kind == .blur }
+    }
+
+    /// The preview's video blurred where the saved video is, made again a
+    /// moment after the parts to blur change, so a drag stays quick.
+    private func refreshBlurs() {
+        blurRefresh?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated { self?.applyBlurs() }
+        }
+        blurRefresh = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12, execute: work)
+    }
+
+    private func applyBlurs() {
+        guard let item = player.currentItem else { return }
+        guard !Self.blurred(project).isEmpty else {
+            if item.videoComposition != nil { item.videoComposition = nil }
+            return
+        }
+        let blurs = blurs
+        // A new one each time, so the picture standing still is drawn again.
+        item.videoComposition = AVVideoComposition(asset: item.asset) { request in
+            let image = blurs.look.map {
+                StudioDraw.blurred(request.sourceImage, look: $0, at: request.compositionTime.seconds)
+            }
+            request.finish(with: image ?? request.sourceImage, context: nil)
+        }
+    }
+
+    // MARK: Cut and speed
+
+    /// The part the video stands in, while it is still.
+    var part: StudioPart? {
+        let parts = look.parts
+        return StudioCuts.index(at: time, in: parts).map { parts[$0] }
+    }
+
+    /// How long the saved video is.
+    var savedLength: Double {
+        StudioCuts.length(of: look.parts)
+    }
+
+    /// Whether the video can be split where it stands: not too near a split.
+    var canSplit: Bool {
+        StudioCuts.split(look.parts, at: time) != nil
+    }
+
+    /// Splits the part the video stands in, where it stands.
+    func split() {
+        pause()
+        guard let split = StudioCuts.split(look.parts, at: time) else { return }
+        change { $0.parts = split }
+    }
+
+    /// The part the video stands in, at a speed.
+    func setSpeed(_ speed: Double) {
+        editPart { $0.speed = speed }
+    }
+
+    /// Whether the part the video stands in can be cut out: not the last
+    /// one kept.
+    var canCut: Bool {
+        guard let part else { return false }
+        return part.removed || look.parts.contains { !$0.removed && $0.id != part.id }
+    }
+
+    /// The part the video stands in cut out, or back in.
+    func toggleCut() {
+        guard canCut else { return }
+        editPart { $0.removed.toggle() }
+    }
+
+    /// Whether a part follows the one the video stands in, to join it to.
+    var canJoin: Bool {
+        guard let i = StudioCuts.index(at: time, in: look.parts) else { return false }
+        return i + 1 < look.parts.count
+    }
+
+    /// The part the video stands in joined to the next, as one.
+    func joinNext() {
+        let parts = look.parts
+        guard let i = StudioCuts.index(at: time, in: parts), let joined = StudioCuts.joined(parts, at: i) else { return }
+        change { $0.parts = joined.count > 1 || StudioCuts.edits(joined) ? joined : [] }
+    }
+
+    private func editPart(_ make: (inout StudioPart) -> Void) {
+        pause()
+        var parts = look.parts
+        guard let i = StudioCuts.index(at: time, in: parts) else { return }
+        make(&parts[i])
+        change { $0.parts = parts.count > 1 || StudioCuts.edits(parts) ? parts : [] }
     }
 }

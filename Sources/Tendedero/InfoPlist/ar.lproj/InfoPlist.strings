@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "يراقب Snapfly المجلد الذي اخترته، ليعلّق الصور الجديدة على الحبل.";
 "NSDownloadsFolderUsageDescription" = "يراقب Snapfly المجلد الذي اخترته، ليعلّق الصور الجديدة على الحبل.";
 "NSMicrophoneUsageDescription" = "يسجّل Snapfly صوتك مع تسجيل الشاشة، فقط إذا اخترت الميكروفون في الإعدادات › عام.";
+"NSSpeechRecognitionUsageDescription" = "يسمع Snapfly ما يُقال في تسجيل الشاشة، على جهاز Mac هذا وحده، لإنشاء ترجمة نصية في الاستوديو، فقط عندما تختار إنشاء ترجمة نصية.";

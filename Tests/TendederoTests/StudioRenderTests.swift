@@ -72,6 +72,119 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertEqual(Double(rate), 60, accuracy: 1.5)
     }
 
+    func testTheRecordingSitsOnItsBackgroundInThePostsShape() async throws {
+        let source = folder.appendingPathComponent("quarters.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 1, draw: StudioSample.quarters)
+        var project = StudioProject()
+        var backdrop = Backdrop()
+        backdrop.fill = .graphite
+        backdrop.ratio = .square
+        project.backdrop = backdrop
+        let made = try await export(source, project)
+        let asset = AVURLAsset(url: made)
+        let tracks = try await asset.loadTracks(withMediaType: .video)
+        let track = try XCTUnwrap(tracks.first)
+        let size = try await track.load(.naturalSize)
+        let framing = StudioFraming(pixels: CGSize(width: 320, height: 180), backdrop: backdrop)
+        XCTAssertEqual(size, framing.canvas)
+        XCTAssertEqual(size.width, size.height)
+        let frame = try await StudioSample.frame(of: made, at: 0.5)
+        // The colour in the corners, the recording in the middle.
+        XCTAssertTrue(StudioSample.pixel(frame, x: 0.01, y: 0.99).isDark)
+        XCTAssertTrue(StudioSample.pixel(frame, x: 0.99, y: 0.01).isDark)
+        let c = framing.canvas, v = framing.video
+        let blue = StudioSample.pixel(frame, x: (v.minX + v.width / 4) / c.width, y: (v.minY + v.height * 3 / 4) / c.height)
+        XCTAssertTrue(blue.isBlue)
+        let green = StudioSample.pixel(frame, x: (v.minX + v.width * 3 / 4) / c.width, y: (v.minY + v.height / 4) / c.height)
+        XCTAssertTrue(green.isGreen)
+    }
+
+    func testAnMP4IsMadeInH264AtTheSizeChosen() async throws {
+        let source = folder.appendingPathComponent("quarters.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 1, draw: StudioSample.quarters)
+        let made = try await export(source, StudioProject(), quality: .hd, as: "mp4")
+        let asset = AVURLAsset(url: made)
+        let tracks = try await asset.loadTracks(withMediaType: .video)
+        let track = try XCTUnwrap(tracks.first)
+        let size = try await track.load(.naturalSize)
+        XCTAssertEqual(size, CGSize(width: 1280, height: 720))
+        let formats = try await track.load(.formatDescriptions)
+        let format = try XCTUnwrap(formats.first)
+        XCTAssertEqual(CMFormatDescriptionGetMediaSubType(format), kCMVideoCodecType_H264)
+        let frame = try await StudioSample.frame(of: made, at: 0.5)
+        XCTAssertTrue(StudioSample.pixel(frame, x: 0.25, y: 0.75).isBlue)
+    }
+
+    func testCutPartsAreLeftOutAndFasterOnesPlayFaster() async throws {
+        let source = folder.appendingPathComponent("seconds.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 3, sound: true, draw: StudioSample.seconds)
+        var project = StudioProject()
+        var parts = StudioCuts.parts([], duration: 3)
+        parts = try XCTUnwrap(StudioCuts.split(parts, at: 1))
+        parts[0].removed = true
+        parts[1].speed = 2
+        project.parts = parts
+        let made = try await export(source, project)
+        let asset = AVURLAsset(url: made)
+        // The red second is gone, the green and the blue take one together.
+        let duration = try await asset.load(.duration).seconds
+        XCTAssertEqual(duration, 1, accuracy: 0.1)
+        let early = try await StudioSample.frame(of: made, at: 0.2)
+        XCTAssertTrue(StudioSample.pixel(early, x: 0.5, y: 0.5).isGreen)
+        let late = try await StudioSample.frame(of: made, at: 0.8)
+        XCTAssertTrue(StudioSample.pixel(late, x: 0.5, y: 0.5).isBlue)
+        // The sound goes with it, as long as the video.
+        let sounds = try await asset.loadTracks(withMediaType: .audio)
+        let sound = try XCTUnwrap(sounds.first)
+        let range = try await sound.load(.timeRange)
+        XCTAssertEqual(range.duration.seconds, 1, accuracy: 0.15)
+    }
+
+    func testTheSoundIsCopiedAsItIsWithoutCuts() async throws {
+        let source = folder.appendingPathComponent("seconds.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, sound: true, draw: StudioSample.seconds)
+        let made = try await export(source, StudioProject())
+        let sounds = try await AVURLAsset(url: made).loadTracks(withMediaType: .audio)
+        let sound = try XCTUnwrap(sounds.first)
+        let range = try await sound.load(.timeRange)
+        XCTAssertEqual(range.duration.seconds, 2, accuracy: 0.15)
+    }
+
+    func testWhatIsBlurredCannotBeMadeOutAndTheRestStaysSharp() async throws {
+        let source = folder.appendingPathComponent("stripes.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.stripes)
+        var project = StudioProject()
+        project.showsClicks = false
+        let blur = Drawing.Mark(kind: .blur, from: CGPoint(x: 0.05, y: 0.1), to: CGPoint(x: 0.45, y: 0.9),
+                                ink: .red, size: .medium)
+        project.marks = [StudioProject.Mark(mark: blur, start: 0, end: 2)]
+        let made = try await export(source, project)
+        let frame = try await StudioSample.frame(of: made, at: 1)
+        // Under the blur the stripes run together into grey.
+        for x in [0.15, 0.25, 0.35] {
+            let grey = StudioSample.pixel(frame, x: x, y: 0.5)
+            XCTAssertTrue((60...200).contains(grey.r), "at \(x): \(grey.r)")
+        }
+        // Beside it they stay black and white.
+        let beside = (0..<16).map { StudioSample.pixel(frame, x: 0.7 + Double($0) / 320, y: 0.5).r }
+        XCTAssertTrue(beside.contains { $0 < 50 }, "\(beside)")
+        XCTAssertTrue(beside.contains { $0 > 205 }, "\(beside)")
+    }
+
+    func testACaptionShowsAtTheFootWhileItIsSaid() async throws {
+        let source = folder.appendingPathComponent("seconds.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.seconds)
+        var project = StudioProject()
+        project.captions = [StudioCaption(text: "Then send it", start: 1.2, end: 2)]
+        let made = try await export(source, project)
+        let before = try await StudioSample.frame(of: made, at: 1.1)
+        XCTAssertTrue(StudioSample.pixel(before, x: 0.5, y: 0.075).isGreen)
+        let said = try await StudioSample.frame(of: made, at: 1.6)
+        XCTAssertTrue(StudioSample.pixel(said, x: 0.5, y: 0.075).isDark)
+        // Above it the picture is as it was.
+        XCTAssertTrue(StudioSample.pixel(said, x: 0.5, y: 0.6).isGreen)
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)
@@ -88,15 +201,17 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertEqual(left, [])
     }
 
-    private func export(_ source: URL, _ project: StudioProject, events: StudioEvents? = nil) async throws -> URL {
+    private func export(_ source: URL, _ project: StudioProject, events: StudioEvents? = nil,
+                        quality: StudioOutput.Quality = .original, as kind: String = "mov") async throws -> URL {
         let asset = AVURLAsset(url: source)
         let duration = try await asset.load(.duration).seconds
         let tracks = try await asset.loadTracks(withMediaType: .video)
         let track = try XCTUnwrap(tracks.first)
         let size = try await track.load(.naturalSize)
         let look = StudioLook(project: project, events: events, duration: duration, pixels: size)
-        let target = folder.appendingPathComponent("made-\(UUID().uuidString).mov")
-        try await StudioExport.run(source, look: look, to: target, stop: StudioExport.Stop()) { _ in }
+        let target = folder.appendingPathComponent("made-\(UUID().uuidString)").appendingPathExtension(kind)
+        try await StudioExport.run(source, look: look, backdrop: project.backdrop, quality: quality, to: target,
+                                   stop: StudioExport.Stop()) { _ in }
         return target
     }
 
@@ -180,6 +295,18 @@ final class StudioRenderTests: XCTestCase {
             let image = try await StudioSample.frame(of: made, at: t)
             try StudioSample.png(image, to: out.appendingPathComponent(String(format: "frame-%04.1f.png", t)))
         }
+        // On a background, in a story's shape, as a post wants it.
+        var backdrop = Backdrop()
+        backdrop.ratio = .story
+        project.backdrop = backdrop
+        let framed = try await export(source, project, events: events, quality: .fullHD, as: "mp4")
+        try? fm.removeItem(at: out.appendingPathComponent("studio-story.mp4"))
+        try fm.copyItem(at: framed, to: out.appendingPathComponent("studio-story.mp4"))
+        for t in [1.0, 3.0, 4.6] {
+            let image = try await StudioSample.frame(of: framed, at: t)
+            try StudioSample.png(image, to: out.appendingPathComponent(String(format: "story-%04.1f.png", t)))
+        }
+        project.backdrop = nil
         let zooms = project.zooms.map { String(format: "%.2f–%.2f ×%.1f", $0.start, $0.end, $0.scale) }
         try zooms.joined(separator: "\n").write(to: out.appendingPathComponent("zooms.txt"), atomically: true, encoding: .utf8)
     }
@@ -195,9 +322,21 @@ final class StudioRenderTests: XCTestCase {
         var project = StudioProject.first(events: events, duration: StudioSample.length)
         project.marks = StudioSample.marks
         for (name, appearance) in [("light", NSAppearance.Name.aqua), ("dark", NSAppearance.Name.darkAqua)] {
-            for chosen in ["mark", "zoom"] {
+            for chosen in ["mark", "zoom", "background"] {
+                var shown = project
+                if chosen == "background" {
+                    var backdrop = Backdrop()
+                    backdrop.ratio = .wide
+                    shown.backdrop = backdrop
+                    // A part cut out and one faster, for the timeline.
+                    shown.parts = [StudioPart(start: 0, end: 0.8, removed: true), StudioPart(start: 0.8, end: 4.2),
+                                   StudioPart(start: 4.2, end: StudioSample.length, speed: 2)]
+                    shown.captions = [StudioCaption(text: "Type the invoice number, then send it.", start: 2.2, end: 4)]
+                }
+                // The background on its page; a mark or a zoom chosen brings its own.
+                UserDefaults.standard.set(chosen == "background" ? "look" : "edit", forKey: "studioPage")
                 let model = StudioModel(url: source, duration: StudioSample.length, pixels: CGSize(width: 1280, height: 800),
-                                        events: events, project: project)
+                                        events: events, project: shown)
                 let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1320, height: 860),
                                       styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
                 window.appearance = NSAppearance(named: appearance)
@@ -206,13 +345,13 @@ final class StudioRenderTests: XCTestCase {
                 window.contentView = hosting
                 window.orderFrontRegardless()
                 model.load()
-                let t = chosen == "mark" ? 3.0 : 2.4
+                let t = chosen == "zoom" ? 2.4 : 3.0
                 model.seek(to: t)
                 model.poster = StudioSample.image(at: t, width: 1280, height: 800, draw: StudioSample.screen)
                 if chosen == "mark", let step = project.marks.first(where: { $0.mark.kind == .step }) {
                     model.tool = .select
                     model.choose(.mark(step.id))
-                } else if let zoom = project.zooms.first(where: { $0.contains(t) }) {
+                } else if chosen == "zoom", let zoom = project.zooms.first(where: { $0.contains(t) }) {
                     model.choose(.zoom(zoom.id))
                 }
                 Self.spin(4)
@@ -251,14 +390,18 @@ private enum StudioSample {
 
     static let length = 6.4
 
-    static func writeMovie(to url: URL, width: Int, height: Int, seconds: Double, draw: Draw) throws {
+    static func writeMovie(to url: URL, width: Int, height: Int, seconds: Double, sound: Bool = false,
+                           draw: Draw) throws {
         let writer = try AVAssetWriter(outputURL: url, fileType: .mov)
         let input = AVAssetWriterInput(mediaType: .video, outputSettings: [
             AVVideoCodecKey: AVVideoCodecType.h264,
             AVVideoWidthKey: width,
             AVVideoHeightKey: height,
         ])
-        input.expectsMediaDataInRealTime = false
+        // Taken as it comes, so the picture and the sound never wait for each other.
+        input.expectsMediaDataInRealTime = sound
+        let tone = sound ? Tone() : nil
+        if let tone { writer.add(tone.input) }
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
             kCVPixelBufferWidthKey as String: width,
@@ -269,6 +412,8 @@ private enum StudioSample {
         writer.startSession(atSourceTime: .zero)
         let fps = 30
         for i in 0..<Int(seconds * Double(fps)) {
+            // The sound up to this frame and a little after.
+            try tone?.write(until: Double(i + 3) / Double(fps), within: seconds, writer: writer)
             while !input.isReadyForMoreMediaData {
                 // A writer that failed is never ready again.
                 guard writer.status == .writing else { throw writer.error ?? StudioExport.Failure.cannotWrite }
@@ -289,11 +434,90 @@ private enum StudioSample {
             CVPixelBufferUnlockBaseAddress(buffer, [])
             adaptor.append(buffer, withPresentationTime: CMTime(value: CMTimeValue(i), timescale: CMTimeScale(fps)))
         }
+        try tone?.write(until: seconds, within: seconds, writer: writer)
+        tone?.input.markAsFinished()
         input.markAsFinished()
         let done = DispatchSemaphore(value: 0)
         writer.finishWriting { done.signal() }
         done.wait()
         guard writer.status == .completed else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+    }
+
+    /// A quiet tone for a made-up recording's sound, written a tenth of a
+    /// second at a time.
+    final class Tone {
+        let input: AVAssetWriterInput
+        private let rate = 44_100
+        private var written = 0
+        private var format: CMAudioFormatDescription?
+
+        init() {
+            input = AVAssetWriterInput(mediaType: .audio, outputSettings: [
+                AVFormatIDKey: kAudioFormatMPEG4AAC,
+                AVSampleRateKey: 44_100,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderBitRateKey: 64_000,
+            ])
+            input.expectsMediaDataInRealTime = true
+            var description = AudioStreamBasicDescription(
+                mSampleRate: 44_100, mFormatID: kAudioFormatLinearPCM,
+                mFormatFlags: kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked,
+                mBytesPerPacket: 2, mFramesPerPacket: 1, mBytesPerFrame: 2, mChannelsPerFrame: 1,
+                mBitsPerChannel: 16, mReserved: 0)
+            CMAudioFormatDescriptionCreate(allocator: nil, asbd: &description, layoutSize: 0, layout: nil,
+                                           magicCookieSize: 0, magicCookie: nil, extensions: nil,
+                                           formatDescriptionOut: &format)
+        }
+
+        func write(until t: Double, within seconds: Double, writer: AVAssetWriter) throws {
+            let end = Int(min(t, seconds) * Double(rate))
+            while written < end {
+                let count = min(rate / 10, end - written)
+                var samples = (0..<count).map { i -> Int16 in
+                    Int16(3000 * sin(Double(written + i) * 2 * .pi * 440 / Double(rate)))
+                }
+                var block: CMBlockBuffer?
+                CMBlockBufferCreateWithMemoryBlock(allocator: nil, memoryBlock: nil, blockLength: count * 2,
+                                                   blockAllocator: nil, customBlockSource: nil, offsetToData: 0,
+                                                   dataLength: count * 2, flags: kCMBlockBufferAssureMemoryNowFlag,
+                                                   blockBufferOut: &block)
+                guard let block, let format else { throw StudioExport.Failure.cannotWrite }
+                samples.withUnsafeMutableBytes { bytes in
+                    _ = CMBlockBufferReplaceDataBytes(with: bytes.baseAddress!, blockBuffer: block, offsetIntoDestination: 0,
+                                                      dataLength: count * 2)
+                }
+                var sample: CMSampleBuffer?
+                CMAudioSampleBufferCreateReadyWithPacketDescriptions(
+                    allocator: nil, dataBuffer: block, formatDescription: format, sampleCount: count,
+                    presentationTimeStamp: CMTime(value: CMTimeValue(written), timescale: CMTimeScale(rate)),
+                    packetDescriptions: nil, sampleBufferOut: &sample)
+                guard let sample else { throw StudioExport.Failure.cannotWrite }
+                while !input.isReadyForMoreMediaData {
+                    guard writer.status == .writing else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+                    Thread.sleep(forTimeInterval: 0.002)
+                }
+                guard input.append(sample) else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+                written += count
+            }
+        }
+    }
+
+    /// Black and white stripes, four pixels wide, as small print is.
+    static func stripes(_ context: CGContext, _ size: CGSize, _ t: Double) {
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(origin: .zero, size: size))
+        context.setFillColor(CGColor(gray: 0, alpha: 1))
+        for x in stride(from: 0, to: size.width, by: 8) {
+            context.fill(CGRect(x: x, y: 0, width: 4, height: size.height))
+        }
+    }
+
+    /// A second of red, one of green, then blue, filling the picture.
+    static func seconds(_ context: CGContext, _ size: CGSize, _ t: Double) {
+        let color = t < 1 ? CGColor(srgbRed: 1, green: 0, blue: 0, alpha: 1)
+            : t < 2 ? CGColor(srgbRed: 0, green: 1, blue: 0, alpha: 1) : CGColor(srgbRed: 0, green: 0, blue: 1, alpha: 1)
+        context.setFillColor(color)
+        context.fill(CGRect(origin: .zero, size: size))
     }
 
     static func image(at t: Double, width: Int, height: Int, draw: Draw) -> CGImage? {
@@ -457,6 +681,8 @@ private enum StudioSample {
 
         var isBlue: Bool { b > 170 && r < 110 && g < 170 }
         var isGreen: Bool { g > 170 && r < 110 && b < 110 }
+        /// Graphite, the background's darkest colour.
+        var isDark: Bool { r < 100 && g < 100 && b < 100 }
     }
 
     /// A pixel's colour, at a place from 0 to 1 from the bottom left.

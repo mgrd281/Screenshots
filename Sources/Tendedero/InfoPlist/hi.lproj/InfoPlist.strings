@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly आपके चुने फ़ोल्डर पर नज़र रखता है, ताकि नई तस्वीरें रस्सी पर टाँग सके।";
 "NSDownloadsFolderUsageDescription" = "Snapfly आपके चुने फ़ोल्डर पर नज़र रखता है, ताकि नई तस्वीरें रस्सी पर टाँग सके।";
 "NSMicrophoneUsageDescription" = "Snapfly स्क्रीन रिकॉर्डिंग के साथ आपकी आवाज़ रिकॉर्ड करता है, सिर्फ़ तब जब आपने सेटिंग्स › सामान्य में माइक्रोफ़ोन चुना हो।";
+"NSSpeechRecognitionUsageDescription" = "Snapfly स्क्रीन रिकॉर्डिंग में कही गई बातें केवल इसी Mac पर सुनता है, ताकि Studio में कैप्शन बना सके, केवल तब जब आप कैप्शन बनाएँ चुनें।";

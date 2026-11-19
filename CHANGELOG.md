@@ -6,6 +6,27 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The icons before the menu bar menu's lines, and in the photos' menus,
+  show again on macOS 27, which hides menu symbols an app does not draw
+  itself.
+- Studio's inspector has pages, as tabs across its top: Edit, Draw,
+  Captions, Appearance and Save. Choosing something brings its page, every
+  key works on every page, and the keyboard button lists them all.
+- Studio writes captions: what is said in a recording, heard on your Mac
+  alone, shown line by line at the foot of the video, in the language you
+  choose. Correct any line where the video stands.
+- Studio blurs: drag Blur over a name, an email or anything else that
+  should not be seen, and it is blurred in the video for as long as it
+  shows, moving with the camera.
+- Studio cuts and speeds up: split a recording where it stands, leave a
+  part out, or play it 1.5, 2, 4 or 8 times as fast, sound and all. The
+  timeline shows each part, and playing skips and speeds up as the saved
+  video will.
+- Studio sets a recording on a background, as Background… sets a photo:
+  one of eight colours, with room round it, rounded corners and a soft
+  shadow, in the shape a post wants (16:9, 1:1, 4:5 or 9:16). Save Video
+  saves it as MOV, MP4 (which plays everywhere) or a GIF, at the
+  recording's own size, 4K, 1080p or 720p.
 - The menu bar menu is in groups under headings (what hangs, Capture,
   Files, Options), with an icon before every line, on every macOS.
 - Claude on your Mac can ask Snapfly for the newest screenshot, any photo

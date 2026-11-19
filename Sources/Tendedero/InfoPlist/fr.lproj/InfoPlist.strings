@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly surveille le dossier que vous avez choisi, afin d’accrocher les nouvelles images à la corde.";
 "NSDownloadsFolderUsageDescription" = "Snapfly surveille le dossier que vous avez choisi, afin d’accrocher les nouvelles images à la corde.";
 "NSMicrophoneUsageDescription" = "Snapfly enregistre votre voix avec un enregistrement de l’écran, seulement si vous avez choisi le micro dans Réglages › Général.";
+"NSSpeechRecognitionUsageDescription" = "Snapfly écoute ce qui est dit dans un enregistrement d’écran, sur ce Mac uniquement, pour créer des sous-titres dans Studio, seulement quand tu choisis Créer des sous-titres.";

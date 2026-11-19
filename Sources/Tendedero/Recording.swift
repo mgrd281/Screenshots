@@ -890,7 +890,8 @@ enum GIF {
         return (fps, min(maxFrames, max(1, Int(seconds * fps))))
     }
 
-    static func make(from movie: URL) async -> URL? {
+    /// - Parameter name: what the GIF is called; the movie's own name if nil.
+    static func make(from movie: URL, named name: String? = nil) async -> URL? {
         let asset = AVURLAsset(url: movie)
         guard let duration = try? await asset.load(.duration), duration.seconds > 0 else { return nil }
         let (fps, count) = plan(for: duration.seconds)
@@ -901,7 +902,7 @@ enum GIF {
         generator.requestedTimeToleranceBefore = tolerance
         generator.requestedTimeToleranceAfter = tolerance
 
-        let base = movie.deletingPathExtension().lastPathComponent
+        let base = name ?? movie.deletingPathExtension().lastPathComponent
         let target = Collage.newFile(base, "gif")
         // Hidden while it is written, so the folder watcher leaves it alone.
         let temp = target.deletingLastPathComponent().appendingPathComponent(".gif-\(UUID().uuidString).gif")

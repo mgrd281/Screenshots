@@ -323,7 +323,8 @@ private struct BackdropEditorView: View {
 }
 
 /// One colour to choose: a circle of it, ringed in the accent when chosen.
-private struct Swatch: View {
+/// Studio's background has the same.
+struct Swatch: View {
     let fill: Backdrop.Fill
     let chosen: Bool
     let choose: () -> Void

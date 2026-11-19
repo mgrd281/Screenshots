@@ -7,3 +7,4 @@
 "NSDocumentsFolderUsageDescription" = "Snapfly, yeni görselleri ipe asabilmek için seçtiğin klasörü izler.";
 "NSDownloadsFolderUsageDescription" = "Snapfly, yeni görselleri ipe asabilmek için seçtiğin klasörü izler.";
 "NSMicrophoneUsageDescription" = "Snapfly, yalnızca Ayarlar › Genel altında mikrofonu seçtiysen, sesini ekran kaydıyla birlikte kaydeder.";
+"NSSpeechRecognitionUsageDescription" = "Snapfly, Studio’da altyazı oluşturmak için ekran kaydında söylenenleri yalnızca bu Mac’te dinler; yalnızca Altyazı oluştur’u seçtiğinde.";

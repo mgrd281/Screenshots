@@ -148,13 +148,13 @@ struct GrabArea: NSViewRepresentable {
             if let covered = line.coveredSentence(id) {
                 let what = NSMenuItem(title: covered, action: nil, keyEquivalent: "")
                 what.isEnabled = false
-                if #available(macOS 26, *) { what.image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: nil) }
+                if #available(macOS 26, *) { what.image = MenuSymbol.image("lock.fill") }
                 menu.addItem(what)
             }
             if let sent = line.sentSentence(id) {
                 let when = NSMenuItem(title: sent, action: nil, keyEquivalent: "")
                 when.isEnabled = false
-                if #available(macOS 26, *) { when.image = NSImage(systemSymbolName: "paperplane", accessibilityDescription: nil) }
+                if #available(macOS 26, *) { when.image = MenuSymbol.image("paperplane") }
                 menu.addItem(when)
             }
 
@@ -220,7 +220,7 @@ struct GrabArea: NSViewRepresentable {
                 // What the screenshot says, translated or summed up, on this Mac.
                 if #available(macOS 15, *) {
                     let translate = NSMenuItem(title: L("Translate Text"), action: nil, keyEquivalent: "")
-                    if #available(macOS 26, *) { translate.image = NSImage(systemSymbolName: "translate", accessibilityDescription: nil) }
+                    if #available(macOS 26, *) { translate.image = MenuSymbol.image("translate") }
                     let languages = NSMenu()
                     for language in Languages.mine {
                         languages.addItem(ClosureMenuItem(Languages.name(language)) { line.translate(id, to: language) })
@@ -286,7 +286,7 @@ struct GrabArea: NSViewRepresentable {
                 }
                 if line.photosToCombine.count > 1 {
                     let combine = NSMenuItem(title: L("Combine into one image"), action: nil, keyEquivalent: "")
-                    if #available(macOS 26, *) { combine.image = NSImage(systemSymbolName: "rectangle.stack", accessibilityDescription: nil) }
+                    if #available(macOS 26, *) { combine.image = MenuSymbol.image("rectangle.stack") }
                     let ways = NSMenu()
                     ways.addItem(ClosureMenuItem(L("One under another")) { line.combine(.stacked) })
                     ways.addItem(ClosureMenuItem(L("Side by side")) { line.combine(.sideBySide) })
@@ -399,7 +399,7 @@ struct GrabArea: NSViewRepresentable {
         while let last = submenu.items.last, last.isSeparatorItem { submenu.removeItem(last) }
         guard !submenu.items.isEmpty else { return nil }
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-        if #available(macOS 26, *) { item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) }
+        if #available(macOS 26, *) { item.image = MenuSymbol.image(symbol) }
         item.submenu = submenu
         return item
     }
@@ -902,7 +902,7 @@ final class ClosureMenuItem: NSMenuItem {
         target = self
         // Menus have icons from macOS 26 on, as Apple's own apps do.
         if #available(macOS 26, *), let symbol {
-            image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
+            image = MenuSymbol.image(symbol)
         }
     }
 

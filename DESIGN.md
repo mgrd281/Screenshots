@@ -239,6 +239,14 @@ components:
     color: "#FF3B30"               # Color.red: a 1.5pt line under a 9 × 12pt head, rounded 2
   studio-click-ring:
     size: "unit × 0.034"           # a click in Studio's video: white at 95% over a dark edge at 28%, white at 18% inside, spreading from 0.45 to 1 and fading over 0.45s
+  studio-caption:
+    size: "unit × 0.034"           # a caption in Studio's video: SF Pro semibold, white, centred, on black 72% rounded 35% of its size, 0.6 × and 0.3 × its size in, at most 80% of the recording wide, its foot 6% above the recording's; it fades as marks do
+  studio-part:
+    color: "#FFFFFF"               # the parts over the timeline's pictures: a split is a 2pt white line on a 3pt edge of black 35%; a part cut out, black 60% with `scissors` (11pt semibold white) in its middle; a faster part, its speed ("2×", 10pt semibold white) on an accent capsule 4pt in from its top left
+  studio-page-tab:
+    rounded: "7pt"                 # one of the five pages across the top of Studio's inspector (Edit `timeline.selection`, Draw `pencil.tip.crop.circle`, Captions `captions.bubble`, Appearance `paintpalette`, Save `square.and.arrow.down`), 4pt apart, 12pt in, 8pt above and below: the symbol (14pt medium) over its name (10pt medium); chosen, both in the accent on the accent at 12%, as `studio-shape-tile`
+  studio-shape-tile:
+    rounded: "7pt"                 # one of Studio's five shapes (the recording's own, 1:1, 16:9, 4:5, 9:16), a row sharing the inspector's width 4pt apart: its outline (1.5pt `.secondary`, rounded 2) drawn to its proportions in 26pt within a 30pt square, over its name in 10pt medium; chosen, both in the accent on the accent at 12%
   phone-dock-icon:
     size: "44pt"                   # a tool on the iPhone editor's bar; glyph 18pt semibold; the tool in hand: phone-protect-tint on a 36pt circle of phone-protect at 14%, which glides to the next tool chosen
   phone-glass:
@@ -936,7 +944,11 @@ apps.
 - **Menu bar menu.** In groups, by purpose, as Apple's menu bar extras are,
   each under a section header (`NSMenuItem.sectionHeader`, macOS 14), with a
   symbol before every line on every macOS (the owner's choice, November
-  2026; `MenuSymbol.swift` lists them).
+  2026; `MenuSymbol.swift` lists them). Each is drawn as a picture of its
+  own, 13 pt regular in an 18 × 16 pt box, a template, so it takes the
+  menu's colour and white on the highlight: macOS 27 hides symbols in
+  menus unless each item asks for them, and shows pictures. The photos'
+  menus draw their symbols the same way.
   - Permissions Needed… (`exclamationmark.triangle`) comes first of all, only
     once a permission was refused.
   - **What hangs**, the header saying how many ("3 photos on the line",
@@ -1368,7 +1380,8 @@ apps.
     from 0.9 of the pen's width inside the oval to 0.9 outside it, so the
     ends pass each other, and thinning to 35% where the pen lands and
     lifts. Drawing explains and never hides: blur and pixelate are not
-    offered, and nothing drawn counts on the lock.
+    offered on a photo, where Hide Part covers, and nothing drawn counts on
+    the lock. Studio alone has Blur, for what moves in a recording.
 - **Studio** (`StudioEditor.swift`, `StudioEditorView.swift`) makes a screen
   recording ready to explain. It is Hide Part's window grown a timeline:
   titled with the recording's name, subtitled "Studio", at least 960 × 640,
@@ -1401,15 +1414,60 @@ apps.
     "2,0×" in German). A click on the ruler or pictures moves the
     video and keeps what is chosen; on an empty track it chooses nothing.
     The playhead (`studio-playhead`) runs through all of it.
-  - The **inspector** (340 pt, a grouped form over a footer): Zoom, with
+  - The **inspector** (340 pt, a row of five page tabs (`studio-page-tab`)
+    over a grouped form over a footer) shows one page at a time, the last
+    one chosen; choosing a zoom brings Edit, a mark or a tool Draw. Its
+    keys (Z, S, X and the tools' letters) work on every page, and the
+    keyboard button beside the timeline's zoom (`keyboard`, `.secondary`)
+    lists every key in a popover, each in a keycap (6 pt, `.primary` at
+    8%). Edit holds Zoom, with
     Zoom in on clicks and typing, How close (a small slider and "2.0×"),
     and the number of zooms with Add Zoom (Z); a chosen zoom's How close,
-    Looks at (The Pointer, One Place, segmented) and Delete; Draw, the six
+    Looks at (The Pointer, One Place, segmented) and Delete; Cut and Speed,
+    for the part the video stands in: Split Here (S, `square.split.2x1`),
+    Cut Out (X, `scissors`; Put Back, `arrow.uturn.backward`, on a part cut
+    out) and Join with Next, small, in one row, then Speed (1×, 1.5×, 2×,
+    4×, 8×, segmented), with how long the video will be in its footer. Draw holds the six
     tools of Draw on Photo that a video takes (Select, Arrow, Box, Circle,
-    Numbered Steps, Text, with their keys), then Color and Size as there; a
+    Numbered Steps, Text, with their keys) and Blur (B, `eye.slash`), then
+    Color and Size as there; a
     chosen mark's name, when it shows, its words for words, and Delete;
-    Show clicks. The footer has Undo and Redo, then Cancel and Save Video;
-    while saving, a small bar and Stop.
+    Show clicks. Captions holds the Language (those this Mac hears by itself,
+    its own first), Make Captions (Make Again once made) with how many,
+    the caption where the video stands in a field to correct it, and
+    Remove Captions. Appearance holds Size, a row of five shape tiles (`studio-shape-tile`) with
+    the video's size in pixels under it ("1080 × 1920", `.secondary`,
+    monospaced digits); Background, a switch and, when on, Background…'s
+    grid of eight swatches, small Padding and Corners sliders and Shadow.
+    Save holds File Type (MOV, MP4, GIF, segmented), Quality (Original, 4K,
+    1080p, 720p, a menu, hidden for a GIF) and a line on what the file is
+    for. A shape other than the recording's own turns the background on.
+    The footer has Undo and Redo, then Cancel and Save Video; while saving,
+    a small bar and Stop.
+  - **Blur** is a box dragged over what should not be seen: for as long
+    as it shows, the recording under it is blurred (a Gaussian blur of
+    1.5% of the recording's unit, at least 10 px), fading in and out as
+    marks do. It sits on the recording, so the camera takes it along, and
+    the preview's video is blurred by the same code (`StudioDraw.blurred`).
+    Nothing is drawn over it; chosen, it shows the outline and handles.
+  - **Captions** (`StudioCaptions`) are made on the Mac from what is said
+    (on-device speech recognition only), in lines of at most 42 letters
+    and 4.5 s, broken at a pause of 0.7 s or a sentence's end, each shown
+    at least 0.8 s (`studio-caption`). They are drawn by the code that
+    draws the marks, so the preview and the video agree, and stay on the
+    recording's time like them.
+  - **Parts** (`StudioCuts`): the recording is split into parts, each
+    kept at its speed or cut out; zooms, marks and clicks stay on the
+    recording's time. Playing skips the parts cut out and plays each part
+    at its speed, as the saved video does. Standing still in a part cut
+    out, the picture is dimmed (black 55%) under "This part is cut out."
+    with `scissors`, 13 pt semibold white. The timeline marks the parts
+    over its pictures (`studio-part`).
+  - **On a background**, the canvas shows the whole video as saved: the
+    colour fills it, under the floating card's shadow, and the recording
+    sits in it with its corners and its shadow, by the same measures as the
+    saved video (`StudioFraming`), which Background… gives a photo. Marks
+    and click rings stay inside the recording's corners.
   - **In the video**: the camera eases in and out of each zoom on a spring
     with no overshoot and follows the pointer only once it nears the edge
     (`StudioCamera`). Marks are drawn in over 0.35 s on an ease-out, an
@@ -1417,8 +1475,9 @@ apps.
     or a circle from 0.92, and fade over 0.25 s before they go; their size
     stays the same as the camera comes closer, and their place stays on
     what they point at. A click ring (`studio-click-ring`) is white with a
-    dark edge, so it shows on light and dark pages. The video is the
-    recording's size, sixty frames a second.
+    dark edge, so it shows on light and dark pages. The video is sixty
+    frames a second, at the recording's size or the one chosen, by the
+    shorter side (2160, 1080 or 720), never over 4K and even on both sides.
 - **Convert to SVG** (`VectorEditor.swift`, `VectorCanvas.swift`) is Hide
   Part's window, laid out the same (`HidePartLayout`, opening for the
   picture's size with the 36 pt bar under the canvas counted), titled "name
