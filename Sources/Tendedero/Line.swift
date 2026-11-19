@@ -195,6 +195,8 @@ final class Line: ObservableObject {
         PrivateDetails.prepare(url)
         TextIndex.read(url)
         MacSync.hung(url)
+        // Offered to the iPhone nearby, with Handoff, as the newest photo.
+        if !quietly { PhoneHandoff.shared.offer(url) }
         if !quietly { play("Tink", volume: 0.35) }
         return item.id
     }
@@ -1502,6 +1504,13 @@ final class Line: ObservableObject {
     func saveCopy(_ id: UUID) {
         guard let item = items.first(where: { $0.id == id && !$0.falling }), !item.isRecording else { return }
         saveCopy(of: item.url)
+    }
+
+    /// Open on iPhone, from a photo's menu: offered with Handoff, to open
+    /// on the iPhone nearby as it leaves the line.
+    func openOnPhone(_ id: UUID) {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
+        PhoneHandoff.shared.openOnPhone(item.url)
     }
 
     /// Copy Link, from a photo's menu: the photo as it leaves the line, or

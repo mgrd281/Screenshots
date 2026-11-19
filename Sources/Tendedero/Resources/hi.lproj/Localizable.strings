@@ -2047,3 +2047,9 @@
 "The chat was longer than %d views, so it was cut there." = "चैट %d व्यू से लंबी थी, इसलिए वहीं रोक दी गई।";
 "The whole chat fits in one view: one screenshot, and no video." = "पूरी चैट एक ही व्यू में आ जाती है: एक स्क्रीनशॉट, कोई वीडियो नहीं।";
 "The screenshots were saved, but the video could not be." = "स्क्रीनशॉट सहेज लिए गए, पर वीडियो नहीं सहेजा जा सका।";
+"Open on iPhone" = "iPhone पर खोलें";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "अपने iPhone पर ऐप स्विचर खोलें और नीचे Snapfly पर टैप करें।";
+"Sent to your iPhone." = "आपके iPhone पर भेज दिया गया।";
+"The photo could not be sent to your iPhone." = "फ़ोटो आपके iPhone पर नहीं भेजी जा सकी।";
+"Getting the screenshot from your Mac…" = "आपके Mac से स्क्रीनशॉट लाया जा रहा है…";
+"The screenshot from your Mac could not be received." = "आपके Mac से स्क्रीनशॉट नहीं मिल सका।";

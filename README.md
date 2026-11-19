@@ -114,6 +114,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: click what is outlined (scroll for a bigger or smaller part), drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
+| Right-click a photo, then Open on iPhone | Open it on the iPhone nearby with Handoff: tap Snapfly at the bottom of the iPhone's app switcher. Each new photo is offered there as it hangs. |
 | Capture Whole Chat in the menu bar | Scroll the chat in front from its first message to its last, a screenshot of each view and a short video of the scroll, which stops by itself at the bottom. |
 
 <br>
@@ -235,7 +236,9 @@ Dock shows the time; click it, press the shortcut again, or choose Stop
 Recording in the menu bar to stop. The recording hangs on the line, ready to
 trim or send, and opens in Studio (below). Make GIF in its menu turns it into a looping GIF that every chat
 plays, which hangs next to it and stays animated when sent. Snapfly's own
-line and controls stay out of it. Quit, log out or install an update while
+line and controls stay out of it. It is saved in HEVC (H.265), about half
+the size of the usual H.264 at the same sharpness, with small text kept
+crisp; a Mac that cannot write HEVC saves H.264. Quit, log out or install an update while
 recording, and the recording is saved first, as Stop saves it. One cut short
 anyway, as by a crash, is written in pieces: the next time Snapfly opens, it
 hangs on the line up to its last few seconds, and a note says so; one that
@@ -274,7 +277,7 @@ are numbered in the order they show. Marks stay on what they point at as the
 camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
 
 Save Video writes a new video beside the recording, at its size and sixty
-frames a second, with its sound, and hangs it on the line; the recording
+frames a second, in HEVC like the recording, with its sound, and hangs it on the line; the recording
 itself is never changed. What you changed stays with the recording for the
 next time, also when you close the window or open another recording in
 Studio, and Trim keeps it in step; only Cancel leaves it as it was. A
@@ -1161,6 +1164,17 @@ iCloud account, and the two work as one:
   while it connects, should iCloud not answer. Disconnect… on either side
   ends it.
 
+**Bring the iPhone near the Mac.** Each photo that hangs on the line is
+offered to the iPhone nearby with Handoff: open the app switcher on the
+iPhone and Snapfly shows at the bottom, "from your Mac"; tap it, and the
+photo opens in Protect Picture on the iPhone, ready to cover more, save or
+send. It needs no Sync, only the same Apple account on both, with Bluetooth
+and Wi-Fi on. The photo goes straight from the Mac, as it leaves the line,
+covered as Settings says. A Mac offers what the app in front offers, so when
+Snapfly is not in front, right-click a photo and choose Open on iPhone:
+Snapfly comes to the front until the iPhone takes it, a note says where to
+tap, and the app you were in comes back.
+
 It goes through your own iCloud, never a server of Snapfly's, and a change
 made offline waits until it can go. The plan, the rules and what is verified
 are in [SYNC.md](SYNC.md). Where Snapfly stands as one Mac and iPhone
@@ -1897,6 +1911,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
 | `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
 | `FullPage.swift` | Captures a whole page by scrolling the window in front |
+| `VideoQuality.swift` | How recordings and Studio's videos are compressed: HEVC, or H.264 where it cannot be written, at a bit rate that follows the picture |
+| `PhoneHandoff.swift` | Offers the newest photo to the iPhone nearby with Handoff, and sends it when asked |
 | `ChatCapture.swift` | Captures a whole chat by scrolling it: a screenshot of each view and a video of the scroll |
 | `PageStitch.swift` | Joins the views of a scrolled page into one picture |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |

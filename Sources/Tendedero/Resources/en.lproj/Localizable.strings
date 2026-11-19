@@ -2047,3 +2047,9 @@
 "The chat was longer than %d views, so it was cut there." = "The chat was longer than %d views, so it was cut there.";
 "The whole chat fits in one view: one screenshot, and no video." = "The whole chat fits in one view: one screenshot, and no video.";
 "The screenshots were saved, but the video could not be." = "The screenshots were saved, but the video could not be.";
+"Open on iPhone" = "Open on iPhone";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "On your iPhone, open the app switcher and tap Snapfly at the bottom.";
+"Sent to your iPhone." = "Sent to your iPhone.";
+"The photo could not be sent to your iPhone." = "The photo could not be sent to your iPhone.";
+"Getting the screenshot from your Mac…" = "Getting the screenshot from your Mac…";
+"The screenshot from your Mac could not be received." = "The screenshot from your Mac could not be received.";

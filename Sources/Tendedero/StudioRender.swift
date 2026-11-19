@@ -240,18 +240,9 @@ enum StudioExport {
         let height = max(2, Int((natural.height / 2).rounded()) * 2)
         let writer = try AVAssetWriter(outputURL: temp, fileType: .mov)
         // About as sharp as the recording, for text that stays crisp when
-        // zoomed in on.
-        let bitRate = min(80_000_000, max(6_000_000, Int(Double(width * height) * Double(rate) * 0.08)))
-        let picture = AVAssetWriterInput(mediaType: .video, outputSettings: [
-            AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: width,
-            AVVideoHeightKey: height,
-            AVVideoCompressionPropertiesKey: [
-                AVVideoAverageBitRateKey: bitRate,
-                AVVideoExpectedSourceFrameRateKey: Int(rate),
-                AVVideoMaxKeyFrameIntervalKey: Int(rate) * 2,
-            ],
-        ])
+        // zoomed in on, and as small as that allows (`VideoQuality`).
+        let picture = AVAssetWriterInput(mediaType: .video, outputSettings: VideoQuality.settings(
+            for: writer, width: width, height: height, frameRate: Double(rate), bitsPerPixel: VideoQuality.studio))
         picture.expectsMediaDataInRealTime = false
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: picture, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,

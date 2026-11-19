@@ -2045,3 +2045,9 @@
 "The chat was longer than %d views, so it was cut there." = "チャットが%d画面を超えたため、そこで区切りました。";
 "The whole chat fits in one view: one screenshot, and no video." = "チャット全体が1画面に収まります：スクリーンショット1枚で、ビデオはありません。";
 "The screenshots were saved, but the video could not be." = "スクリーンショットは保存されましたが、ビデオは保存できませんでした。";
+"Open on iPhone" = "iPhoneで開く";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "iPhoneでAppスイッチャーを開き、下部のSnapflyをタップしてください。";
+"Sent to your iPhone." = "iPhoneに送信しました。";
+"The photo could not be sent to your iPhone." = "写真をiPhoneに送信できませんでした。";
+"Getting the screenshot from your Mac…" = "Macからスクリーンショットを受信しています…";
+"The screenshot from your Mac could not be received." = "Macからスクリーンショットを受信できませんでした。";

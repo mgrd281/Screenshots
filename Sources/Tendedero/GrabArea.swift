@@ -168,6 +168,10 @@ struct GrabArea: NSViewRepresentable {
             if let frontApp {
                 menu.addItem(ClosureMenuItem(String(format: L("Paste into %@"), frontApp), symbol: "paperplane") { line.paste(id) })
             }
+            // To the iPhone nearby, with Handoff.
+            if isImage {
+                menu.addItem(ClosureMenuItem(L("Open on iPhone"), symbol: "iphone") { line.openOnPhone(id) })
+            }
             // A link to paste anywhere, for seven days.
             if LinkSharing.isAvailable {
                 menu.addItem(ClosureMenuItem(L("Copy Link"), symbol: "link") { line.copyLink(id) })

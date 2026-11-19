@@ -92,6 +92,13 @@ struct PhotosTab: View {
             guard let item else { return }
             Task { await open(item) }
         }
+        // A screenshot from the Mac nearby opens in the editor, here.
+        .onReceive(MacHandoff.shared.$arrived) { image in
+            guard let image else { return }
+            MacHandoff.shared.arrived = nil
+            AppTabs.shared.selection = .photos
+            path.append(ProtectSession.Source.picture(Imported.shared.keep(image, info: Imported.Info(screenshot: true))))
+        }
         // The introduction, once, as the first screenshots show.
         .onChange(of: library.shots.isEmpty) { _, empty in
             if !empty { guide.offerIfDue() }

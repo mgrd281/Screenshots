@@ -2045,3 +2045,9 @@
 "The chat was longer than %d views, so it was cut there." = "Sohbet %d görünümden uzundu, bu yüzden orada kesildi.";
 "The whole chat fits in one view: one screenshot, and no video." = "Tüm sohbet tek görünüme sığıyor: bir ekran görüntüsü, video yok.";
 "The screenshots were saved, but the video could not be." = "Ekran görüntüleri kaydedildi ama video kaydedilemedi.";
+"Open on iPhone" = "iPhone’da aç";
+"On your iPhone, open the app switcher and tap Snapfly at the bottom." = "iPhone’unda uygulama değiştiriciyi aç ve alttaki Snapfly’a dokun.";
+"Sent to your iPhone." = "iPhone’una gönderildi.";
+"The photo could not be sent to your iPhone." = "Fotoğraf iPhone’una gönderilemedi.";
+"Getting the screenshot from your Mac…" = "Ekran görüntüsü Mac’ten alınıyor…";
+"The screenshot from your Mac could not be received." = "Mac’ten ekran görüntüsü alınamadı.";

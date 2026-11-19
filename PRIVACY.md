@@ -1,6 +1,6 @@
 # Snapfly Privacy Policy
 
-*Last updated: October 26, 2026*
+*Last updated: November 19, 2026*
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
@@ -81,6 +81,15 @@ or turn on syncing with your iPhone (below).
   the developer or through a server of Snapfly's. Turn Sync off and nothing
   more goes; what is in iCloud stays until you remove Snapfly's data in your
   iCloud settings.
+- **Handoff to your iPhone, only when you tap it there.** Your Mac tells
+  your own devices nearby, signed in to the same Apple account, that the
+  newest photo on the line can be opened on them, through Apple's Handoff.
+  Only when you tap Snapfly in your iPhone's app switcher, or choose Open on
+  iPhone on the Mac and then tap it, does that photo go, straight from the Mac
+  to the iPhone over Bluetooth and Wi-Fi, as it leaves the line, with its
+  private details covered as you chose. The iPhone keeps it only while
+  Snapfly is open, unless you save it. Nothing of it goes through iCloud, to
+  the developer or through a server of Snapfly's.
 - **Pairing with a code, for another Apple account.** When an iPhone on a
   different Apple account types the code your Mac shows, and you say yes on
   the Mac, your Mac shares its synced screenshots with that account alone,
