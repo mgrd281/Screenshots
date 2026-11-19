@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio blurs: drag Blur over a name, an email or anything else that
+  should not be seen, and it is blurred in the video for as long as it
+  shows, moving with the camera.
 - Studio cuts and speeds up: split a recording where it stands, leave a
   part out, or play it 1.5, 2, 4 or 8 times as fast, sound and all. The
   timeline shows each part, and playing skips and speeds up as the saved

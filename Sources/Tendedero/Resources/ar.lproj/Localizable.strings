@@ -2079,3 +2079,4 @@
 "Cut and Speed" = "القص والسرعة";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "اقسم حيث يقف الفيديو، ثم احذف جزءًا أو شغّله أسرع. سيكون طول الفيديو %@.";
 "This part is cut out." = "هذا الجزء محذوف.";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "اسحب فوق ما لا يجب أن يُرى. يُموَّه في الفيديو طوال ظهوره.";

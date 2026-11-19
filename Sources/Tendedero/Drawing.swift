@@ -22,6 +22,9 @@ struct Drawing: Codable, Equatable, Sendable {
     struct Mark: Codable, Equatable, Identifiable, Sendable {
         enum Kind: String, Codable, CaseIterable, Sendable {
             case arrow, box, circle, highlight, step, text
+            /// Studio's alone: what is under it is blurred in the video,
+            /// and nothing is drawn.
+            case blur
         }
 
         var id = UUID()
@@ -206,7 +209,7 @@ struct Drawing: Codable, Equatable, Sendable {
             case .circle: drawCircle(mark, in: context, size: size, unit: unit)
             case .step: drawStep(mark, number: numbers[mark.id] ?? 1, in: context, size: size, unit: unit)
             case .text: drawWords(mark, in: context, size: size, unit: unit, placeholder: placeholder)
-            case .highlight: break
+            case .highlight, .blur: break
             }
             context.restoreGState()
         }
@@ -439,7 +442,7 @@ struct Drawing: Codable, Equatable, Sendable {
             let room = lineWidth(mark, unit: unit) * 2.5
             return CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(b.x - a.x), height: abs(b.y - a.y))
                 .insetBy(dx: -room, dy: -room)
-        case .box, .circle, .highlight:
+        case .box, .circle, .highlight, .blur:
             return rect(mark.rect, in: size)
         case .step:
             return stepCircle(mark, size: size, unit: unit)
@@ -472,7 +475,7 @@ struct Drawing: Codable, Equatable, Sendable {
             // pen's path strays about its width either side of it.
             let off = scale > 0 ? across * abs(1 - 1 / scale) : min(a, b)
             return off <= width * 1.5 + slack
-        case .highlight, .text:
+        case .highlight, .text, .blur:
             return frame(of: mark, size: size, unit: unit, placeholder: placeholder).insetBy(dx: -slack, dy: -slack).contains(p)
         case .step:
             let circle = stepCircle(mark, size: size, unit: unit)
@@ -511,7 +514,7 @@ struct Drawing: Codable, Equatable, Sendable {
     static func handles(of mark: Mark) -> [CGPoint] {
         switch mark.kind {
         case .arrow: return [mark.from, mark.to]
-        case .box, .circle, .highlight: return corners(of: mark.rect)
+        case .box, .circle, .highlight, .blur: return corners(of: mark.rect)
         case .step, .text: return []
         }
     }
@@ -528,7 +531,7 @@ struct Drawing: Codable, Equatable, Sendable {
         switch mark.kind {
         case .arrow:
             if handle == 0 { reshaped.from = kept } else { reshaped.to = kept }
-        case .box, .circle, .highlight:
+        case .box, .circle, .highlight, .blur:
             reshaped.from = Self.corners(of: mark.rect)[(handle + 2) % 4]
             reshaped.to = kept
         case .step, .text:

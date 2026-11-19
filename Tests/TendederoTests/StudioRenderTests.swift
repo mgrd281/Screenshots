@@ -150,6 +150,27 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertEqual(range.duration.seconds, 2, accuracy: 0.15)
     }
 
+    func testWhatIsBlurredCannotBeMadeOutAndTheRestStaysSharp() async throws {
+        let source = folder.appendingPathComponent("stripes.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.stripes)
+        var project = StudioProject()
+        project.showsClicks = false
+        let blur = Drawing.Mark(kind: .blur, from: CGPoint(x: 0.05, y: 0.1), to: CGPoint(x: 0.45, y: 0.9),
+                                ink: .red, size: .medium)
+        project.marks = [StudioProject.Mark(mark: blur, start: 0, end: 2)]
+        let made = try await export(source, project)
+        let frame = try await StudioSample.frame(of: made, at: 1)
+        // Under the blur the stripes run together into grey.
+        for x in [0.15, 0.25, 0.35] {
+            let grey = StudioSample.pixel(frame, x: x, y: 0.5)
+            XCTAssertTrue((60...200).contains(grey.r), "at \(x): \(grey.r)")
+        }
+        // Beside it they stay black and white.
+        let beside = (0..<16).map { StudioSample.pixel(frame, x: 0.7 + Double($0) / 320, y: 0.5).r }
+        XCTAssertTrue(beside.contains { $0 < 50 }, "\(beside)")
+        XCTAssertTrue(beside.contains { $0 > 205 }, "\(beside)")
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)
@@ -461,6 +482,16 @@ private enum StudioSample {
                 guard input.append(sample) else { throw writer.error ?? StudioExport.Failure.cannotWrite }
                 written += count
             }
+        }
+    }
+
+    /// Black and white stripes, four pixels wide, as small print is.
+    static func stripes(_ context: CGContext, _ size: CGSize, _ t: Double) {
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(origin: .zero, size: size))
+        context.setFillColor(CGColor(gray: 0, alpha: 1))
+        for x in stride(from: 0, to: size.width, by: 8) {
+            context.fill(CGRect(x: x, y: 0, width: 4, height: size.height))
         }
     }
 

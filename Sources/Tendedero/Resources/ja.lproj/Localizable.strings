@@ -2079,3 +2079,4 @@
 "Cut and Speed" = "カットと速度";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "動画の位置で分割し、部分をカットしたり速く再生したりできます。動画の長さは %@ になります。";
 "This part is cut out." = "この部分はカットされています。";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "見せたくない部分の上をドラッグします。表示中は動画でぼかされます。";

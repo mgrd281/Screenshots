@@ -133,6 +133,11 @@ final class DrawEditor: NSObject, NSWindowDelegate {
 /// What can be done on the picture, one at a time, each with its key.
 enum DrawTool: String, CaseIterable, Identifiable {
     case select, arrow, box, circle, highlight, step, text, crop
+    /// Studio's alone: a photo's private parts are covered, not blurred.
+    case blur
+
+    /// Draw on Photo's tools.
+    static let photo: [DrawTool] = allCases.filter { $0 != .blur }
 
     var id: String { rawValue }
 
@@ -145,6 +150,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .highlight: .highlight
         case .step: .step
         case .text: .text
+        case .blur: .blur
         case .select, .crop: nil
         }
     }
@@ -159,6 +165,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .step: "1.circle"
         case .text: "textformat"
         case .crop: "crop"
+        case .blur: "eye.slash"
         }
     }
 
@@ -172,6 +179,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .step: L("Numbered Steps")
         case .text: L("Text")
         case .crop: L("Crop")
+        case .blur: L("Blur")
         }
     }
 
@@ -186,6 +194,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .step: "n"
         case .text: "t"
         case .crop: "c"
+        case .blur: "b"
         }
     }
 
@@ -200,6 +209,7 @@ enum DrawTool: String, CaseIterable, Identifiable {
         case .step: L("Click each place in turn. The numbers follow the order.")
         case .text: L("Click where the words go, then type them.")
         case .crop: L("Drag over the part to keep, or drag its corners.")
+        case .blur: L("Drag over what should not be seen. It is blurred in the video while it shows.")
         }
     }
 }
@@ -253,8 +263,8 @@ final class DrawModel: ObservableObject {
         self.hand = hand
         opened = drawing.tidied
         let defaults = UserDefaults.standard
-        tool = defaults.string(forKey: Self.toolKey).flatMap(DrawTool.init(rawValue:)).flatMap { $0.kind == nil ? nil : $0 }
-            ?? .arrow
+        tool = defaults.string(forKey: Self.toolKey).flatMap(DrawTool.init(rawValue:))
+            .flatMap { $0.kind == nil || !DrawTool.photo.contains($0) ? nil : $0 } ?? .arrow
         ink = defaults.string(forKey: Self.inkKey).flatMap(Drawing.Ink.init(rawValue:)) ?? .red
         highlightInk = defaults.string(forKey: Self.highlightInkKey).flatMap(Drawing.Ink.init(rawValue:)) ?? .yellow
         size = defaults.string(forKey: Self.sizeKey).flatMap(Drawing.Size.init(rawValue:)) ?? .medium
@@ -586,7 +596,7 @@ private struct DrawEditorView: View {
                 model.choose(hit)
                 model.begin()
                 self.action = .moving(mark, from: start)
-            case .select, .crop:
+            case .select, .crop, .blur:
                 self.action = .idle
             }
         case let .drawing(id):
@@ -725,7 +735,7 @@ private struct DrawEditorView: View {
     private var tools: some View {
         Section {
             HStack(spacing: 4) {
-                ForEach(DrawTool.allCases) { tool in
+                ForEach(DrawTool.photo) { tool in
                     toolButton(tool)
                 }
             }
@@ -831,6 +841,7 @@ private struct DrawEditorView: View {
         case .highlight: L("Highlight")
         case .step: String(format: L("Step %d"), model.drawing.number(of: mark) ?? 1)
         case .text: L("Text")
+        case .blur: L("Blur")
         }
     }
 

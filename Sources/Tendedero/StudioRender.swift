@@ -72,7 +72,7 @@ enum StudioDraw {
                                   y: mark.from.y + (mark.to.y - mark.from.y) * drawn)
             case .step, .text:
                 grow(context, about: Drawing.point(mark.from, in: size), by: 0.6 + 0.4 * drawn)
-            case .box, .circle, .highlight:
+            case .box, .circle, .highlight, .blur:
                 let box = Drawing.rect(mark.rect, in: size)
                 grow(context, about: CGPoint(x: box.midX, y: box.midY), by: 0.92 + 0.08 * drawn)
             }
@@ -115,7 +115,7 @@ enum StudioDraw {
         let size = CGSize(width: width, height: height)
         let video = framing.isFramed ? framing.video : CGRect(origin: .zero, size: size)
         let rect = look.camera.rect(at: t)
-        let picture = CIImage(cvPixelBuffer: source)
+        let picture = blurred(CIImage(cvPixelBuffer: source), look: look, at: t)
         let extent = picture.extent
         let crop = CGRect(x: extent.minX + rect.minX * extent.width, y: extent.minY + rect.minY * extent.height,
                           width: rect.width * extent.width, height: rect.height * extent.height)
@@ -151,6 +151,58 @@ enum StudioDraw {
             drawing.clip()
         }
         overlay(look, at: t, rect: rect, in: drawing, size: video.size)
+    }
+}
+
+extension StudioDraw {
+    /// The recording's picture with the parts to blur blurred while each
+    /// shows, fading in and out as marks do. They are in the recording's
+    /// own place, so the camera takes them along; the preview's video goes
+    /// through the same (`StudioModel`).
+    static func blurred(_ picture: CIImage, look: StudioLook, at t: Double) -> CIImage {
+        let extent = picture.extent
+        var made = picture
+        var any = false
+        for item in look.marks where item.mark.kind == .blur {
+            guard let presence = StudioFade.presence(at: t, start: item.start, end: item.end) else { continue }
+            let area = Drawing.rect(item.mark.rect, in: extent.size).offsetBy(dx: extent.minX, dy: extent.minY)
+                .integral.intersection(extent)
+            guard !area.isNull, !area.isEmpty else { continue }
+            // Strong enough that words under it cannot be read, on any screen.
+            let strength = max(10, Drawing.unit(width: extent.width, height: extent.height) * blurStrength)
+            var blur = picture.clampedToExtent().applyingGaussianBlur(sigma: Double(strength)).cropped(to: area)
+            if presence.opacity < 1 {
+                blur = blur.applyingFilter("CIColorMatrix", parameters: [
+                    "inputAVector": CIVector(x: 0, y: 0, z: 0, w: CGFloat(presence.opacity)),
+                ])
+            }
+            made = blur.composited(over: made)
+            any = true
+        }
+        return any ? made.cropped(to: extent) : picture
+    }
+
+    /// The blur's radius, as a share of the recording's unit.
+    static let blurStrength: CGFloat = 0.015
+}
+
+/// What the preview's video blurs, as the look changes, read on the video's
+/// own queue.
+final class StudioBlurs: @unchecked Sendable {
+    private let lock = NSLock()
+    private var current: StudioLook?
+
+    var look: StudioLook? {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return current
+        }
+        set {
+            lock.lock()
+            current = newValue
+            lock.unlock()
+        }
     }
 }
 

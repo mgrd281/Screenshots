@@ -2079,3 +2079,4 @@
 "Cut and Speed" = "Schnitt und Tempo";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Teile dort, wo das Video steht, und schneide dann einen Teil heraus oder spiel ihn schneller ab. Das Video wird %@ lang.";
 "This part is cut out." = "Dieser Teil ist herausgeschnitten.";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "Zieh über das, was nicht zu sehen sein soll. Es wird im Video unscharf, solange es sichtbar ist.";

@@ -2081,3 +2081,4 @@
 "Cut and Speed" = "काट और गति";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "जहाँ वीडियो रुका है वहाँ बाँटें, फिर कोई हिस्सा काटें या उसे तेज़ चलाएँ। वीडियो %@ लंबा होगा।";
 "This part is cut out." = "यह हिस्सा काट दिया गया है।";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "जो नहीं दिखना चाहिए उसके ऊपर खींचें। जब तक वह दिखता है, वीडियो में धुंधला रहता है।";

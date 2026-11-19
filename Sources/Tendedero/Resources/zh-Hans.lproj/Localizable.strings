@@ -2079,3 +2079,4 @@
 "Cut and Speed" = "剪辑与速度";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "在视频当前位置拆分，然后剪掉某段或让它播放得更快。视频时长将为 %@。";
 "This part is cut out." = "此段已剪掉。";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "在不应被看到的内容上拖动。它显示期间会在视频中被模糊。";

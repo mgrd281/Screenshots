@@ -724,7 +724,7 @@ private struct StudioCanvas: View {
             guard hypot(value.translation.width, value.translation.height) >= 3 else { return }
             let start = recorded(value.startLocation, in: size)
             switch model.tool {
-            case .arrow, .box, .circle:
+            case .arrow, .box, .circle, .blur:
                 guard var mark = model.newMark(at: start) else { return }
                 mark.to = point
                 model.put(mark, keepOpen: true)

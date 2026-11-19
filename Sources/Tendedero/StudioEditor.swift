@@ -1,5 +1,6 @@
 import AppKit
 import AVFoundation
+import CoreImage
 import SwiftUI
 
 /// Studio: a screen recording made ready to explain something. The window
@@ -251,6 +252,8 @@ final class StudioModel: ObservableObject {
             // The camera is worked out again only when the zooms change.
             let camera = project.zooms == oldValue.zooms ? look.camera : nil
             look = StudioLook(project: project, events: events, duration: duration, pixels: pixels, camera: camera)
+            blurs.look = look
+            if Self.blurred(project) != Self.blurred(oldValue) { refreshBlurs() }
         }
     }
 
@@ -287,6 +290,9 @@ final class StudioModel: ObservableObject {
     @Published private var redone: [StudioProject] = []
     private var before: StudioProject?
     private var finished: NSObjectProtocol?
+    /// What the preview's video blurs, and the next time it is made again.
+    private let blurs = StudioBlurs()
+    private var blurRefresh: DispatchWorkItem?
     /// Follows the video while it plays, past the parts cut out and at the
     /// speed of each part.
     private var pacer: Any?
@@ -294,7 +300,7 @@ final class StudioModel: ObservableObject {
     private var keptWork: StudioProject
 
     /// The tools that draw over a recording, with Select first.
-    static let tools: [DrawTool] = [.select, .arrow, .box, .circle, .step, .text]
+    static let tools: [DrawTool] = [.select, .arrow, .box, .circle, .step, .text, .blur]
     private static let toolKey = "studioTool"
 
     init(url: URL, duration: Double, pixels: CGSize, events: StudioEvents?, project: StudioProject) {
@@ -314,6 +320,8 @@ final class StudioModel: ObservableObject {
         // The same ink and size as Draw on Photo, kept between the two.
         ink = defaults.string(forKey: "drawInk").flatMap(Drawing.Ink.init(rawValue:)) ?? .red
         size = defaults.string(forKey: "drawSize").flatMap(Drawing.Size.init(rawValue:)) ?? .medium
+        blurs.look = look
+        if !Self.blurred(project).isEmpty { applyBlurs() }
     }
 
     /// Reads the pictures and the sound for the timeline, and follows the
@@ -695,6 +703,7 @@ final class StudioModel: ObservableObject {
         case .highlight: L("Highlight")
         case .step: String(format: L("Step %d"), project.numbers[item.id] ?? 1)
         case .text: L("Text")
+        case .blur: L("Blur")
         }
     }
 
@@ -762,6 +771,39 @@ final class StudioModel: ObservableObject {
 
     var ratio: Backdrop.Ratio {
         project.backdrop?.ratio ?? .fit
+    }
+
+    // MARK: Blur
+
+    private static func blurred(_ project: StudioProject) -> [StudioProject.Mark] {
+        project.marks.filter { $0.mark.kind == .blur }
+    }
+
+    /// The preview's video blurred where the saved video is, made again a
+    /// moment after the parts to blur change, so a drag stays quick.
+    private func refreshBlurs() {
+        blurRefresh?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated { self?.applyBlurs() }
+        }
+        blurRefresh = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12, execute: work)
+    }
+
+    private func applyBlurs() {
+        guard let item = player.currentItem else { return }
+        guard !Self.blurred(project).isEmpty else {
+            if item.videoComposition != nil { item.videoComposition = nil }
+            return
+        }
+        let blurs = blurs
+        // A new one each time, so the picture standing still is drawn again.
+        item.videoComposition = AVVideoComposition(asset: item.asset) { request in
+            let image = blurs.look.map {
+                StudioDraw.blurred(request.sourceImage, look: $0, at: request.compositionTime.seconds)
+            }
+            request.finish(with: image ?? request.sourceImage, context: nil)
+        }
     }
 
     // MARK: Cut and speed

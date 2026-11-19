@@ -1372,7 +1372,8 @@ apps.
     from 0.9 of the pen's width inside the oval to 0.9 outside it, so the
     ends pass each other, and thinning to 35% where the pen lands and
     lifts. Drawing explains and never hides: blur and pixelate are not
-    offered, and nothing drawn counts on the lock.
+    offered on a photo, where Hide Part covers, and nothing drawn counts on
+    the lock. Studio alone has Blur, for what moves in a recording.
 - **Studio** (`StudioEditor.swift`, `StudioEditorView.swift`) makes a screen
   recording ready to explain. It is Hide Part's window grown a timeline:
   titled with the recording's name, subtitled "Studio", at least 960 × 640,
@@ -1414,7 +1415,8 @@ apps.
     out) and Join with Next, small, in one row, then Speed (1×, 1.5×, 2×,
     4×, 8×, segmented), with how long the video will be in its footer; Draw, the six
     tools of Draw on Photo that a video takes (Select, Arrow, Box, Circle,
-    Numbered Steps, Text, with their keys), then Color and Size as there; a
+    Numbered Steps, Text, with their keys) and Blur (B, `eye.slash`), then
+    Color and Size as there; a
     chosen mark's name, when it shows, its words for words, and Delete;
     Show clicks; Size, a row of five shape tiles (`studio-shape-tile`) with
     the video's size in pixels under it ("1080 × 1920", `.secondary`,
@@ -1425,6 +1427,12 @@ apps.
     for. A shape other than the recording's own turns the background on.
     The footer has Undo and Redo, then Cancel and Save Video; while saving,
     a small bar and Stop.
+  - **Blur** is a box dragged over what should not be seen: for as long
+    as it shows, the recording under it is blurred (a Gaussian blur of
+    1.5% of the recording's unit, at least 10 px), fading in and out as
+    marks do. It sits on the recording, so the camera takes it along, and
+    the preview's video is blurred by the same code (`StudioDraw.blurred`).
+    Nothing is drawn over it; chosen, it shows the outline and handles.
   - **Parts** (`StudioCuts`): the recording is split into parts, each
     kept at its speed or cut out; zooms, marks and clicks stay on the
     recording's time. Playing skips the parts cut out and plays each part

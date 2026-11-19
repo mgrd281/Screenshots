@@ -2079,3 +2079,4 @@
 "Cut and Speed" = "자르기와 속도";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "영상이 멈춘 곳에서 나눈 뒤, 한 부분을 잘라내거나 더 빠르게 재생하세요. 영상 길이는 %@입니다.";
 "This part is cut out." = "이 부분은 잘려 있습니다.";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "보이면 안 되는 부분 위로 드래그하세요. 보이는 동안 영상에서 흐리게 처리됩니다.";

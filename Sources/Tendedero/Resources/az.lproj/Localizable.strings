@@ -2081,3 +2081,4 @@
 "Cut and Speed" = "Kəsmə və sürət";
 "Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Videonun dayandığı yerdən böl, sonra bir hissəni kəs at və ya daha sürətli oxut. Video %@ uzunluğunda olacaq.";
 "This part is cut out." = "Bu hissə kəsilib.";
+"Drag over what should not be seen. It is blurred in the video while it shows." = "Görünməməli olanın üzərindən sürüşdür. O, göründüyü müddətdə videoda bulanıq olur.";
