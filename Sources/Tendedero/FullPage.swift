@@ -84,18 +84,29 @@ final class FullPage {
         // turn the scrolling into a zoom.
         await Self.waitForKeysUp()
 
-        // The pointer rests over the page, well inside the window and clear
-        // of Snapfly's own windows, so the scrolling reaches the page
-        // itself; it goes back where it was afterwards.
+        // The pointer rests over what scrolls, clear of Snapfly's own
+        // windows, so the scrolling reaches it: the page itself, or a box
+        // of its own that holds the content, like a chat's; it goes back
+        // where it was afterwards.
         let pointer = CGEvent(source: nil)?.location
-        let over = Self.scrollPoint(in: target.frame)
-        _ = CGWarpMouseCursorPosition(over)
         defer { if let pointer { _ = CGWarpMouseCursorPosition(pointer) } }
+        func whole() async -> PageStitch.Rows? {
+            guard let image = try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
+            else { return nil }
+            return PageStitch.rows(of: image)
+        }
+        let points = Scrolling.candidates(in: target.frame, pointer: pointer, chat: false)
+            .map { Self.clearOfOwnWindows($0) }
+        let found = await Self.findScroller(among: points, in: target.frame, scale: scale, shot: whole)
+        let over = found.point
+        // Only the columns that scroll are compared, so a part that stays
+        // beside them, like a list beside a chat, does not hide the move.
+        let band = found.band
 
         func shot() async -> (image: CGImage, rows: PageStitch.Rows)? {
             guard let image = try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config),
                   let rows = PageStitch.rows(of: image) else { return nil }
-            return (image, rows)
+            return (image, band.map { PageStitch.columns(rows, $0) } ?? rows)
         }
         func wait(_ nanoseconds: UInt64 = Self.settle) async {
             try? await Task.sleep(nanoseconds: nanoseconds)
@@ -193,14 +204,59 @@ final class FullPage {
 
     // MARK: Scrolling the window in front
 
-    /// Where the pointer rests while the page scrolls: well inside the
-    /// window, towards its trailing side and a little below the middle, and
-    /// clear of Snapfly's own windows, like the screenshot button at the
-    /// screen's edge.
-    private static func scrollPoint(in frame: CGRect) -> CGPoint {
+    /// A point to scroll at, moved clear of Snapfly's own windows, like the
+    /// screenshot button at the screen's edge.
+    static func clearOfOwnWindows(_ point: CGPoint) -> CGPoint {
         let screenHeight = NSScreen.screens.first?.frame.height ?? 0
         let own = NSApp.windows.filter(\.isVisible).map { Scrolling.topLeft($0.frame, screenHeight: screenHeight) }
-        return Scrolling.clear(Scrolling.restingPoint(in: frame), of: own)
+        return Scrolling.clear(point, of: own)
+    }
+
+    /// How far each point is tried: a little, up and back, then down and
+    /// back. Where the window is left then does not matter, since the
+    /// capture starts by scrolling to the top.
+    private static let probe: CGFloat = 300
+
+    /// Of the points given, tried in turn, the one where the window scrolls
+    /// the farthest, and the columns that scrolled there: the page itself,
+    /// or a box of its own, like a chat's, beside parts that stay put. The
+    /// first that moves as far as asked wins at once; when none moves, the
+    /// first, with no columns. `scale` is pixels a point in the views.
+    static func findScroller(among points: [CGPoint], in frame: CGRect, scale: CGFloat,
+                             shot: () async -> PageStitch.Rows?) async -> (point: CGPoint, band: Range<Int>?) {
+        let expected = Int(probe * scale)
+        var best: (point: CGPoint, band: Range<Int>?, rows: Int)?
+        for point in points {
+            _ = CGWarpMouseCursorPosition(point)
+            let column = Scrolling.column(of: point, in: frame)
+            guard let start = await shot() else { continue }
+            scroll(by: probe, at: point)
+            try? await Task.sleep(nanoseconds: settle / 2)
+            guard let up = await shot() else { continue }
+            scroll(by: -probe, at: point)
+            try? await Task.sleep(nanoseconds: settle / 2)
+            guard let back = await shot() else { continue }
+            scroll(by: -probe, at: point)
+            try? await Task.sleep(nanoseconds: settle / 2)
+            guard let down = await shot() else { continue }
+            scroll(by: probe, at: point)
+            try? await Task.sleep(nanoseconds: settle / 2)
+            // Scrolled up, the view before follows the one after.
+            let rise = Scrolling.distance(from: up, to: start, around: column, expected: expected)
+            let fall = Scrolling.distance(from: back, to: down, around: column, expected: expected)
+            let farther = fall.rows >= rise.rows ? fall : rise
+            if best == nil || farther.rows > best!.rows {
+                best = (point, farther.band, farther.rows)
+            }
+            if farther.rows >= expected * 9 / 10 { break }
+        }
+        guard let best, best.rows > 1 else {
+            let first = points.first ?? Scrolling.restingPoint(in: frame)
+            _ = CGWarpMouseCursorPosition(first)
+            return (first, nil)
+        }
+        _ = CGWarpMouseCursorPosition(best.point)
+        return (best.point, best.band)
     }
 
     /// Until the shortcut's keys are let go, a second at most.
@@ -312,6 +368,46 @@ enum Scrolling {
             moves += 1
         }
         return point
+    }
+
+    /// Where to try scrolling a window, in turn: for a whole page, first
+    /// the resting point, where a page's own boxes seldom are; for a chat,
+    /// first the pointer when it is over the window, since that is likely
+    /// the conversation. Then a little right of the middle, where a chat
+    /// usually is past a list of chats, then left of it. No two closer than
+    /// 40 points.
+    static func candidates(in frame: CGRect, pointer: CGPoint?, chat: Bool) -> [CGPoint] {
+        let resting = restingPoint(in: frame)
+        let mine = pointer.flatMap { frame.insetBy(dx: 40, dy: 80).contains($0) ? $0 : nil }
+            .map { CGPoint(x: $0.x.rounded(), y: $0.y.rounded()) }
+        let right = CGPoint(x: (frame.minX + frame.width * 0.6).rounded(), y: (frame.minY + frame.height * 0.5).rounded())
+        let left = CGPoint(x: (frame.minX + frame.width * 0.35).rounded(), y: (frame.minY + frame.height * 0.55).rounded())
+        let order = chat ? [mine, right, left, resting] : [resting, mine, right, left]
+        var points: [CGPoint] = []
+        for case let point? in order where !points.contains(where: { hypot($0.x - point.x, $0.y - point.y) < 40 }) {
+            points.append(point)
+        }
+        return points
+    }
+
+    /// Which column of `PageStitch`'s samples a point over the window is in.
+    static func column(of point: CGPoint, in frame: CGRect) -> Int {
+        guard frame.width > 0 else { return 0 }
+        let column = Int(((point.x - frame.minX) / frame.width * CGFloat(PageStitch.samples)).rounded(.down))
+        return min(max(column, 0), PageStitch.samples - 1)
+    }
+
+    /// How far the part under `column` moved from one view to the next,
+    /// in rows, and which columns moved: zero and nil when nothing did; one
+    /// row when something changed but no move fits, as when it changed by
+    /// itself. `expected` is how far it was asked to move.
+    static func distance(from a: PageStitch.Rows, to b: PageStitch.Rows, around column: Int,
+                         expected: Int) -> (rows: Int, band: Range<Int>?) {
+        guard let band = PageStitch.band(a, b, around: column), band.count >= 4 else { return (0, nil) }
+        let step = PageStitch.step(from: PageStitch.columns(a, band), to: PageStitch.columns(b, band),
+                                   expected: expected)
+        guard let step else { return (1, band) }
+        return (step.shift, step.shift > 0 ? band : nil)
     }
 
     /// An AppKit frame, counted from the bottom left of the main screen, as

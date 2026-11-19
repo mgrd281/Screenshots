@@ -87,21 +87,24 @@ final class ChatCapture {
         // turn the scrolling into a zoom.
         await FullPage.waitForKeysUp()
 
-        // The pointer rests over the chat, clear of Snapfly's own windows,
-        // so the scrolling reaches the conversation itself; it goes back
-        // where it was afterwards.
-        let pointer = CGEvent(source: nil)?.location
-        let own = NSApp.windows.filter(\.isVisible).map { Scrolling.topLeft($0.frame, screenHeight: top) }
-        let over = Scrolling.clear(ChatScroll.restingPoint(in: target.frame, pointer: pointer), of: own)
-        _ = CGWarpMouseCursorPosition(over)
-        defer { if let pointer { _ = CGWarpMouseCursorPosition(pointer) } }
-
         func shot() async -> (image: CGImage, rows: PageStitch.Rows)? {
             guard let image = try? await SCScreenshotManager.captureImage(contentFilter: still.filter,
                                                                           configuration: still.config),
                   let rows = PageStitch.rows(of: image) else { return nil }
             return (image, rows)
         }
+
+        // The pointer rests over the conversation, clear of Snapfly's own
+        // windows, so the scrolling reaches it rather than the page around
+        // it: where it scrolls the farthest, tried from the pointer and the
+        // middle. It goes back where it was afterwards.
+        let pointer = CGEvent(source: nil)?.location
+        defer { if let pointer { _ = CGWarpMouseCursorPosition(pointer) } }
+        let points = Scrolling.candidates(in: target.frame, pointer: pointer, chat: true)
+            .map { FullPage.clearOfOwnWindows($0) }
+        let over = await FullPage.findScroller(among: points, in: target.frame,
+                                               scale: CGFloat(still.filter.pointPixelScale),
+                                               shot: { await shot()?.rows }).point
         func wait(_ nanoseconds: UInt64 = Self.settle) async {
             try? await Task.sleep(nanoseconds: nanoseconds)
         }
@@ -242,25 +245,14 @@ final class ChatCapture {
     }
 }
 
-/// How a chat is scrolled for its pictures and its video: from where, how
-/// far at a time, how smoothly, and how its bottom is told.
+/// How a chat is scrolled for its pictures and its video: how far at a
+/// time, how smoothly, and how its bottom is told. Where is `Scrolling`'s.
 enum ChatScroll {
     /// How long one turn of the glide waits for the next: sixty a second,
     /// as a screen shows them.
     static let frameTime: UInt64 = 16_000_000
     /// How many turns one glide takes: about seven tenths of a second.
     static let glideTurns = 42
-
-    /// Where the pointer rests to scroll a chat: where it already is, when
-    /// that is over the window, since that is likely the conversation; else
-    /// a little right of the middle, where the conversation usually is, past
-    /// a list of chats on the left. On whole points, as a pointer is.
-    static func restingPoint(in frame: CGRect, pointer: CGPoint?) -> CGPoint {
-        if let pointer, frame.insetBy(dx: 40, dy: 80).contains(pointer) {
-            return CGPoint(x: pointer.x.rounded(), y: pointer.y.rounded())
-        }
-        return CGPoint(x: (frame.minX + frame.width * 0.6).rounded(), y: (frame.minY + frame.height * 0.5).rounded())
-    }
 
     /// How far each glide goes, in points: well under half the window,
     /// since a chat's own box is usually shorter than the window, with its
