@@ -102,9 +102,10 @@ final class ChatCapture {
         defer { if let pointer { _ = CGWarpMouseCursorPosition(pointer) } }
         let points = Scrolling.candidates(in: target.frame, pointer: pointer, chat: true)
             .map { FullPage.clearOfOwnWindows($0) }
-        let over = await FullPage.findScroller(among: points, in: target.frame,
-                                               scale: CGFloat(still.filter.pointPixelScale),
-                                               shot: { await shot()?.rows }).point
+        let scale = CGFloat(still.filter.pointPixelScale)
+        let found = await FullPage.findScroller(among: points, in: target.frame, scale: scale,
+                                                shot: { await shot()?.rows })
+        let over = found.point
         func wait(_ nanoseconds: UInt64 = Self.settle) async {
             try? await Task.sleep(nanoseconds: nanoseconds)
         }
@@ -139,35 +140,59 @@ final class ChatCapture {
         } catch {
             log.error("Could not record the chat: \(error.localizedDescription, privacy: .public)")
         }
-        await wait(600_000_000)
+        await wait(ChatScroll.hold)
 
-        // Most of a view at a time, so each picture overlaps the last and no
-        // message falls between two; glided, so the video is smooth. The
-        // bottom is where a glide no longer moves the chat.
-        let step = ChatScroll.step(forHeight: target.frame.height)
+        // The chat's box at a time, less a line, so no two pictures show the
+        // same messages and none falls between two; glided, so the video is
+        // smooth. Unsure how tall the box is, less at a time.
+        let step = found.span > 0 ? ChatScroll.step(forBox: CGFloat(found.span) / scale)
+                                  : ChatScroll.step(forHeight: target.frame.height)
+        let asked = Int(CGFloat(step) * scale)
+        let column = Scrolling.column(of: over, in: target.frame)
         var pictures: [URL] = []
-        var previous: PageStitch.Rows?
         var cut = false
-        while !stopAsked {
-            guard let view = await shot() else { break }
-            if let previous, !ChatScroll.moved(previous, view.rows) { break }
-            if let url = await save(view.image, number: pictures.count + 1, stamp: stamp, from: target.frame) {
+        // How many rows stay above the box while it scrolls, like a
+        // toolbar and the chat's header, from its first glide.
+        var boxTop: Int?
+        func take(_ image: CGImage) async {
+            if let url = await save(image, number: pictures.count + 1, stamp: stamp, from: target.frame) {
                 pictures.append(url)
             }
-            previous = view.rows
-            if pictures.count >= Self.maxViews {
-                cut = true
-                break
+        }
+        if var view = await shot() {
+            while true {
+                await take(view.image)
+                if stopAsked { break }
+                if pictures.count >= Self.maxViews {
+                    cut = true
+                    break
+                }
+                for piece in ChatScroll.glide(-step) {
+                    guard !stopAsked else { break }
+                    FullPage.scroll(by: CGFloat(piece), at: over)
+                    await wait(ChatScroll.frameTime)
+                }
+                await wait()
+                guard let next = await shot() else { break }
+                let measured = Scrolling.distance(from: view.rows, to: next.rows, around: column, expected: asked)
+                let moved = measured.rows
+                // Nothing moved: the picture before was the bottom.
+                if moved == 0 { break }
+                // Only the page around the box moved, its header and all,
+                // once the box was at its bottom: the same messages again.
+                if let boxTop, ChatScroll.onlyThePageMoved(top: measured.top, boxTop: boxTop, moved: moved) { break }
+                if boxTop == nil, moved > 1 { boxTop = measured.top }
+                view = next
+                // Less than asked: this is the bottom, and the last picture.
+                // The video ends here, with no turn more to find out.
+                if ChatScroll.reachedBottom(moved: moved, asked: asked) {
+                    await take(view.image)
+                    break
+                }
             }
-            for piece in ChatScroll.glide(-step) {
-                guard !stopAsked else { break }
-                FullPage.scroll(by: CGFloat(piece), at: over)
-                await wait(ChatScroll.frameTime)
-            }
-            await wait()
         }
         // The last message held a moment at the end of the video.
-        await wait(700_000_000)
+        await wait(ChatScroll.hold)
 
         var video: URL?
         if let recorder, let movie {
@@ -253,13 +278,40 @@ enum ChatScroll {
     static let frameTime: UInt64 = 16_000_000
     /// How many turns one glide takes: about seven tenths of a second.
     static let glideTurns = 42
+    /// How long the video holds the first and the last view: long enough to
+    /// see them, short enough to end as soon as the chat does.
+    static let hold: UInt64 = 300_000_000
+    /// How much of the box two pictures share, in points: about a line, so
+    /// one cut at the bottom edge shows whole in the next.
+    static let overlap: CGFloat = 32
 
-    /// How far each glide goes, in points: well under half the window,
-    /// since a chat's own box is usually shorter than the window, with its
-    /// header above and the message box below, and no message may be
-    /// skipped. Never less than 80.
+    /// How far each glide goes when the box's height is not known, in
+    /// points: well under half the window, since a chat's own box is usually
+    /// shorter than the window, with its header above and the message box
+    /// below, and no message may be skipped. Never less than 80.
     static func step(forHeight height: CGFloat) -> Int {
         max(80, Int(((height - 140) * 0.4).rounded()))
+    }
+
+    /// How far each glide goes when the box's height is known: the box,
+    /// less a line. Never less than 80.
+    static func step(forBox height: CGFloat) -> Int {
+        max(80, Int((height - overlap).rounded(.down)))
+    }
+
+    /// Whether a glide that moved the chat this far, of what was asked,
+    /// reached its bottom: a tenth short or more. Both in rows.
+    static func reachedBottom(moved: Int, asked: Int) -> Bool {
+        moved < asked * 9 / 10
+    }
+
+    /// Whether a glide moved the page around the chat's box rather than the
+    /// box: it moved as one, with the rows above the box that stayed while
+    /// the box scrolled, like its header, so fewer rows stayed at the top.
+    /// A glide that moved both, the box to its bottom and the page the
+    /// rest, fits no one move and is not this.
+    static func onlyThePageMoved(top: Int, boxTop: Int, moved: Int) -> Bool {
+        moved > 1 && top + 12 < boxTop
     }
 
     /// A scroll of this many points as `turns` turns of the wheel that start

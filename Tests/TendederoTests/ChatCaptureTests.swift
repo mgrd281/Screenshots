@@ -12,6 +12,30 @@ final class ChatCaptureTests: XCTestCase {
         XCTAssertEqual(ChatScroll.step(forHeight: 150), 80)
     }
 
+    func testAKnownBoxIsScrolledByItsHeightLessALine() {
+        XCTAssertEqual(ChatScroll.step(forBox: 432), 400)
+        XCTAssertEqual(ChatScroll.step(forBox: 432.9), 400)
+        // A tiny box still moves.
+        XCTAssertEqual(ChatScroll.step(forBox: 50), 80)
+    }
+
+    func testTheBottomIsWhereAGlideFallsShort() {
+        XCTAssertFalse(ChatScroll.reachedBottom(moved: 800, asked: 800))
+        XCTAssertFalse(ChatScroll.reachedBottom(moved: 721, asked: 800))
+        XCTAssertTrue(ChatScroll.reachedBottom(moved: 719, asked: 800))
+        XCTAssertTrue(ChatScroll.reachedBottom(moved: 1, asked: 800))
+    }
+
+    func testThePageMovingAroundTheBoxIsNotANewPicture() {
+        // The header above the box moved too: only the page moved.
+        XCTAssertTrue(ChatScroll.onlyThePageMoved(top: 30, boxTop: 70, moved: 50))
+        // The box scrolled, its header stayed.
+        XCTAssertFalse(ChatScroll.onlyThePageMoved(top: 70, boxTop: 70, moved: 300))
+        XCTAssertFalse(ChatScroll.onlyThePageMoved(top: 62, boxTop: 70, moved: 300))
+        // Something changed but no one move fits, as when both moved.
+        XCTAssertFalse(ChatScroll.onlyThePageMoved(top: 0, boxTop: 70, moved: 1))
+    }
+
     func testAGlideAddsUpAndIsSlowAtBothEnds() {
         let pieces = ChatScroll.glide(-304)
         XCTAssertEqual(pieces.reduce(0) { $0 + Int($1) }, -304)
