@@ -221,11 +221,14 @@ final class FullPage {
     /// the farthest, and the columns that scrolled there: the page itself,
     /// or a box of its own, like a chat's, beside parts that stay put. The
     /// first that moves as far as asked wins at once; when none moves, the
-    /// first, with no columns. `scale` is pixels a point in the views.
+    /// first, with no columns. Also how tall the part that scrolls is, in
+    /// rows, or zero when that is not sure. `scale` is pixels a point in the
+    /// views.
     static func findScroller(among points: [CGPoint], in frame: CGRect, scale: CGFloat,
-                             shot: () async -> PageStitch.Rows?) async -> (point: CGPoint, band: Range<Int>?) {
+                             shot: () async -> PageStitch.Rows?) async
+        -> (point: CGPoint, band: Range<Int>?, span: Int) {
         let expected = Int(probe * scale)
-        var best: (point: CGPoint, band: Range<Int>?, rows: Int)?
+        var best: (point: CGPoint, band: Range<Int>?, rows: Int, span: Int)?
         for point in points {
             _ = CGWarpMouseCursorPosition(point)
             let column = Scrolling.column(of: point, in: frame)
@@ -246,17 +249,17 @@ final class FullPage {
             let fall = Scrolling.distance(from: back, to: down, around: column, expected: expected)
             let farther = fall.rows >= rise.rows ? fall : rise
             if best == nil || farther.rows > best!.rows {
-                best = (point, farther.band, farther.rows)
+                best = (point, farther.band, farther.rows, farther.span)
             }
             if farther.rows >= expected * 9 / 10 { break }
         }
         guard let best, best.rows > 1 else {
             let first = points.first ?? Scrolling.restingPoint(in: frame)
             _ = CGWarpMouseCursorPosition(first)
-            return (first, nil)
+            return (first, nil, 0)
         }
         _ = CGWarpMouseCursorPosition(best.point)
-        return (best.point, best.band)
+        return (best.point, best.band, best.span)
     }
 
     /// Until the shortcut's keys are let go, a second at most.
@@ -400,14 +403,23 @@ enum Scrolling {
     /// How far the part under `column` moved from one view to the next,
     /// in rows, and which columns moved: zero and nil when nothing did; one
     /// row when something changed but no move fits, as when it changed by
-    /// itself. `expected` is how far it was asked to move.
+    /// itself. `expected` is how far it was asked to move. With it, how
+    /// tall the part that moves is, in rows, between what stays above and
+    /// below it, like a chat's box between its header and its message box;
+    /// zero when that is not sure, as when what stays is too tall to tell;
+    /// and how many rows at the top stayed, like a toolbar and a header.
     static func distance(from a: PageStitch.Rows, to b: PageStitch.Rows, around column: Int,
-                         expected: Int) -> (rows: Int, band: Range<Int>?) {
-        guard let band = PageStitch.band(a, b, around: column), band.count >= 4 else { return (0, nil) }
-        let step = PageStitch.step(from: PageStitch.columns(a, band), to: PageStitch.columns(b, band),
-                                   expected: expected)
-        guard let step else { return (1, band) }
-        return (step.shift, step.shift > 0 ? band : nil)
+                         expected: Int) -> (rows: Int, band: Range<Int>?, span: Int, top: Int) {
+        guard let band = PageStitch.band(a, b, around: column), band.count >= 4 else { return (0, nil, 0, 0) }
+        let rows = PageStitch.columns(a, band)
+        let step = PageStitch.step(from: rows, to: PageStitch.columns(b, band), expected: expected)
+        guard let step else { return (1, band, 0, 0) }
+        guard step.shift > 0 else { return (0, nil, 0, 0) }
+        // Bars that stay are found up to a third of the window; one that
+        // tall may be taller still, and the box shorter than it seems.
+        let most = rows.count * 35 / 100
+        let sure = step.top < most && step.bottom < most
+        return (step.shift, band, sure ? rows.count - step.top - step.bottom : 0, step.top)
     }
 
     /// An AppKit frame, counted from the bottom left of the main screen, as

@@ -101,6 +101,56 @@ final class FullPageTests: XCTestCase {
         XCTAssertNil(still.band)
     }
 
+    /// A page in a window: a toolbar of 30 rows that never moves, then the
+    /// page scrolled `page` rows: a header of 40, a chat's box of 250
+    /// scrolled `box` rows inside, then its message box and the page's foot.
+    private func boxedPage(page: Int, box: Int) -> PageStitch.Rows {
+        let toolbar: PageStitch.Rows = (0..<30).map { (i: Int) -> [UInt8] in pattern(i, 1, 1, 0, 30, plus: 220) }
+        let header: PageStitch.Rows = (0..<40).map { (i: Int) -> [UInt8] in pattern(i, 37, 5, 3, 190) }
+        let messages: PageStitch.Rows = (0..<250).map { (i: Int) -> [UInt8] in pattern(box + i, 131, 17, 0, 200) }
+        let foot: PageStitch.Rows = (0..<300).map { (i: Int) -> [UInt8] in pattern(i, 89, 11, 7, 180) }
+        let content: PageStitch.Rows = header + messages + foot
+        return toolbar + Array(content[page..<(page + 370)])
+    }
+
+    /// Row `i` of a pattern: each column's sample is
+    /// `(i * down + column * across + start) % range + plus`.
+    private func pattern(_ i: Int, _ down: Int, _ across: Int, _ start: Int, _ range: Int,
+                         plus: Int = 0) -> [UInt8] {
+        var row: [UInt8] = []
+        for j in 0..<PageStitch.samples {
+            let value: Int = i * down + j * across + start
+            row.append(UInt8(value % range + plus))
+        }
+        return row
+    }
+
+    func testTheBoxsHeightIsWhatMovesBetweenWhatStays() {
+        let moved = Scrolling.distance(from: boxedPage(page: 0, box: 0), to: boxedPage(page: 0, box: 120),
+                                       around: 20, expected: 120)
+        XCTAssertEqual(moved.rows, 120)
+        XCTAssertEqual(moved.top, 70)
+        XCTAssertEqual(moved.span, 250)
+    }
+
+    func testThePageMovingAroundTheBoxMovesTheHeaderToo() {
+        let moved = Scrolling.distance(from: boxedPage(page: 0, box: 250), to: boxedPage(page: 50, box: 250),
+                                       around: 20, expected: 120)
+        XCTAssertEqual(moved.rows, 50)
+        XCTAssertEqual(moved.top, 30)
+        XCTAssertTrue(ChatScroll.onlyThePageMoved(top: moved.top, boxTop: 70, moved: moved.rows))
+    }
+
+    func testTheBoxToItsBottomAndThePageTheRestIsNoOneMove() {
+        // The box's last 50 rows, then the page 30 more: no one move fits,
+        // so the picture is kept, as the last.
+        let both = Scrolling.distance(from: boxedPage(page: 0, box: 200), to: boxedPage(page: 30, box: 250),
+                                      around: 20, expected: 80)
+        XCTAssertEqual(both.rows, 1)
+        XCTAssertFalse(ChatScroll.onlyThePageMoved(top: both.top, boxTop: 70, moved: both.rows))
+        XCTAssertTrue(ChatScroll.reachedBottom(moved: both.rows, asked: 80))
+    }
+
     func testOnlyTheBoxsColumnsAreCompared() {
         let rows: PageStitch.Rows = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
         XCTAssertEqual(PageStitch.columns(rows, 1..<3), [[2, 3], [7, 8]])

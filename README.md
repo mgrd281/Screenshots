@@ -836,8 +836,11 @@ Choose Capture Whole Chat in the menu, and Snapfly scrolls the chat in front
 up to its first message, then down to its last, by itself. It takes a
 screenshot of each view on the way, each a picture of its own with the
 window as it is, numbered from the top, and records a short video of the
-same scroll, gliding as a hand would and pausing on each view. The video
-stops by itself when the chat no longer moves. The screenshots and the video
+same scroll, gliding as a hand would and pausing on each view. Each
+screenshot moves on by the height of the chat's box less a line, so no two
+show the same messages and none is missed; when the page around the box
+moves once the box is at its end, that view is left out. The video stops as
+soon as the last message shows. The screenshots and the video
 hang on the line together, ready to keep or send, like a conversation with
 a customer. It works in a browser and in any chat app that scrolls, also
 when the messages scroll in a box of their own inside the page: Snapfly
