@@ -1726,9 +1726,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// A symbol before an item of the menu bar's menu, drawn as the menu's
     /// text is.
     private static func icon(_ name: String, on item: NSMenuItem) {
-        let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)
-        image?.isTemplate = true
-        item.image = image
+        item.image = MenuSymbol.image(name)
     }
 
     /// The menu's switch for all of Hide private details. Off keeps the kinds

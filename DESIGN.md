@@ -944,7 +944,11 @@ apps.
 - **Menu bar menu.** In groups, by purpose, as Apple's menu bar extras are,
   each under a section header (`NSMenuItem.sectionHeader`, macOS 14), with a
   symbol before every line on every macOS (the owner's choice, November
-  2026; `MenuSymbol.swift` lists them).
+  2026; `MenuSymbol.swift` lists them). Each is drawn as a picture of its
+  own, 13 pt regular in an 18 × 16 pt box, a template, so it takes the
+  menu's colour and white on the highlight: macOS 27 hides symbols in
+  menus unless each item asks for them, and shows pictures. The photos'
+  menus draw their symbols the same way.
   - Permissions Needed… (`exclamationmark.triangle`) comes first of all, only
     once a permission was refused.
   - **What hangs**, the header saying how many ("3 photos on the line",

@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The icons before the menu bar menu's lines, and in the photos' menus,
+  show again on macOS 27, which hides menu symbols an app does not draw
+  itself.
 - Studio's inspector has pages, as tabs across its top: Edit, Draw,
   Captions, Appearance and Save. Choosing something brings its page, every
   key works on every page, and the keyboard button lists them all.

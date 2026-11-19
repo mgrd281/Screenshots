@@ -1,3 +1,5 @@
+import AppKit
+
 /// The symbols before the items of the menu bar's menu, one for each line,
 /// shown on every macOS (DESIGN.md, "Menu bar menu"). All are in SF Symbols
 /// on macOS 14, the oldest Snapfly runs on.
@@ -30,6 +32,28 @@ enum MenuSymbol {
     static let help = "questionmark.circle"
     static let introduction = "hand.wave"
     static let quit = "power"
+
+    /// A symbol as a menu shows it before a line: drawn as a picture of its
+    /// own, 18 × 16 points, in the menu's colour and white on the highlight.
+    /// macOS 27 hides symbols in menus unless each item asks for them, and
+    /// shows pictures, so a picture shows on every macOS.
+    static func image(_ name: String) -> NSImage? {
+        guard let symbol = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 13, weight: .regular)) else { return nil }
+        let image = NSImage(size: box, flipped: false) { rect in
+            let size = symbol.size
+            let scale = min(1, rect.width / max(size.width, 1), rect.height / max(size.height, 1))
+            let drawn = NSSize(width: size.width * scale, height: size.height * scale)
+            symbol.draw(in: NSRect(x: (rect.width - drawn.width) / 2, y: (rect.height - drawn.height) / 2,
+                                   width: drawn.width, height: drawn.height))
+            return true
+        }
+        image.isTemplate = true
+        return image
+    }
+
+    /// The room each symbol is drawn in, so the lines' words start together.
+    static let box = NSSize(width: 18, height: 16)
 
     static let all = [
         permissions, paste, showLine, hideLine, search, history, clear, screenshot, timer, wholePage, wholeChat,
