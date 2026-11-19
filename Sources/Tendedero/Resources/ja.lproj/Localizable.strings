@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "写真をiPhoneに送信できませんでした。";
 "Getting the screenshot from your Mac…" = "Macからスクリーンショットを受信しています…";
 "The screenshot from your Mac could not be received." = "Macからスクリーンショットを受信できませんでした。";
+"Let AI apps use Snapfly" = "AIアプリにSnapflyの使用を許可";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "このMacのClaudeは、最新のスクリーンショット、ロープ上の写真やPDF、または隠したいテキストをSnapflyに求めることができます。受け取るのは、「プライバシー」で選んだとおりに隠されたものだけです。";
+"Connect Again" = "もう一度接続";
+"Connect…" = "接続…";
+"Connect to Claude" = "Claudeに接続";
+"Connected. In Claude, ask about your newest screenshot." = "接続済みです。Claudeで最新のスクリーンショットについて尋ねてください。";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "このMacのClaudeにSnapflyを追加します。その後、Claudeを終了してもう一度開いてください。";
+"AI apps on this Mac" = "このMacのAIアプリ";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "ClaudeはこのMac上でSnapflyに尋ねます。Snapflyのサーバーを経由することはありません。Claudeが受け取ったものは、チャットのほかの内容と一緒にAnthropicに送られます。";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Claudeに接続しました。そこでSnapflyを使うには、Claudeを終了してもう一度開いてください。";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "このMacにClaudeがありません。claude.com/downloadから入手してから接続してください。";
+"Claude’s settings could not be changed, so nothing was." = "Claudeの設定を変更できなかったため、何も変更されていません。";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "SnapflyがClaudeの設定に自身を追加できるよう、「Claude」という名前のフォルダを選んでください。";

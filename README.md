@@ -1124,6 +1124,34 @@ cover it. Words in the screenshot are only read, never followed.
 
 <br>
 
+## Claude asks Snapfly.
+
+Claude on your Mac can ask Snapfly for what hangs on the line, and gets
+only what is covered. In Settings › AI Assistant, under AI apps on this Mac,
+click Connect… beside Connect to Claude: Snapfly adds itself to Claude's
+settings, beside anything else there, and turns on Let AI apps use Snapfly.
+Quit Claude and open it again, then ask it, say, to answer the customer in
+your newest screenshot. Claude can ask for:
+
+- **The newest screenshot**, as a picture, covered.
+- **What hangs on the line**, a numbered list, newest first, and **any photo
+  or PDF** from it by its number; a PDF comes as a picture of each page, up
+  to ten.
+- **Text to cover**: what you give Claude comes back with each private
+  detail as a tag of its kind, like [NAME 1] or [EMAIL 2], the same tag
+  wherever the same detail comes again, so a reply can still say who is who.
+
+What is covered is what you chose under Privacy, with your own details and
+rules, and everything with Cover Everything in AI Chats on. Claude starts
+Snapfly itself to ask it (Model Context Protocol, `Snapfly --mcp`), here on
+your Mac: nothing goes through a server of Snapfly's, and what Claude is
+given goes to Anthropic like the rest of your chat. Turn Let AI apps use
+Snapfly off, and Claude gets nothing more. The App Store edition asks you to
+choose Claude's folder first. ChatGPT takes only servers on the internet, so
+it is not connected yet, nor are the AI apps on the iPhone.
+
+<br>
+
 ## Private by design.
 
 No account. No server of its own. No analytics.
@@ -1134,7 +1162,8 @@ unless you choose originals too. On its own, the only thing it ever asks the int
 the time, from the PTB's atomic clock, while the time stamp is on. The AI
 assistant, once you give it your key, sends a covered screenshot to Claude or
 ChatGPT only when you choose Write a Reply, Explain or Order Details, and
-the words of each screenshot only with Find more turned on under Privacy.
+the words of each screenshot only with Find more turned on under Privacy. Claude on your Mac, once you connect it, gets covered copies and covered
+text only when it asks, and only while Let AI apps use Snapfly is on.
 
 <br>
 
@@ -1751,6 +1780,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `SettingFilmView.swift` | The symbol before each setting and its film in a popover, drawn and played once |
 | `SettingFilm.swift`, `FilmScene.swift` | A setting's film as plain values: its parts and their moments, and the scene most films share (the wallpaper, the menu bar, the line and where its photos hang) |
 | `SettingFilms.swift` | Every setting's film, one for each row in Settings that turns on, chooses or does something |
+| `MCPMode.swift`, `Shared/MCPServer.swift`, `Shared/TextCover.swift` | Snapfly answering Claude on this Mac (`Snapfly --mcp`): the newest screenshot, the line, any photo or PDF, and text, all covered |
+| `ClaudeConnect.swift` | Connect to Claude: adds Snapfly to Claude's settings, keeping everything else there |
 | `AIAssistantSettings.swift` | Settings › AI Assistant: the assistant tiles, the key checked with the provider, the model from its own list, and what it does |
 | `Support.swift` | Settings › Support: the introduction and Show Me How, which stays in Settings with a note when the line has nothing to show, the help page, an email about a problem or an idea with the details filled in, and those details to copy |
 | `LinePanel.swift` | The transparent strip along the top of the screen |

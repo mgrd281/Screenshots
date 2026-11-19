@@ -1,6 +1,8 @@
 import AppKit
 
 MainActor.assumeIsolated {
+    // Started by an AI app, like Claude, to answer it: no line, no menu.
+    if MCPMode.isRequested { MCPMode.run() }
     // Opens the folders the App Store edition was let into, before the line
     // brings back the photos in them.
     _ = AppDelegate.extraFolders

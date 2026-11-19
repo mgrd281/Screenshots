@@ -20,7 +20,7 @@ extension SettingFilm {
         case strongestProtection, findMoreWithAppleIntelligence, findMoreWithModel, coverEverythingInAIChats
         case checkBeforeSending, plainFileNames, coverWhatLandsInAFolder, testOnASample, bookkeepingFolder
         case monthlyPack, shopLogo, numbersBesideTheSendButton, assistant, assistantModel, writeAReply, explainWith
-        case orderDetails, keepScreenshotsInAWorkspaceFolder, workspaceFolder, newScreenshotsGoTo
+        case orderDetails, letAIAppsUseSnapfly, connectToClaude, keepScreenshotsInAWorkspaceFolder, workspaceFolder, newScreenshotsGoTo
         case orderAndVisibility, deleteTheWorkspace, syncWithYourIPhone, originalsToo, thisMac, connectWithACode
     }
 }
@@ -2303,6 +2303,45 @@ enum SettingFilms {
                 ]),
                 .click(0.3, 0.84, at: 1.0),
                 .show(.symbol("checkmark"), Box(0.14, 0.6, 0.1, 0.16), from: 2.1),
+            ])
+        case .letAIAppsUseSnapfly:
+            // An AI chat beside the line; a click turns the switch on, and the
+            // screenshot it is then given comes over covered.
+            return SettingFilm("puzzlepiece.extension", FilmScene.line(cards: 0) + [
+                .show(.card(2), FilmScene.slot(1), angle: FilmScene.tilt(1)),
+                .show(.window(.chat), Box(0.56, 0.68, 0.6, 0.56)),
+                .show(.symbol("sparkles"), Box(0.79, 0.5, 0.09, 0.144)),
+                .show(.toggle(on: false), Box(0.18, 0.62, 0.12, 0.09), to: 1.0),
+                .show(.toggle(on: true), Box(0.18, 0.62, 0.12, 0.09), from: 1.0),
+                Part(kind: .cursor, keys: [
+                    .init(0.3, Box(0.3, 0.9, 0.05, 0.08), opacity: 0),
+                    .init(0.45, Box(0.3, 0.9, 0.05, 0.08)),
+                    .init(0.85, Box(0.2, 0.64, 0.05, 0.08)),
+                    .init(1.1, Box(0.2, 0.64, 0.05, 0.08)),
+                    .init(1.3, Box(0.2, 0.64, 0.05, 0.08), opacity: 0),
+                ]),
+                .click(0.18, 0.62, at: 0.95),
+                .move(.card(2, covered: true), FilmScene.slot(1), Box(0.5, 0.72, 0.17, 0.2), start: 1.5, end: 2.3,
+                      appear: 1.4, angles: (FilmScene.tilt(1), 0)),
+            ])
+        case .connectToClaude:
+            // Snapfly's settings beside Claude's window; a click, and Snapfly's
+            // piece goes over to Claude, which shows a check.
+            return SettingFilm("point.3.connected.trianglepath.dotted", FilmScene.line(cards: 1) + [
+                .show(.window(.settings), Box(0.3, 0.66, 0.4, 0.46)),
+                .show(.window(.chat), Box(0.74, 0.66, 0.4, 0.46)),
+                .show(.symbol("sparkles"), Box(0.74, 0.5, 0.08, 0.128), to: 1.9),
+                .move(.symbol("puzzlepiece.extension"), Box(0.3, 0.7, 0.09, 0.144), Box(0.74, 0.7, 0.09, 0.144),
+                      start: 1.2, end: 1.9, appear: 0),
+                Part(kind: .cursor, keys: [
+                    .init(0.3, Box(0.4, 0.95, 0.05, 0.08), opacity: 0),
+                    .init(0.45, Box(0.4, 0.95, 0.05, 0.08)),
+                    .init(0.85, Box(0.31, 0.72, 0.05, 0.08)),
+                    .init(1.05, Box(0.31, 0.72, 0.05, 0.08)),
+                    .init(1.25, Box(0.31, 0.72, 0.05, 0.08), opacity: 0),
+                ]),
+                .click(0.3, 0.7, at: 0.95),
+                .show(.symbol("checkmark.circle.fill"), Box(0.74, 0.5, 0.08, 0.128), from: 2.1),
             ])
         case .connectWithACode:
             // The Mac shows the code and the iPhone types it in; a click on the

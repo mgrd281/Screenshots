@@ -2053,3 +2053,16 @@
 "The photo could not be sent to your iPhone." = "The photo could not be sent to your iPhone.";
 "Getting the screenshot from your Mac…" = "Getting the screenshot from your Mac…";
 "The screenshot from your Mac could not be received." = "The screenshot from your Mac could not be received.";
+"Let AI apps use Snapfly" = "Let AI apps use Snapfly";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy.";
+"Connect Again" = "Connect Again";
+"Connect…" = "Connect…";
+"Connect to Claude" = "Connect to Claude";
+"Connected. In Claude, ask about your newest screenshot." = "Connected. In Claude, ask about your newest screenshot.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards.";
+"AI apps on this Mac" = "AI apps on this Mac";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Connected to Claude. Quit Claude and open it again to use Snapfly there.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude is not on this Mac. Get it from claude.com/download, then connect.";
+"Claude’s settings could not be changed, so nothing was." = "Claude’s settings could not be changed, so nothing was.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Choose the folder named Claude, so Snapfly can add itself to Claude’s settings.";

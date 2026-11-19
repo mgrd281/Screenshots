@@ -39,6 +39,9 @@ enum Plan {
         /// Studio: recordings zoomed in on clicks and typing, with marks
         /// drawn over them for a while each, saved as a new video.
         case studio
+        /// Claude on the Mac asking Snapfly for what hangs on the line, and
+        /// for text, covered (`MCPMode`).
+        case aiApps
     }
 
     /// The day Pro begins. Until it is set, nothing is held back.

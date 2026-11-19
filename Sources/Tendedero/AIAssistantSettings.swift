@@ -19,6 +19,9 @@ struct AIAssistantPane: View {
     @State private var other = false
     /// Remove Key was clicked, and waits for its question.
     @State private var confirmsRemoval = false
+    /// Whether AI apps on this Mac, like Claude, may ask Snapfly (`MCPMode`).
+    @AppStorage("aiAppsMayAsk") private var aiAppsMayAsk = false
+    @State private var claudeConnected = false
 
     private static let otherTag = "\u{0}other"
 
@@ -90,9 +93,13 @@ struct AIAssistantPane: View {
                 }
                 .foregroundStyle(.secondary)
             }
+            aiAppsSection
         }
         .formStyle(.grouped)
-        .onAppear(perform: load)
+        .onAppear {
+            load()
+            claudeConnected = ClaudeConnect.isConnected
+        }
         .onChange(of: prefs.aiProvider) { _, _ in load() }
         .onChange(of: model) { _, value in AIAccount.setModel(value, for: provider) }
         // A provider shows a key only once, so it is not removed unasked.
@@ -102,6 +109,49 @@ struct AIAssistantPane: View {
         } message: {
             Text(String(format: L("This can't be undone: %@ shows a key only once, so you would make a new one there."),
                         provider.maker))
+        }
+    }
+
+    // MARK: AI apps on this Mac
+
+    /// Claude on this Mac asking Snapfly for what hangs on the line, or to
+    /// cover text, and getting only what is covered.
+    private var aiAppsSection: some View {
+        Section {
+            Toggle(isOn: $aiAppsMayAsk) {
+                SettingText(.letAIAppsUseSnapfly, L("Let AI apps use Snapfly"),
+                            L("Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy."))
+            }
+            LabeledContent {
+                SettingsButton(claudeConnected ? L("Connect Again") : L("Connect…")) { connectClaude() }
+            } label: {
+                SettingText(.connectToClaude, L("Connect to Claude"),
+                            claudeConnected
+                                ? L("Connected. In Claude, ask about your newest screenshot.")
+                                : L("Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards."))
+            }
+        } header: {
+            Text(L("AI apps on this Mac"))
+        } footer: {
+            Text(L("Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat."))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func connectClaude() {
+        switch ClaudeConnect.connect() {
+        case .connected:
+            aiAppsMayAsk = true
+            claudeConnected = true
+            Notice.show(L("Connected to Claude. Quit Claude and open it again to use Snapfly there."), done: true, lasting: 8)
+        case .notInstalled:
+            Notice.show(L("Claude is not on this Mac. Get it from claude.com/download, then connect."), lasting: 8) {
+                if let page = URL(string: "https://claude.com/download") { NSWorkspace.shared.open(page) }
+            }
+        case .failed:
+            Notice.show(L("Claude’s settings could not be changed, so nothing was."), lasting: 6)
+        case .cancelled:
+            break
         }
     }
 

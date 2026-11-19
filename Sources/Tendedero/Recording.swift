@@ -316,6 +316,8 @@ private final class ResumeOnce: @unchecked Sendable {
 /// would leave the user guessing.
 @MainActor
 enum Notice {
+    /// Nothing shows, as when Snapfly answers an AI app (`MCPMode`).
+    static var isSilent = false
     private static var badge: CaptureBadge?
     private static var hide: DispatchWorkItem?
     private static var current: UUID?
@@ -331,6 +333,7 @@ enum Notice {
     @discardableResult
     static func show(_ text: String, on screen: NSScreen? = nil, working: Bool = false, done: Bool = false,
                      lasting seconds: TimeInterval = 4, onClick: (() -> Void)? = nil) -> UUID {
+        if isSilent { return UUID() }
         hide?.cancel()
         badge?.orderOut(nil)
         let id = UUID()

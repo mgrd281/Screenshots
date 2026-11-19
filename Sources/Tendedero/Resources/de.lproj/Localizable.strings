@@ -2051,3 +2051,16 @@
 "The photo could not be sent to your iPhone." = "Das Foto konnte nicht an dein iPhone gesendet werden.";
 "Getting the screenshot from your Mac…" = "Bildschirmfoto wird vom Mac geholt …";
 "The screenshot from your Mac could not be received." = "Das Bildschirmfoto von deinem Mac konnte nicht empfangen werden.";
+"Let AI apps use Snapfly" = "KI-Apps Snapfly nutzen lassen";
+"Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy." = "Claude auf diesem Mac kann Snapfly nach dem neuesten Bildschirmfoto, einem Foto oder PDF auf der Leine oder nach Text zum Verdecken fragen. Es bekommt nur, was verdeckt ist, so wie du es unter Datenschutz gewählt hast.";
+"Connect Again" = "Erneut verbinden";
+"Connect…" = "Verbinden …";
+"Connect to Claude" = "Mit Claude verbinden";
+"Connected. In Claude, ask about your newest screenshot." = "Verbunden. Frag Claude nach deinem neuesten Bildschirmfoto.";
+"Adds Snapfly to Claude on this Mac. Quit and open Claude again afterwards." = "Fügt Snapfly zu Claude auf diesem Mac hinzu. Beende Claude danach und öffne es wieder.";
+"AI apps on this Mac" = "KI-Apps auf diesem Mac";
+"Claude asks Snapfly here on this Mac, never through a server of Snapfly’s. What Claude is given goes to Anthropic with the rest of your chat." = "Claude fragt Snapfly hier auf diesem Mac, nie über einen Server von Snapfly. Was Claude bekommt, geht mit dem Rest deines Chats an Anthropic.";
+"Connected to Claude. Quit Claude and open it again to use Snapfly there." = "Mit Claude verbunden. Beende Claude und öffne es wieder, um Snapfly dort zu nutzen.";
+"Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude ist nicht auf diesem Mac. Lade es von claude.com/download und verbinde dann.";
+"Claude’s settings could not be changed, so nothing was." = "Claudes Einstellungen konnten nicht geändert werden, also wurde nichts geändert.";
+"Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Wähle den Ordner namens Claude, damit Snapfly sich zu Claudes Einstellungen hinzufügen kann.";
