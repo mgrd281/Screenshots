@@ -1555,57 +1555,60 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Only once something was asked for and not given: nothing nags
         // about what was never needed.
         if Permissions.somethingDenied {
-            menu.addItem(ClosureMenuItem(L("Permissions Needed…"), symbol: "exclamationmark.triangle") { [weak self] in
+            menu.addItem(Self.item(L("Permissions Needed…"), MenuSymbol.permissions) { [weak self] in
                 self?.openPermissions()
             })
             menu.addItem(.separator())
         }
 
-        // First what hangs, then the main act: the photos picked, or the
-        // newest, into the app in front, as the send shortcut does.
+        // The line: what hangs, named over its group, then the main act, the
+        // photos picked or the newest into the app in front, and the rest of
+        // what is done with the line.
         let count = line.liveCount
-        let status = NSMenuItem(title: count == 0 ? L("Nothing on the line")
-                                : count == 1 ? L("One photo on the line")
-                                : String(format: L("%d photos on the line"), count),
-                                action: nil, keyEquivalent: "")
-        status.isEnabled = false
-        menu.addItem(status)
+        menu.addItem(.sectionHeader(title: count == 0 ? L("Nothing on the line")
+                                        : count == 1 ? L("One photo on the line")
+                                        : String(format: L("%d photos on the line"), count)))
         if let app = Paste.frontApp?.localizedName {
-            let sendItem = ClosureMenuItem(String(format: L("Paste into %@"), app), symbol: "paperplane") { [weak self] in
+            let sendItem = Self.item(String(format: L("Paste into %@"), app), MenuSymbol.paste) { [weak self] in
                 self?.line.pasteNewest()
             }
             Self.show(Shortcut.current(.send), on: sendItem)
             sendItem.isEnabled = count > 0
             menu.addItem(sendItem)
         }
-        menu.addItem(.separator())
-
-        // Settings at the top, where it is found at once, with the folder the
-        // screenshots are kept in.
-        menu.addItem(ClosureMenuItem(L("Settings…"), symbol: "gearshape", key: ",") { [weak self] in
-            self?.openSettings()
-        })
-        let workspaceOn = Workspace.shared.isOn
-        menu.addItem(ClosureMenuItem(workspaceOn ? L("Open Workspace") : L("Open screenshots folder"), symbol: "folder") { [weak self] in
-            guard let self else { return }
-            if workspaceOn { Workspace.shared.reveal() } else { NSWorkspace.shared.open(self.watcher.folder) }
-        })
+        let toggleItem = Self.item(isRevealed ? L("Hide line") : L("Show line"),
+                                   isRevealed ? MenuSymbol.hideLine : MenuSymbol.showLine) { [weak self] in
+            self?.toggle()
+        }
+        Self.show(Shortcut.current(.toggle), on: toggleItem)
+        menu.addItem(toggleItem)
+        let searchItem = Self.item(L("Search…"), MenuSymbol.search) { [weak self] in self?.openSearch() }
+        Self.show(Shortcut.current(.search), on: searchItem)
+        searchItem.isEnabled = count > 0
+        menu.addItem(searchItem)
+        let historyItem = Self.item(L("History…"), MenuSymbol.history, key: "y") { HistoryWindow.shared.show() }
+        historyItem.isEnabled = History.days != nil
+        menu.addItem(historyItem)
+        let clearItem = Self.item(L("Take everything down"), MenuSymbol.clear) { [weak self] in self?.line.clear() }
+        clearItem.isEnabled = count > 0
+        menu.addItem(clearItem)
         menu.addItem(.separator())
 
         // The ways onto the line.
+        menu.addItem(.sectionHeader(title: L("Capture")))
         if Recording.shared.isRecording {
-            let stopItem = ClosureMenuItem(L("Stop Recording"), symbol: "stop.circle") { Recording.shared.stop() }
+            let stopItem = Self.item(L("Stop Recording"), MenuSymbol.stop) { Recording.shared.stop() }
             Self.show(Shortcut.current(.record), on: stopItem)
             menu.addItem(stopItem)
         } else {
-            let captureItem = ClosureMenuItem(L("Take Screenshot"), symbol: "camera.viewfinder") {
+            let captureItem = Self.item(L("Take Screenshot"), MenuSymbol.screenshot) {
                 // Once the menu has faded, so it is not in the picture.
                 Capture.shared.start(after: 0.2)
             }
             Self.show(Shortcut.current(.capture), on: captureItem)
             menu.addItem(captureItem)
             let timerItem = NSMenuItem(title: L("Take Screenshot with Timer"), action: nil, keyEquivalent: "")
-            Self.symbol("timer", on: timerItem)
+            Self.icon(MenuSymbol.timer, on: timerItem)
             let seconds = NSMenu()
             for n in Capture.timerChoices {
                 seconds.addItem(ClosureMenuItem(Self.secondsTitle(n)) {
@@ -1614,23 +1617,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             timerItem.submenu = seconds
             menu.addItem(timerItem)
-            let pageItem = ClosureMenuItem(L("Capture Whole Page"), symbol: "scroll") {
-                FullPage.shared.start(after: 0.2)
-            }
+            let pageItem = Self.item(L("Capture Whole Page"), MenuSymbol.wholePage) { FullPage.shared.start(after: 0.2) }
             Self.show(Shortcut.current(.page), on: pageItem)
             menu.addItem(pageItem)
             // A chat from its first message to its last: a picture of each
             // view, and a video of the scroll that stops by itself.
             if ChatCapture.shared.isRunning {
-                menu.addItem(ClosureMenuItem(L("Stop Capturing the Chat"), symbol: "stop.circle") {
-                    ChatCapture.shared.stop()
-                })
+                menu.addItem(Self.item(L("Stop Capturing the Chat"), MenuSymbol.stop) { ChatCapture.shared.stop() })
             } else {
-                menu.addItem(ClosureMenuItem(L("Capture Whole Chat"), symbol: "bubble.left.and.text.bubble.right") {
+                menu.addItem(Self.item(L("Capture Whole Chat"), MenuSymbol.wholeChat) {
                     ChatCapture.shared.start(after: 0.2)
                 })
             }
-            let recordItem = ClosureMenuItem(L("Record Screen"), symbol: "record.circle") {
+            let recordItem = Self.item(L("Record Screen"), MenuSymbol.record) {
                 Capture.shared.start(after: 0.2, mode: .record)
             }
             Self.show(Shortcut.current(.record), on: recordItem)
@@ -1638,14 +1637,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         // A step-by-step guide, from the clicks that follow.
         if HowToRecorder.shared.isRecording {
-            menu.addItem(ClosureMenuItem(L("Finish Guide"), symbol: "stop.circle") { HowToRecorder.shared.finish() })
-            menu.addItem(ClosureMenuItem(L("Cancel Guide"), symbol: "xmark.circle") { HowToRecorder.shared.cancel() })
+            menu.addItem(Self.item(L("Finish Guide"), MenuSymbol.stop) { HowToRecorder.shared.finish() })
+            menu.addItem(Self.item(L("Cancel Guide"), MenuSymbol.cancel) { HowToRecorder.shared.cancel() })
         } else {
-            menu.addItem(ClosureMenuItem(L("Record a Guide"), symbol: "list.number") { HowToRecorder.shared.start() })
+            menu.addItem(Self.item(L("Record a Guide"), MenuSymbol.guide) { HowToRecorder.shared.start() })
             let guides = HowToStore.recent()
             if !guides.isEmpty {
                 let recentItem = NSMenuItem(title: L("Recent Guides"), action: nil, keyEquivalent: "")
-                Self.symbol("clock", on: recentItem)
+                Self.icon(MenuSymbol.recentGuides, on: recentItem)
                 let list = NSMenu()
                 for guide in guides.prefix(10) {
                     list.addItem(ClosureMenuItem(HowToRender.name(of: guide)) { HowToEditor.shared.open(guide) })
@@ -1656,79 +1655,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         menu.addItem(.separator())
 
-        // Photos and PDFs from anywhere on the Mac, to send protected.
-        menu.addItem(ClosureMenuItem(L("Add Files…"), symbol: "folder.badge.plus", key: "o") { [weak self] in
-            self?.chooseFiles()
+        // Photos and PDFs from anywhere on the Mac, to send protected; many
+        // covered at once; and the folder the screenshots are kept in.
+        menu.addItem(.sectionHeader(title: L("Files")))
+        menu.addItem(Self.item(L("Add Files…"), MenuSymbol.addFiles, key: "o") { [weak self] in self?.chooseFiles() })
+        menu.addItem(Self.item(L("Cover Files…"), MenuSymbol.coverFiles) { CoverFiles.shared.open() })
+        let workspaceOn = Workspace.shared.isOn
+        menu.addItem(Self.item(workspaceOn ? L("Open Workspace") : L("Open screenshots folder"), MenuSymbol.folder) { [weak self] in
+            guard let self else { return }
+            if workspaceOn { Workspace.shared.reveal() } else { NSWorkspace.shared.open(self.watcher.folder) }
         })
-        // Many PDFs and pictures covered at once, each saved as a copy.
-        menu.addItem(ClosureMenuItem(L("Cover Files…"), symbol: "doc.on.doc") { CoverFiles.shared.open() })
         menu.addItem(.separator())
 
-        // The line itself.
-        let toggleItem = ClosureMenuItem(isRevealed ? L("Hide line") : L("Show line"),
-                                         symbol: isRevealed ? "arrow.up.to.line" : "arrow.down.to.line") { [weak self] in
-            self?.toggle()
-        }
-        Self.show(Shortcut.current(.toggle), on: toggleItem)
-        menu.addItem(toggleItem)
-
-        let searchItem = ClosureMenuItem(L("Search…"), symbol: "magnifyingglass") { [weak self] in self?.openSearch() }
-        Self.show(Shortcut.current(.search), on: searchItem)
-        searchItem.isEnabled = count > 0
-        menu.addItem(searchItem)
-
-        let historyItem = ClosureMenuItem(L("History…"), symbol: "clock.arrow.circlepath", key: "y") {
-            HistoryWindow.shared.show()
-        }
-        historyItem.isEnabled = History.days != nil
-        menu.addItem(historyItem)
-
-        let clearItem = ClosureMenuItem(L("Take everything down"), symbol: "eye.slash") { [weak self] in
-            self?.line.clear()
-        }
-        clearItem.isEnabled = count > 0
-        menu.addItem(clearItem)
-        menu.addItem(.separator())
-
-        // The switches: what leaves covered, the button at the edge, and the
-        // desktop's icons.
-        let privacyItem = ClosureMenuItem(L("Hide private details"), symbol: "hand.raised") { [weak self] in
+        // The switches, each with its check: what leaves covered, the button
+        // at the edge, and the desktop's icons.
+        menu.addItem(.sectionHeader(title: L("Options")))
+        let privacyItem = Self.item(L("Hide private details"), MenuSymbol.privacy) { [weak self] in
             self?.togglePrivateDetails()
         }
         privacyItem.state = PrivateDetails.hidden ? .on : .off
         menu.addItem(privacyItem)
-        let buttonItem = ClosureMenuItem(L("Screenshot Button"), symbol: "camera.circle") { [weak self] in
+        let buttonItem = Self.item(L("Screenshot Button"), MenuSymbol.button) { [weak self] in
             CaptureButton.isEnabled.toggle()
             self?.preferences?.refresh()
         }
         buttonItem.state = CaptureButton.isEnabled ? .on : .off
         menu.addItem(buttonItem)
         // The wallpaper over the desktop icons, for clean screenshots.
-        let iconsItem = ClosureMenuItem(L("Hide Desktop Icons"), symbol: "menubar.dock.rectangle") {
-            DesktopIcons.shared.toggle()
-        }
+        let iconsItem = Self.item(L("Hide Desktop Icons"), MenuSymbol.desktopIcons) { DesktopIcons.shared.toggle() }
         iconsItem.state = DesktopIcons.isHidden ? .on : .off
         menu.addItem(iconsItem)
         menu.addItem(.separator())
 
-        // Help, then the newest version, just above Quit.
+        // The app itself, as Apple's menu bar extras end: Settings, the
+        // newest version, help, the introduction, then Quit last.
+        menu.addItem(Self.item(L("Settings…"), MenuSymbol.settings, key: ",") { [weak self] in self?.openSettings() })
+        menu.addItem(Self.item(L("Check for Updates…"), MenuSymbol.updates) { Updater.check() })
+        menu.addItem(Self.item(L("Help & Support…"), MenuSymbol.help) { NSWorkspace.shared.open(AppDelegate.supportURL) })
         // Ended before its end, it says it goes on from there.
         let introduction = GuideProgress.load().canContinue ? L("Continue Introduction") : L("Introduction")
-        menu.addItem(ClosureMenuItem(introduction, symbol: "hand.wave") {
+        menu.addItem(Self.item(introduction, MenuSymbol.introduction) {
             // Once the menu has gone, so the first step finds the icon free.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { Guide.shared.startIntroduction() }
         })
-        menu.addItem(ClosureMenuItem(L("Help & Support…"), symbol: "questionmark.circle") {
-            NSWorkspace.shared.open(AppDelegate.supportURL)
-        })
-        menu.addItem(ClosureMenuItem(L("Check for Updates…"), symbol: "arrow.down.circle") {
-            Updater.check()
-        })
-
         menu.addItem(.separator())
-        menu.addItem(ClosureMenuItem(L("Quit Snapfly"), key: "q") {
-            NSApp.terminate(nil)
-        })
+        menu.addItem(Self.item(L("Quit Snapfly"), MenuSymbol.quit, key: "q") { NSApp.terminate(nil) })
     }
 
     /// The introduction's first step asks for this menu.
@@ -1743,12 +1714,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         item.keyEquivalentModifierMask = shortcut.modifiers
     }
 
-    /// A symbol on a plain menu item, from macOS 26 on, as ClosureMenuItem
-    /// gives its own.
-    private static func symbol(_ name: String, on item: NSMenuItem) {
-        if #available(macOS 26, *) {
-            item.image = NSImage(systemSymbolName: name, accessibilityDescription: nil)
-        }
+    /// An item of the menu bar's menu, with its symbol on every macOS: the
+    /// menu shows one before each line, as the owner asked (November 2026).
+    private static func item(_ title: String, _ symbol: String, key: String = "",
+                             handler: @escaping () -> Void) -> ClosureMenuItem {
+        let item = ClosureMenuItem(title, key: key, handler: handler)
+        icon(symbol, on: item)
+        return item
+    }
+
+    /// A symbol before an item of the menu bar's menu, drawn as the menu's
+    /// text is.
+    private static func icon(_ name: String, on item: NSMenuItem) {
+        let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)
+        image?.isTemplate = true
+        item.image = image
     }
 
     /// The menu's switch for all of Hide private details. Off keeps the kinds

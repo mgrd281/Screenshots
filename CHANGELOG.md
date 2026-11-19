@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The menu bar menu is in groups under headings (what hangs, Capture,
+  Files, Options), with an icon before every line, on every macOS.
 - Claude on your Mac can ask Snapfly for the newest screenshot, any photo
   or PDF on the line, or text to cover, and gets only what is covered, with
   details in text as tags like [NAME 1]. Connect it in Settings › AI

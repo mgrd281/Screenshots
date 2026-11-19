@@ -933,39 +933,43 @@ apps.
     gap; it goes once the line comes down. Both are in the template, so
     macOS colours them, and in the tip and the spoken label: "Snapfly, 4
     photos on the line, something new".
-- **Menu bar menu.** In groups, by purpose, as Apple's menu bar extras are.
-  - First what hangs, as a disabled line ("3 photos on the line", "Nothing
-    on the line"), and the main act: Paste into <the app in front>, with
-    the send shortcut, enabled while something hangs.
-  - Then Settings… (⌘,) and Open screenshots folder (Open Workspace while
-    it is on), at the top, where they are found at once.
-  - Then the ways onto the line: Take Screenshot, Take Screenshot with
-    Timer, Capture Whole Page, Record Screen (Stop Recording while it runs),
-    Record a Guide and Recent Guides.
-  - Then files from anywhere: Add Files… (⌘O) and Cover Files….
-  - Then the line: Show or Hide line, Search…, History…, Take everything
-    down; the last three enabled only when they can act.
-  - Then three switches with a checkmark: Hide private details, which keeps
-    the kinds chosen when turned off and brings them back when turned on
-    (the recommended ones when none were kept), Screenshot Button and Hide
-    Desktop Icons.
-  - Then the Introduction, Help & Support… (the website's support page, in
-    German or Arabic where the Mac speaks them) and Check for Updates…, just
-    above Quit, which comes last. The download edition checks and updates
+- **Menu bar menu.** In groups, by purpose, as Apple's menu bar extras are,
+  each under a section header (`NSMenuItem.sectionHeader`, macOS 14), with a
+  symbol before every line on every macOS (the owner's choice, November
+  2026; `MenuSymbol.swift` lists them).
+  - Permissions Needed… (`exclamationmark.triangle`) comes first of all, only
+    once a permission was refused.
+  - **What hangs**, the header saying how many ("3 photos on the line",
+    "Nothing on the line"): Paste into <the app in front> (`paperplane`),
+    with the send shortcut, enabled while something hangs; Show or Hide line
+    (`arrow.down.to.line` or `arrow.up.to.line`), Search… (`magnifyingglass`),
+    History… (`clock.arrow.circlepath`) and Take everything down
+    (`rectangle.stack.badge.minus`), the last three enabled only when they
+    can act.
+  - **Capture**: Take Screenshot (`camera.viewfinder`), Take Screenshot with
+    Timer (`timer`), Capture Whole Page (`rectangle.expand.vertical`),
+    Capture Whole Chat (`bubble.left.and.text.bubble.right`), Record Screen
+    (`record.circle`), Record a Guide (`list.bullet.clipboard`) and Recent
+    Guides (`clock`). What runs is stopped where it was started, after
+    `stop.circle`: Stop Recording, Stop Capturing the Chat, Finish Guide
+    (with Cancel Guide, `xmark.circle`).
+  - **Files**: Add Files… (⌘O, `plus.rectangle.on.folder`), Cover Files…
+    (`lock.doc`) and Open screenshots folder (Open Workspace while it is on,
+    `folder`).
+  - **Options**, three switches with a checkmark: Hide private details
+    (`hand.raised`), which keeps the kinds chosen when turned off and brings
+    them back when turned on (the recommended ones when none were kept),
+    Screenshot Button (`camera.circle`) and Hide Desktop Icons
+    (`menubar.dock.rectangle`).
+  - Then the app, as menu bar extras end: Settings… (⌘,, `gearshape`), Check
+    for Updates… (`arrow.triangle.2.circlepath`), Help & Support…
+    (`questionmark.circle`, the website's support page, in German or Arabic
+    where the Mac speaks them) and the Introduction (`hand.wave`), then Quit
+    Snapfly (⌘Q, `power`) last. The download edition checks and updates
     itself after a question; the App Store edition opens TestFlight for a
     test build, else the App Store's updates.
-  - Permissions Needed… comes first of all, only once a permission was
-    refused.
-  - SF Symbols on macOS 26 only, as the photo context menu: `paperplane`,
-    `camera.viewfinder`, `timer`, `scroll`,
-    `bubble.left.and.text.bubble.right` (Capture Whole Chat, `stop.circle`
-    while it runs), `record.circle` (`stop.circle` while recording), `folder.badge.plus`, `arrow.down.to.line` or
-    `arrow.up.to.line`, `magnifyingglass`, `clock.arrow.circlepath`,
-    `eye.slash`, `hand.raised`, `camera.circle`, `menubar.dock.rectangle`
-    (Hide Desktop Icons, a switch with a check like the two above it),
-    `gearshape`, `folder`,
-    `questionmark.circle`, `arrow.down.circle`. None on Quit, as in Apple's
-    menus.
+  - The symbols are templates, drawn in the menu's text colour. The photo
+    context menu keeps its symbols for macOS 26.
 - **Finder's Services menu.** Send Safely with Snapfly and Hide Private
   Details with Snapfly, for photos and PDFs, translated like the app
   (`ServicesMenu.strings`). Open With lists Snapfly as an alternative, never

@@ -2064,3 +2064,6 @@
 "Claude is not on this Mac. Get it from claude.com/download, then connect." = "このMacにClaudeがありません。claude.com/downloadから入手してから接続してください。";
 "Claude’s settings could not be changed, so nothing was." = "Claudeの設定を変更できなかったため、何も変更されていません。";
 "Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "SnapflyがClaudeの設定に自身を追加できるよう、「Claude」という名前のフォルダを選んでください。";
+"Capture" = "キャプチャ";
+"Files" = "ファイル";
+"Options" = "オプション";
