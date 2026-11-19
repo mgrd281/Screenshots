@@ -63,7 +63,7 @@ enum PhotoHandoff {
     private static func write(_ data: Data, to stream: OutputStream) -> Bool {
         var sent = 0
         while sent < data.count {
-            let wrote = data.withUnsafeBytes { buffer -> Int in
+            let wrote = data.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) -> Int in
                 guard let base = buffer.bindMemory(to: UInt8.self).baseAddress else { return -1 }
                 return stream.write(base + sent, maxLength: min(64 * 1024, data.count - sent))
             }

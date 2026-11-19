@@ -57,7 +57,7 @@ final class PhoneHandoff: NSObject, NSUserActivityDelegate {
     private func giveBackFront() {
         guard let before else { return }
         self.before = nil
-        if NSApp.isActive { before.activate() }
+        if NSApp.isActive { _ = before.activate(options: []) }
     }
 
     // MARK: The iPhone asks
