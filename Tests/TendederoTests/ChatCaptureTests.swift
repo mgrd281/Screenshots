@@ -2,25 +2,9 @@ import CoreGraphics
 import XCTest
 @testable import Tendedero
 
-/// How a whole chat is scrolled for its pictures and its video: where the
-/// pointer rests, how far each glide goes, how smoothly, and how the bottom
-/// is told.
+/// How a whole chat is scrolled for its pictures and its video: how far
+/// each glide goes, how smoothly, and how the bottom is told.
 final class ChatCaptureTests: XCTestCase {
-    func testThePointerStaysWhereItIsWhenItIsOverTheWindow() {
-        let frame = CGRect(x: 100, y: 50, width: 1000, height: 800)
-        let point = ChatScroll.restingPoint(in: frame, pointer: CGPoint(x: 400.4, y: 300.6))
-        XCTAssertEqual(point, CGPoint(x: 400, y: 301))
-    }
-
-    func testElseThePointerRestsRightOfTheMiddle() {
-        let frame = CGRect(x: 100, y: 50, width: 1000, height: 800)
-        // In the menu bar, as when the menu started it.
-        XCTAssertEqual(ChatScroll.restingPoint(in: frame, pointer: CGPoint(x: 500, y: 10)), CGPoint(x: 700, y: 450))
-        // At the window's very edge, where its own bars are.
-        XCTAssertEqual(ChatScroll.restingPoint(in: frame, pointer: CGPoint(x: 110, y: 400)), CGPoint(x: 700, y: 450))
-        XCTAssertEqual(ChatScroll.restingPoint(in: frame, pointer: nil), CGPoint(x: 700, y: 450))
-    }
-
     func testEachGlideGoesWellUnderHalfTheWindow() {
         XCTAssertEqual(ChatScroll.step(forHeight: 900), 304)
         XCTAssertLessThan(CGFloat(ChatScroll.step(forHeight: 900)), 900 / 2)

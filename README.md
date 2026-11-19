@@ -818,7 +818,10 @@ it is.
 Press ⌃⌥P, or choose Capture Whole Page in the menu, and Snapfly scrolls the
 window in front from top to bottom and joins what it sees into one long
 picture, with no seams: the toolbar and a site's sticky header appear once,
-at the top. It works in any browser and in any window that scrolls. It turns
+at the top. It works in any browser and in any window that scrolls, also
+where the content scrolls in a box of its own, like the messages of a
+ticket or a chat: before it starts, Snapfly tries a few places in the window
+and scrolls where the content moves the farthest. It turns
 the scroll wheel in small turns, as a hand would, and if the page does not
 follow the wheel, it presses Page Down instead. The picture hangs on the line
 like any screenshot, and with the time stamp on, it is stamped with the time
@@ -836,8 +839,11 @@ window as it is, numbered from the top, and records a short video of the
 same scroll, gliding as a hand would and pausing on each view. The video
 stops by itself when the chat no longer moves. The screenshots and the video
 hang on the line together, ready to keep or send, like a conversation with
-a customer. It works in a browser and in any chat app that scrolls; the
-pointer rests over the chat while it runs and goes back afterwards. Click
+a customer. It works in a browser and in any chat app that scrolls, also
+when the messages scroll in a box of their own inside the page: Snapfly
+tries the pointer and the middle of the window first and scrolls where the
+messages move. The pointer rests over the chat while it runs and goes back
+afterwards. Click
 the note above the Dock, or Stop Capturing the Chat in the menu, to stop
 early: what was taken until then is kept. A chat that fits in one view gives
 one screenshot and no video, and one longer than 40 views is cut there. It

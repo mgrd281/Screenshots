@@ -40,6 +40,39 @@ enum PageStitch {
         return differing * 10 <= a.count
     }
 
+    /// The columns, as samples, where two views differ: the part of the
+    /// window that scrolled between them, like a chat's own box beside a
+    /// list of chats that stays put. The run around `column`, bridging up
+    /// to three columns that stayed the same, like a margin in the box.
+    /// Nil when nothing changed at or beside `column`.
+    static func band(_ a: Rows, _ b: Rows, around column: Int) -> Range<Int>? {
+        guard a.count == b.count, let width = a.first?.count, width > 0,
+              a.allSatisfy({ $0.count == width }), b.allSatisfy({ $0.count == width }) else { return nil }
+        let changed = (0..<width).map { c in a.indices.contains { abs(Int(a[$0][c]) - Int(b[$0][c])) > 6 } }
+        let at = min(max(column, 0), width - 1)
+        guard let start = (0...3).flatMap({ [at - $0, at + $0] })
+            .first(where: { (0..<width).contains($0) && changed[$0] }) else { return nil }
+        var lower = start
+        var gap = 0
+        for c in stride(from: start - 1, through: 0, by: -1) {
+            if changed[c] { lower = c; gap = 0 } else { gap += 1; if gap > 3 { break } }
+        }
+        var upper = start + 1
+        gap = 0
+        for c in (start + 1)..<max(start + 1, width) {
+            if changed[c] { upper = c + 1; gap = 0 } else { gap += 1; if gap > 3 { break } }
+        }
+        return lower..<upper
+    }
+
+    /// Only these columns of each row, to compare the part that scrolls.
+    static func columns(_ rows: Rows, _ band: Range<Int>) -> Rows {
+        rows.map { row in
+            let kept = band.clamped(to: 0..<row.count)
+            return Array(row[kept])
+        }
+    }
+
     /// The rows of an image, as gray samples.
     static func rows(of image: CGImage) -> Rows? {
         let height = image.height
