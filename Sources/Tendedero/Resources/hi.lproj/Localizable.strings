@@ -2066,3 +2066,6 @@
 "Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude इस Mac पर नहीं है। इसे claude.com/download से लें, फिर कनेक्ट करें।";
 "Claude’s settings could not be changed, so nothing was." = "Claude की सेटिंग्स नहीं बदली जा सकीं, इसलिए कुछ नहीं बदला।";
 "Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Claude नाम का फ़ोल्डर चुनें, ताकि Snapfly खुद को Claude की सेटिंग्स में जोड़ सके।";
+"Capture" = "कैप्चर";
+"Files" = "फ़ाइलें";
+"Options" = "विकल्प";

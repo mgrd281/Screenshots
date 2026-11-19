@@ -2064,3 +2064,6 @@
 "Claude is not on this Mac. Get it from claude.com/download, then connect." = "这台 Mac 上没有 Claude。请从 claude.com/download 下载，然后再连接。";
 "Claude’s settings could not be changed, so nothing was." = "无法更改 Claude 的设置，因此没有任何改动。";
 "Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "请选择名为 Claude 的文件夹，以便 Snapfly 将自己添加到 Claude 的设置中。";
+"Capture" = "捕捉";
+"Files" = "文件";
+"Options" = "选项";

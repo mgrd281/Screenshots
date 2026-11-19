@@ -2064,3 +2064,6 @@
 "Claude is not on this Mac. Get it from claude.com/download, then connect." = "Claude bu Mac’te yok. claude.com/download adresinden indir, sonra bağla.";
 "Claude’s settings could not be changed, so nothing was." = "Claude’un ayarları değiştirilemedi, bu yüzden hiçbir şey değişmedi.";
 "Choose the folder named Claude, so Snapfly can add itself to Claude’s settings." = "Snapfly’ın kendini Claude’un ayarlarına ekleyebilmesi için Claude adlı klasörü seç.";
+"Capture" = "Yakala";
+"Files" = "Dosyalar";
+"Options" = "Seçenekler";
