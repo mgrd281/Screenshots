@@ -2036,3 +2036,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "想拍多少就拍多少：它们在晾绳上等待，你一打开聊天就一起进入当前对话，放在你已写的内容旁。“立即”会在每张之后打开聊天。";
 "It goes into %@ as soon as you open it." = "你一打开 %@ 它就会进入。";
 "How %@ works" = "“%@”的工作方式";
+"Capture Whole Chat" = "捕捉整个聊天";
+"Stop Capturing the Chat" = "停止捕捉聊天";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "要滚动聊天，Snapfly 需要替你按键。请在“系统设置”中允许，然后再试一次。";
+"Open the chat to capture first, then try again." = "请先打开要捕捉的聊天，然后再试一次。";
+"Capturing the chat… Click to stop." = "正在捕捉聊天… 点按以停止。";
+"The chat could not be captured." = "无法捕捉该聊天。";
+"The chat was longer than %d views, so it was cut there." = "聊天超过 %d 屏，因此在那里截断。";
+"The whole chat fits in one view: one screenshot, and no video." = "整个聊天一屏就能放下：一张截屏，没有视频。";
+"The screenshots were saved, but the video could not be." = "截屏已保存，但视频未能保存。";

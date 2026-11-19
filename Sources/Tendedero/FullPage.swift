@@ -27,7 +27,8 @@ final class FullPage {
 
     /// - Parameter delay: lets a menu that started it fade out first.
     func start(after delay: TimeInterval = 0) {
-        guard !isRunning, !Countdown.shared.isRunning, Capture.shared.hasPermission() else { return }
+        guard !isRunning, !ChatCapture.shared.isRunning, !Countdown.shared.isRunning,
+              Capture.shared.hasPermission() else { return }
         guard Paste.isAllowed else {
             Paste.askToBeAllowed()
             Notice.show(L("To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again."))
@@ -48,7 +49,7 @@ final class FullPage {
 
     /// The window in front of an app, as the window server lists it: its
     /// number and its frame, counted from the top left of the main screen.
-    private static func frontWindow(of pid: pid_t) -> (id: CGWindowID, frame: CGRect)? {
+    static func frontWindow(of pid: pid_t) -> (id: CGWindowID, frame: CGRect)? {
         guard let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
                 as? [[String: Any]] else { return nil }
         for info in list {
@@ -203,7 +204,7 @@ final class FullPage {
     }
 
     /// Until the shortcut's keys are let go, a second at most.
-    private static func waitForKeysUp() async {
+    static func waitForKeysUp() async {
         for _ in 0..<50 {
             let held = CGEventSource.flagsState(.combinedSessionState)
                 .intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
@@ -216,7 +217,7 @@ final class FullPage {
     /// positive. Given in small pieces, as a wheel gives them, since apps are
     /// wary of one large value; and marked as pixels, so the page moves by
     /// just that much.
-    private static func scroll(by points: CGFloat, at point: CGPoint) {
+    static func scroll(by points: CGFloat, at point: CGPoint) {
         for piece in Scrolling.pieces(of: Int(points.rounded())) {
             guard let event = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1,
                                       wheel1: piece, wheel2: 0, wheel3: 0) else { continue }

@@ -2036,3 +2036,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "التقط ما شئت: تنتظر اللقطات على الخط وتدخل معًا إلى المحادثة المفتوحة عندما تذهب إلى الدردشة، بجانب ما كتبته هناك. «فورًا» يفتح الدردشة بعد كل لقطة.";
 "It goes into %@ as soon as you open it." = "تدخل إلى %@ فور أن تفتحه.";
 "How %@ works" = "كيف يعمل %@";
+"Capture Whole Chat" = "تصوير المحادثة كاملة";
+"Stop Capturing the Chat" = "إيقاف تصوير المحادثة";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "كي يمرّر Snapfly المحادثة، يحتاج إلى أن يضغط المفاتيح نيابةً عنك. اسمح له بذلك في إعدادات النظام، ثم حاول مرة أخرى.";
+"Open the chat to capture first, then try again." = "افتح المحادثة التي تريد تصويرها أولًا، ثم حاول مرة أخرى.";
+"Capturing the chat… Click to stop." = "يجري تصوير المحادثة… انقر للإيقاف.";
+"The chat could not be captured." = "تعذّر تصوير المحادثة.";
+"The chat was longer than %d views, so it was cut there." = "كانت المحادثة أطول من %d شاشة، فتوقّف التصوير عندها.";
+"The whole chat fits in one view: one screenshot, and no video." = "المحادثة كلها تتّسع في شاشة واحدة: لقطة شاشة واحدة، ولا فيديو.";
+"The screenshots were saved, but the video could not be." = "حُفظت لقطات الشاشة، لكن تعذّر حفظ الفيديو.";

@@ -2038,3 +2038,12 @@
 "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one." = "Take as many as you like: they wait on the line and go together into the conversation open when you go to the chat, next to anything you typed there. At once opens the chat after each one.";
 "It goes into %@ as soon as you open it." = "It goes into %@ as soon as you open it.";
 "How %@ works" = "How %@ works";
+"Capture Whole Chat" = "Capture Whole Chat";
+"Stop Capturing the Chat" = "Stop Capturing the Chat";
+"To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "To scroll the chat, Snapfly needs to press keys for you. Allow it in System Settings, then try again.";
+"Open the chat to capture first, then try again." = "Open the chat to capture first, then try again.";
+"Capturing the chat… Click to stop." = "Capturing the chat… Click to stop.";
+"The chat could not be captured." = "The chat could not be captured.";
+"The chat was longer than %d views, so it was cut there." = "The chat was longer than %d views, so it was cut there.";
+"The whole chat fits in one view: one screenshot, and no video." = "The whole chat fits in one view: one screenshot, and no video.";
+"The screenshots were saved, but the video could not be." = "The screenshots were saved, but the video could not be.";

@@ -114,6 +114,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: click what is outlined (scroll for a bigger or smaller part), drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
+| Capture Whole Chat in the menu bar | Scroll the chat in front from its first message to its last, a screenshot of each view and a short video of the scroll, which stops by itself at the bottom. |
 
 <br>
 
@@ -823,6 +824,24 @@ follow the wheel, it presses Page Down instead. The picture hangs on the line
 like any screenshot, and with the time stamp on, it is stamped with the time
 and the website's name. It needs the permission to press keys, the same one
 the send button uses.
+
+<br>
+
+## The whole chat.
+
+Choose Capture Whole Chat in the menu, and Snapfly scrolls the chat in front
+up to its first message, then down to its last, by itself. It takes a
+screenshot of each view on the way, each a picture of its own with the
+window as it is, numbered from the top, and records a short video of the
+same scroll, gliding as a hand would and pausing on each view. The video
+stops by itself when the chat no longer moves. The screenshots and the video
+hang on the line together, ready to keep or send, like a conversation with
+a customer. It works in a browser and in any chat app that scrolls; the
+pointer rests over the chat while it runs and goes back afterwards. Click
+the note above the Dock, or Stop Capturing the Chat in the menu, to stop
+early: what was taken until then is kept. A chat that fits in one view gives
+one screenshot and no video, and one longer than 40 views is cut there. It
+needs the permission to press keys, as Capture Whole Page does.
 
 <br>
 
@@ -1869,6 +1888,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
 | `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
 | `FullPage.swift` | Captures a whole page by scrolling the window in front |
+| `ChatCapture.swift` | Captures a whole chat by scrolling it: a screenshot of each view and a video of the scroll |
 | `PageStitch.swift` | Joins the views of a scrolled page into one picture |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
 | `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording, guide and note capsule above the Dock, and makes GIFs of recordings |
