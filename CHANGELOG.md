@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Capture and Ask AI (⌃⌥A, or in the menu): take a screenshot, then pick a
+  ready question or type your own, and the AI chat to ask. The covered copy
+  goes in with the question, waiting for your Return.
 - The icons before the menu bar menu's lines, and in the photos' menus,
   show again on macOS 27, which hides menu symbols an app does not draw
   itself.

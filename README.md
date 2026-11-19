@@ -112,6 +112,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: click what is outlined (scroll for a bigger or smaller part), drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>A</kbd> | Capture and ask AI: take a screenshot as with ⌃⌥S, then choose what to ask about it, and in which AI chat: a question kept in Settings (⌘1 to ⌘9) or your own, then Return. The covered copy goes into the chat with the question under it, waiting for your Return there. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
 | Right-click a photo, then Open on iPhone | Open it on the iPhone nearby with Handoff: tap Snapfly at the bottom of the iPhone's app switcher. Each new photo is offered there as it hangs. |
@@ -194,6 +195,14 @@ with a preview, or turn it off.
 Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd>, or choose Take Screenshot
 in the menu bar. The screen holds still. Drag over an area, click a window,
 or press Return for the whole screen; Escape cancels.
+
+To ask an AI about what is on screen, press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>A</kbd>,
+or choose Capture and Ask AI. Take the screenshot the same way; once it
+hangs, a card asks what to ask and where: choose ChatGPT, Claude or another
+AI chat shown under photos, then a question kept in Settings › AI Assistant
+(⌘1 to ⌘9) or one you type, and Return. Its private details covered, the
+screenshot goes into the chat with the question under it, and waits there
+for your Return. Escape keeps it on the line.
 
 Smart selection finds what you mean. The picture, card, button or paragraph
 under the pointer is outlined, and a click takes just that: one logo out of
@@ -2009,6 +2018,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Trim.swift` | Trims a screen recording and saves the result |
 | `StudioPlanning.swift` | Studio without a screen: what was done while recording, where to zoom, the camera's path, how marks and clicks come and go, and the timeline's rules |
 | `StudioStore.swift` | Studio's work on each recording and what was done while recording, kept on the Mac; notes the pointer, clicks and key times while recording |
+| `AskPanel.swift` | Capture and Ask AI: the card that asks what to ask about a new screenshot, and in which AI chat |
 | `StudioCaptions.swift` | Studio's captions: what is said in a recording heard on the Mac, made into short timed lines |
 | `StudioCuts.swift` | Studio's parts: splitting the recording, cutting parts out and speeding them up, how long the video is and which moment of the recording shows when |
 | `StudioFraming.swift` | Where the recording sits in Studio's video on a background, in a post's shape and at the size chosen, and how Save Video writes it (MOV, MP4 or GIF) |

@@ -12,7 +12,7 @@ final class ShortcutTap {
     static let shared = ShortcutTap()
 
     /// The shortcuts heard this way: those that take what is on screen.
-    static let roles: [Shortcut.Role] = [.capture, .record]
+    static let roles: [Shortcut.Role] = [.capture, .record, .ask]
 
     var onPress: (@MainActor (Shortcut.Role) -> Void)?
 
