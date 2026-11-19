@@ -239,6 +239,8 @@ components:
     color: "#FF3B30"               # Color.red: a 1.5pt line under a 9 × 12pt head, rounded 2
   studio-click-ring:
     size: "unit × 0.034"           # a click in Studio's video: white at 95% over a dark edge at 28%, white at 18% inside, spreading from 0.45 to 1 and fading over 0.45s
+  studio-part:
+    color: "#FFFFFF"               # the parts over the timeline's pictures: a split is a 2pt white line on a 3pt edge of black 35%; a part cut out, black 60% with `scissors` (11pt semibold white) in its middle; a faster part, its speed ("2×", 10pt semibold white) on an accent capsule 4pt in from its top left
   studio-shape-tile:
     rounded: "7pt"                 # one of Studio's five shapes (the recording's own, 1:1, 16:9, 4:5, 9:16), a row sharing the inspector's width 4pt apart: its outline (1.5pt `.secondary`, rounded 2) drawn to its proportions in 26pt within a 30pt square, over its name in 10pt medium; chosen, both in the accent on the accent at 12%
   phone-dock-icon:
@@ -1406,7 +1408,11 @@ apps.
   - The **inspector** (340 pt, a grouped form over a footer): Zoom, with
     Zoom in on clicks and typing, How close (a small slider and "2.0×"),
     and the number of zooms with Add Zoom (Z); a chosen zoom's How close,
-    Looks at (The Pointer, One Place, segmented) and Delete; Draw, the six
+    Looks at (The Pointer, One Place, segmented) and Delete; Cut and Speed,
+    for the part the video stands in: Split Here (S, `square.split.2x1`),
+    Cut Out (X, `scissors`; Put Back, `arrow.uturn.backward`, on a part cut
+    out) and Join with Next, small, in one row, then Speed (1×, 1.5×, 2×,
+    4×, 8×, segmented), with how long the video will be in its footer; Draw, the six
     tools of Draw on Photo that a video takes (Select, Arrow, Box, Circle,
     Numbered Steps, Text, with their keys), then Color and Size as there; a
     chosen mark's name, when it shows, its words for words, and Delete;
@@ -1419,6 +1425,13 @@ apps.
     for. A shape other than the recording's own turns the background on.
     The footer has Undo and Redo, then Cancel and Save Video; while saving,
     a small bar and Stop.
+  - **Parts** (`StudioCuts`): the recording is split into parts, each
+    kept at its speed or cut out; zooms, marks and clicks stay on the
+    recording's time. Playing skips the parts cut out and plays each part
+    at its speed, as the saved video does. Standing still in a part cut
+    out, the picture is dimmed (black 55%) under "This part is cut out."
+    with `scissors`, 13 pt semibold white. The timeline marks the parts
+    over its pictures (`studio-part`).
   - **On a background**, the canvas shows the whole video as saved: the
     colour fills it, under the floating card's shadow, and the recording
     sits in it with its corners and its shadow, by the same measures as the

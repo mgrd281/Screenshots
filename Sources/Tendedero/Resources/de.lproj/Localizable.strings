@@ -2072,3 +2072,10 @@
 "The smallest file, as Macs and iPhones play it." = "Die kleinste Datei, wie Mac und iPhone sie abspielen.";
 "Plays everywhere: on websites, Windows and Android." = "Läuft überall: auf Websites, unter Windows und Android.";
 "Plays in any chat, on a loop, without sound." = "Läuft in jedem Chat, in Schleife, ohne Ton.";
+"Split Here" = "Hier teilen";
+"Cut Out" = "Herausschneiden";
+"Put Back" = "Zurückholen";
+"Join with Next" = "Mit nächstem verbinden";
+"Cut and Speed" = "Schnitt und Tempo";
+"Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Teile dort, wo das Video steht, und schneide dann einen Teil heraus oder spiel ihn schneller ab. Das Video wird %@ lang.";
+"This part is cut out." = "Dieser Teil ist herausgeschnitten.";

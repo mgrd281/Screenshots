@@ -115,6 +115,41 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertTrue(StudioSample.pixel(frame, x: 0.25, y: 0.75).isBlue)
     }
 
+    func testCutPartsAreLeftOutAndFasterOnesPlayFaster() async throws {
+        let source = folder.appendingPathComponent("seconds.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 3, sound: true, draw: StudioSample.seconds)
+        var project = StudioProject()
+        var parts = StudioCuts.parts([], duration: 3)
+        parts = try XCTUnwrap(StudioCuts.split(parts, at: 1))
+        parts[0].removed = true
+        parts[1].speed = 2
+        project.parts = parts
+        let made = try await export(source, project)
+        let asset = AVURLAsset(url: made)
+        // The red second is gone, the green and the blue take one together.
+        let duration = try await asset.load(.duration).seconds
+        XCTAssertEqual(duration, 1, accuracy: 0.1)
+        let early = try await StudioSample.frame(of: made, at: 0.2)
+        XCTAssertTrue(StudioSample.pixel(early, x: 0.5, y: 0.5).isGreen)
+        let late = try await StudioSample.frame(of: made, at: 0.8)
+        XCTAssertTrue(StudioSample.pixel(late, x: 0.5, y: 0.5).isBlue)
+        // The sound goes with it, as long as the video.
+        let sounds = try await asset.loadTracks(withMediaType: .audio)
+        let sound = try XCTUnwrap(sounds.first)
+        let range = try await sound.load(.timeRange)
+        XCTAssertEqual(range.duration.seconds, 1, accuracy: 0.15)
+    }
+
+    func testTheSoundIsCopiedAsItIsWithoutCuts() async throws {
+        let source = folder.appendingPathComponent("seconds.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, sound: true, draw: StudioSample.seconds)
+        let made = try await export(source, StudioProject())
+        let sounds = try await AVURLAsset(url: made).loadTracks(withMediaType: .audio)
+        let sound = try XCTUnwrap(sounds.first)
+        let range = try await sound.load(.timeRange)
+        XCTAssertEqual(range.duration.seconds, 2, accuracy: 0.15)
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)
@@ -258,6 +293,9 @@ final class StudioRenderTests: XCTestCase {
                     var backdrop = Backdrop()
                     backdrop.ratio = .wide
                     shown.backdrop = backdrop
+                    // A part cut out and one faster, for the timeline.
+                    shown.parts = [StudioPart(start: 0, end: 0.8, removed: true), StudioPart(start: 0.8, end: 4.2),
+                                   StudioPart(start: 4.2, end: StudioSample.length, speed: 2)]
                 }
                 let model = StudioModel(url: source, duration: StudioSample.length, pixels: CGSize(width: 1280, height: 800),
                                         events: events, project: shown)
@@ -314,14 +352,18 @@ private enum StudioSample {
 
     static let length = 6.4
 
-    static func writeMovie(to url: URL, width: Int, height: Int, seconds: Double, draw: Draw) throws {
+    static func writeMovie(to url: URL, width: Int, height: Int, seconds: Double, sound: Bool = false,
+                           draw: Draw) throws {
         let writer = try AVAssetWriter(outputURL: url, fileType: .mov)
         let input = AVAssetWriterInput(mediaType: .video, outputSettings: [
             AVVideoCodecKey: AVVideoCodecType.h264,
             AVVideoWidthKey: width,
             AVVideoHeightKey: height,
         ])
-        input.expectsMediaDataInRealTime = false
+        // Taken as it comes, so the picture and the sound never wait for each other.
+        input.expectsMediaDataInRealTime = sound
+        let tone = sound ? Tone() : nil
+        if let tone { writer.add(tone.input) }
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
             kCVPixelBufferWidthKey as String: width,
@@ -332,6 +374,8 @@ private enum StudioSample {
         writer.startSession(atSourceTime: .zero)
         let fps = 30
         for i in 0..<Int(seconds * Double(fps)) {
+            // The sound up to this frame and a little after.
+            try tone?.write(until: Double(i + 3) / Double(fps), within: seconds, writer: writer)
             while !input.isReadyForMoreMediaData {
                 // A writer that failed is never ready again.
                 guard writer.status == .writing else { throw writer.error ?? StudioExport.Failure.cannotWrite }
@@ -352,11 +396,80 @@ private enum StudioSample {
             CVPixelBufferUnlockBaseAddress(buffer, [])
             adaptor.append(buffer, withPresentationTime: CMTime(value: CMTimeValue(i), timescale: CMTimeScale(fps)))
         }
+        try tone?.write(until: seconds, within: seconds, writer: writer)
+        tone?.input.markAsFinished()
         input.markAsFinished()
         let done = DispatchSemaphore(value: 0)
         writer.finishWriting { done.signal() }
         done.wait()
         guard writer.status == .completed else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+    }
+
+    /// A quiet tone for a made-up recording's sound, written a tenth of a
+    /// second at a time.
+    final class Tone {
+        let input: AVAssetWriterInput
+        private let rate = 44_100
+        private var written = 0
+        private var format: CMAudioFormatDescription?
+
+        init() {
+            input = AVAssetWriterInput(mediaType: .audio, outputSettings: [
+                AVFormatIDKey: kAudioFormatMPEG4AAC,
+                AVSampleRateKey: 44_100,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderBitRateKey: 64_000,
+            ])
+            input.expectsMediaDataInRealTime = true
+            var description = AudioStreamBasicDescription(
+                mSampleRate: 44_100, mFormatID: kAudioFormatLinearPCM,
+                mFormatFlags: kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked,
+                mBytesPerPacket: 2, mFramesPerPacket: 1, mBytesPerFrame: 2, mChannelsPerFrame: 1,
+                mBitsPerChannel: 16, mReserved: 0)
+            CMAudioFormatDescriptionCreate(allocator: nil, asbd: &description, layoutSize: 0, layout: nil,
+                                           magicCookieSize: 0, magicCookie: nil, extensions: nil,
+                                           formatDescriptionOut: &format)
+        }
+
+        func write(until t: Double, within seconds: Double, writer: AVAssetWriter) throws {
+            let end = Int(min(t, seconds) * Double(rate))
+            while written < end {
+                let count = min(rate / 10, end - written)
+                var samples = (0..<count).map { i -> Int16 in
+                    Int16(3000 * sin(Double(written + i) * 2 * .pi * 440 / Double(rate)))
+                }
+                var block: CMBlockBuffer?
+                CMBlockBufferCreateWithMemoryBlock(allocator: nil, memoryBlock: nil, blockLength: count * 2,
+                                                   blockAllocator: nil, customBlockSource: nil, offsetToData: 0,
+                                                   dataLength: count * 2, flags: kCMBlockBufferAssureMemoryNowFlag,
+                                                   blockBufferOut: &block)
+                guard let block, let format else { throw StudioExport.Failure.cannotWrite }
+                samples.withUnsafeMutableBytes { bytes in
+                    _ = CMBlockBufferReplaceDataBytes(with: bytes.baseAddress!, blockBuffer: block, offsetIntoDestination: 0,
+                                                      dataLength: count * 2)
+                }
+                var sample: CMSampleBuffer?
+                CMAudioSampleBufferCreateReadyWithPacketDescriptions(
+                    allocator: nil, dataBuffer: block, formatDescription: format, sampleCount: count,
+                    presentationTimeStamp: CMTime(value: CMTimeValue(written), timescale: CMTimeScale(rate)),
+                    packetDescriptions: nil, sampleBufferOut: &sample)
+                guard let sample else { throw StudioExport.Failure.cannotWrite }
+                while !input.isReadyForMoreMediaData {
+                    guard writer.status == .writing else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+                    Thread.sleep(forTimeInterval: 0.002)
+                }
+                guard input.append(sample) else { throw writer.error ?? StudioExport.Failure.cannotWrite }
+                written += count
+            }
+        }
+    }
+
+    /// A second of red, one of green, then blue, filling the picture.
+    static func seconds(_ context: CGContext, _ size: CGSize, _ t: Double) {
+        let color = t < 1 ? CGColor(srgbRed: 1, green: 0, blue: 0, alpha: 1)
+            : t < 2 ? CGColor(srgbRed: 0, green: 1, blue: 0, alpha: 1) : CGColor(srgbRed: 0, green: 0, blue: 1, alpha: 1)
+        context.setFillColor(color)
+        context.fill(CGRect(origin: .zero, size: size))
     }
 
     static func image(at t: Double, width: Int, height: Int, draw: Draw) -> CGImage? {

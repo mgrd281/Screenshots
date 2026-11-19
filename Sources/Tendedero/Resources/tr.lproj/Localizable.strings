@@ -2072,3 +2072,10 @@
 "The smallest file, as Macs and iPhones play it." = "En küçük dosya; Mac ve iPhone'ların oynattığı biçimde.";
 "Plays everywhere: on websites, Windows and Android." = "Her yerde oynar: web sitelerinde, Windows ve Android'de.";
 "Plays in any chat, on a loop, without sound." = "Her sohbette döngü hâlinde, sessiz oynar.";
+"Split Here" = "Buradan böl";
+"Cut Out" = "Kes";
+"Put Back" = "Geri koy";
+"Join with Next" = "Sonrakiyle birleştir";
+"Cut and Speed" = "Kesme ve hız";
+"Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Videonun durduğu yerden böl, sonra bir parçayı kes ya da daha hızlı oynat. Video %@ uzunluğunda olacak.";
+"This part is cut out." = "Bu parça kesildi.";

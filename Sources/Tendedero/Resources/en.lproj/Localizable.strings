@@ -2074,3 +2074,10 @@
 "The smallest file, as Macs and iPhones play it." = "The smallest file, as Macs and iPhones play it.";
 "Plays everywhere: on websites, Windows and Android." = "Plays everywhere: on websites, Windows and Android.";
 "Plays in any chat, on a loop, without sound." = "Plays in any chat, on a loop, without sound.";
+"Split Here" = "Split Here";
+"Cut Out" = "Cut Out";
+"Put Back" = "Put Back";
+"Join with Next" = "Join with Next";
+"Cut and Speed" = "Cut and Speed";
+"Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "Split where the video stands, then cut a part out or play it faster. The video will be %@ long.";
+"This part is cut out." = "This part is cut out.";

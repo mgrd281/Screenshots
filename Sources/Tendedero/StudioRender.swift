@@ -12,6 +12,9 @@ struct StudioLook: Sendable {
     let clicks: [StudioEvents.Click]
     /// The recording's own pixels, which the marks' sizes are measured in.
     let pixels: CGSize
+    /// The recording's parts from its start to its end, some cut out or
+    /// faster (`StudioCuts`).
+    let parts: [StudioPart]
 
     /// - Parameter camera: the camera worked out before for the same zooms,
     ///   so a change to the marks alone doesn't work it out again.
@@ -21,6 +24,7 @@ struct StudioLook: Sendable {
         numbers = project.numbers
         clicks = project.showsClicks ? (events?.clicks ?? []).filter { StudioEvents.isInside($0.x, $0.y) } : []
         self.pixels = pixels
+        parts = StudioCuts.parts(project.parts, duration: duration)
     }
 
     /// The unit the marks are measured in, for the recording shown `size`
@@ -268,12 +272,18 @@ enum StudioExport {
             .appendingPathComponent(".studio-\(UUID().uuidString)").appendingPathExtension(target.pathExtension)
         let mp4 = target.pathExtension.lowercased() == "mp4"
         let framing = StudioFraming(pixels: natural, backdrop: backdrop, quality: quality)
+        // With parts cut out or faster, the sound is put together as the
+        // video has them.
+        var made: EditedSound?
+        if StudioCuts.edits(look.parts), !sounds.isEmpty { made = try await editedSound(sounds, parts: look.parts) }
+        let edited = made
         do {
             try await withCheckedThrowingContinuation { (done: CheckedContinuation<Void, Error>) in
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
                         try write(asset: asset, track: track, framing: framing, mp4: mp4, sounds: sounds, hints: hints,
-                                  duration: duration, look: look, to: temp, stop: stop, progress: progress)
+                                  edited: edited, duration: duration, look: look, to: temp, stop: stop,
+                                  progress: progress)
                         done.resume()
                     } catch {
                         done.resume(throwing: error)
@@ -290,11 +300,64 @@ enum StudioExport {
         }
     }
 
+    /// The recording's sound as the video has it: the parts cut out gone,
+    /// one after another, the faster ones made as fast.
+    private struct EditedSound: @unchecked Sendable {
+        let composition: AVComposition
+        let tracks: [AVAssetTrack]
+    }
+
+    private static func editedSound(_ sounds: [AVAssetTrack], parts: [StudioPart]) async throws -> EditedSound? {
+        let composition = AVMutableComposition()
+        let scale: CMTimeScale = 6000
+        var tracks: [AVAssetTrack] = []
+        for sound in sounds {
+            let range = try await sound.load(.timeRange)
+            guard let track = composition.addMutableTrack(withMediaType: .audio,
+                                                          preferredTrackID: kCMPersistentTrackID_Invalid) else { continue }
+            var at = CMTime.zero
+            var filled = CMTime.zero
+            for part in parts where !part.removed {
+                let wanted = CMTimeRange(start: CMTime(seconds: part.start, preferredTimescale: scale),
+                                         end: CMTime(seconds: part.end, preferredTimescale: scale))
+                // Only where the sound is: it may start late or end early.
+                let there = CMTimeRangeGetIntersection(wanted, otherRange: range)
+                if there.duration > .zero {
+                    let place = at + (there.start - wanted.start)
+                    if place > filled { track.insertEmptyTimeRange(CMTimeRange(start: filled, end: place)) }
+                    try track.insertTimeRange(there, of: sound, at: place)
+                    filled = place + there.duration
+                }
+                at = at + wanted.duration
+            }
+            tracks.append(track)
+        }
+        guard !tracks.isEmpty else { return nil }
+        // Each faster part made as fast, from the last, so the places before it stay.
+        var faster: [(range: CMTimeRange, to: CMTime)] = []
+        var at = CMTime.zero
+        for part in parts where !part.removed {
+            let length = CMTime(seconds: part.duration, preferredTimescale: scale)
+            if part.speed != 1 {
+                faster.append((CMTimeRange(start: at, duration: length),
+                               CMTime(seconds: part.duration / part.speed, preferredTimescale: scale)))
+            }
+            at = at + length
+        }
+        for part in faster.reversed() { composition.scaleTimeRange(part.range, toDuration: part.to) }
+        return EditedSound(composition: composition, tracks: tracks)
+    }
+
     // The reader and writer are kept to this one queue's work and the
     // inputs' own queues, so they are never used from two places at once.
     private static func write(asset: AVAsset, track: AVAssetTrack, framing: StudioFraming, mp4: Bool, sounds: [AVAssetTrack],
-                              hints: [CMFormatDescription?], duration: Double, look: StudioLook, to temp: URL,
-                              stop: Stop, progress: @escaping @Sendable (Double) -> Void) throws {
+                              hints: [CMFormatDescription?], edited: EditedSound?, duration: Double, look: StudioLook,
+                              to temp: URL, stop: Stop, progress: @escaping @Sendable (Double) -> Void) throws {
+        // How long the video is, with parts cut out or faster.
+        let parts = look.parts
+        let cut = StudioCuts.edits(parts)
+        let length = cut ? StudioCuts.length(of: parts) : duration
+        guard length >= 1 / Double(rate) else { throw Failure.noPicture }
         let reader = try AVAssetReader(asset: asset)
         let pictures = AVAssetReaderTrackOutput(track: track, outputSettings: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
@@ -325,31 +388,68 @@ enum StudioExport {
         guard writer.canAdd(picture) else { throw Failure.cannotWrite }
         writer.add(picture)
 
-        // The sound is copied as it is, track by track.
-        var copies: [(from: AVAssetReaderTrackOutput, to: AVAssetWriterInput)] = []
-        for (i, sound) in sounds.enumerated() {
-            let from = AVAssetReaderTrackOutput(track: sound, outputSettings: nil)
-            let to = AVAssetWriterInput(mediaType: .audio, outputSettings: nil, sourceFormatHint: hints[i])
+        // The sound is copied as it is, track by track; with parts cut out
+        // or faster, it is read as the video has it, at its own pitch, and
+        // written again.
+        var copies: [(from: AVAssetReaderOutput, to: AVAssetWriterInput)] = []
+        var soundReader: AVAssetReader?
+        if let edited {
+            let mixed = try AVAssetReader(asset: edited.composition)
+            let from = AVAssetReaderAudioMixOutput(audioTracks: edited.tracks, audioSettings: [
+                AVFormatIDKey: kAudioFormatLinearPCM,
+                AVLinearPCMBitDepthKey: 16,
+                AVLinearPCMIsFloatKey: false,
+                AVLinearPCMIsBigEndianKey: false,
+                AVLinearPCMIsNonInterleaved: false,
+                AVSampleRateKey: 48_000,
+                AVNumberOfChannelsKey: 2,
+            ])
+            from.audioTimePitchAlgorithm = .spectral
+            let to = AVAssetWriterInput(mediaType: .audio, outputSettings: [
+                AVFormatIDKey: kAudioFormatMPEG4AAC,
+                AVSampleRateKey: 48_000,
+                AVNumberOfChannelsKey: 2,
+                AVEncoderBitRateKey: 160_000,
+            ])
             to.expectsMediaDataInRealTime = false
-            guard reader.canAdd(from), writer.canAdd(to) else { continue }
-            reader.add(from)
-            writer.add(to)
-            copies.append((from, to))
+            if mixed.canAdd(from), writer.canAdd(to) {
+                mixed.add(from)
+                writer.add(to)
+                copies.append((from, to))
+                soundReader = mixed
+            }
+        } else if !cut {
+            for (i, sound) in sounds.enumerated() {
+                let from = AVAssetReaderTrackOutput(track: sound, outputSettings: nil)
+                let to = AVAssetWriterInput(mediaType: .audio, outputSettings: nil, sourceFormatHint: hints[i])
+                to.expectsMediaDataInRealTime = false
+                guard reader.canAdd(from), writer.canAdd(to) else { continue }
+                reader.add(from)
+                writer.add(to)
+                copies.append((from, to))
+            }
         }
 
         guard reader.startReading() else { throw reader.error ?? Failure.cannotRead }
+        if let soundReader, !soundReader.startReading() {
+            reader.cancelReading()
+            throw soundReader.error ?? Failure.cannotRead
+        }
         guard writer.startWriting() else {
             reader.cancelReading()
+            soundReader?.cancelReading()
             throw writer.error ?? Failure.cannotWrite
         }
         let next = pictures.copyNextSampleBuffer()
         let start = next?.presentationTimeStamp ?? .zero
-        writer.startSession(atSourceTime: start)
+        // A video put together from parts starts at nought, as its sound does.
+        let origin = cut ? CMTime.zero : start
+        writer.startSession(atSourceTime: origin)
 
         let context = CIContext(options: [.workingColorSpace: NSNull(), .outputColorSpace: NSNull(),
                                           .cacheIntermediates: false])
         let ground = StudioGround(framing)
-        let total = max(1, Int((duration * Double(rate)).rounded(.down)))
+        let total = max(1, Int((length * Double(rate)).rounded(.down)))
         let group = DispatchGroup()
         let failed = Flag()
 
@@ -371,7 +471,9 @@ enum StudioExport {
             guard !pictureEnded.isSet else { return }
             while picture.isReadyForMoreMediaData {
                 guard !stop.isSet, state.index < total else { return finish(false) }
-                let t = Double(state.index) / Double(rate)
+                // The moment of the video, and the moment of the recording it shows.
+                let time = Double(state.index) / Double(rate)
+                let t = cut ? StudioCuts.source(at: time, in: parts) : time
                 // The newest picture by then: the screen sends one only
                 // when something changed.
                 while let sample = state.next, (sample.presentationTimeStamp - start).seconds <= t + 0.0005 {
@@ -388,11 +490,11 @@ enum StudioExport {
                 else { return finish(true) }
                 StudioDraw.frame(source, into: output, look: look, framing: framing, ground: ground, at: t,
                                  context: context)
-                let time = CMTimeAdd(start, CMTime(value: CMTimeValue(state.index), timescale: rate))
-                guard adaptor.append(output, withPresentationTime: time) else { return finish(true) }
+                let at = CMTimeAdd(origin, CMTime(value: CMTimeValue(state.index), timescale: rate))
+                guard adaptor.append(output, withPresentationTime: at) else { return finish(true) }
                 state.index += 1
                 // A hundred steps at most, so the window keeps up.
-                let share = Int(min(1, t / duration) * 100)
+                let share = Int(min(1, time / length) * 100)
                 if share != state.told {
                     state.told = share
                     progress(Double(share) / 100)
@@ -426,7 +528,7 @@ enum StudioExport {
         // ended yet is ended here, as a group freed while entered stops the app.
         let waiting = endings
         while group.wait(timeout: .now() + .milliseconds(250)) == .timedOut {
-            if writer.status == .failed || reader.status == .failed {
+            if writer.status == .failed || reader.status == .failed || soundReader?.status == .failed {
                 failed.set()
                 for ending in waiting {
                     if ending.setFirst() { group.leave() }
@@ -436,15 +538,17 @@ enum StudioExport {
         }
         if stop.isSet {
             reader.cancelReading()
+            soundReader?.cancelReading()
             writer.cancelWriting()
             throw Failure.cancelled
         }
-        if failed.isSet || reader.status == .failed {
+        if failed.isSet || reader.status == .failed || soundReader?.status == .failed {
             reader.cancelReading()
+            soundReader?.cancelReading()
             writer.cancelWriting()
-            throw writer.error ?? reader.error ?? Failure.cannotWrite
+            throw writer.error ?? reader.error ?? soundReader?.error ?? Failure.cannotWrite
         }
-        writer.endSession(atSourceTime: CMTimeAdd(start, CMTime(seconds: duration, preferredTimescale: 600)))
+        writer.endSession(atSourceTime: CMTimeAdd(origin, CMTime(seconds: length, preferredTimescale: 600)))
         let finished = DispatchSemaphore(value: 0)
         writer.finishWriting { finished.signal() }
         finished.wait()

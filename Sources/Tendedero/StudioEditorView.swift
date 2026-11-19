@@ -92,6 +92,7 @@ struct StudioEditorView: View {
             Form {
                 zooms
                 if let zoom = model.selectedZoom { chosen(zoom) }
+                cutting
                 tools
                 style
                 if let item = model.selectedMark { chosen(item) }
@@ -317,6 +318,55 @@ struct StudioEditorView: View {
             Text(L("A ring where each click landed."))
                 .foregroundStyle(.secondary)
         }
+    }
+
+    // MARK: Cut and speed
+
+    /// The part the video stands in: split it there, cut it out, or play
+    /// it faster.
+    private var cutting: some View {
+        let part = model.part
+        let removed = part?.removed ?? false
+        return Section {
+            HStack(spacing: 8) {
+                Button {
+                    model.split()
+                } label: {
+                    Label(L("Split Here"), systemImage: "square.split.2x1")
+                }
+                .disabled(!model.canSplit)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("s", modifiers: []))
+                Button {
+                    model.toggleCut()
+                } label: {
+                    Label(removed ? L("Put Back") : L("Cut Out"), systemImage: removed ? "arrow.uturn.backward" : "scissors")
+                }
+                .disabled(!model.canCut)
+                .keyboardShortcut(fieldFocused ? nil : KeyboardShortcut("x", modifiers: []))
+                Spacer(minLength: 0)
+                Button(L("Join with Next")) { model.joinNext() }
+                    .disabled(!model.canJoin)
+            }
+            .controlSize(.small)
+            Picker(L("Speed"), selection: Binding(get: { part?.speed ?? 1 }, set: { model.setSpeed($0) })) {
+                ForEach(StudioPart.speeds, id: \.self) { speed in
+                    Text(Self.speed(speed)).tag(speed)
+                }
+            }
+            .pickerStyle(.segmented)
+            .disabled(removed)
+        } header: {
+            Text(L("Cut and Speed"))
+        } footer: {
+            Text(String(format: L("Split where the video stands, then cut a part out or play it faster. The video will be %@ long."),
+                        StudioTimeline.text(model.savedLength)))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// How fast a part plays, "1.5×", its number as the Mac's region writes it.
+    static func speed(_ speed: Double) -> String {
+        speed.formatted(.number.precision(.fractionLength(0...1))) + "×"
     }
 
     // MARK: The video's shape, its background, and saving
@@ -567,6 +617,19 @@ private struct StudioCanvas: View {
                 }
                 StudioSurface(model: model, radius: radius)
                     .frame(width: size.width, height: size.height)
+                    .overlay {
+                        // Standing in a part cut out: the saved video skips it.
+                        if !model.playing, model.part?.removed == true {
+                            ZStack {
+                                Color.black.opacity(0.55)
+                                Label(L("This part is cut out."), systemImage: "scissors")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.white)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: radius))
+                            .allowsHitTesting(false)
+                        }
+                    }
                     .overlay {
                         Color.clear
                             .contentShape(Rectangle())
@@ -1142,6 +1205,7 @@ private struct StudioTimelineView: View {
                 .background(LinearGradient(colors: [.clear, .black.opacity(0.45)], startPoint: .top, endPoint: .bottom))
                 .accessibilityHidden(true)
             }
+            partMarks(pps: pps)
         }
         .frame(width: width, height: Self.strip)
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -1149,6 +1213,39 @@ private struct StudioTimelineView: View {
         .gesture(scrub(pps))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(L("Recording"))
+    }
+
+    /// The parts over the pictures: a white line at each split, a part cut
+    /// out darkened under scissors, a faster one with its speed.
+    private func partMarks(pps: CGFloat) -> some View {
+        let parts = model.look.parts
+        return Canvas { context, size in
+            for (i, part) in parts.enumerated() {
+                let x = CGFloat(part.start) * pps
+                let box = CGRect(x: x, y: 0, width: CGFloat(part.duration) * pps, height: size.height)
+                if part.removed {
+                    context.fill(Path(box), with: .color(.black.opacity(0.6)))
+                    if box.width > 18 {
+                        context.draw(Text(Image(systemName: "scissors")).font(.system(size: 11, weight: .semibold))
+                                         .foregroundColor(.white), at: CGPoint(x: box.midX, y: box.midY))
+                    }
+                } else if part.speed != 1, box.width > 30 {
+                    let label = context.resolve(Text(StudioEditorView.speed(part.speed))
+                        .font(.system(size: 10, weight: .semibold)).foregroundColor(.white))
+                    let measured = label.measure(in: size)
+                    let badge = CGRect(x: x + 4, y: 4, width: measured.width + 10, height: measured.height + 2)
+                    context.fill(Path(roundedRect: badge, cornerRadius: badge.height / 2), with: .color(.accentColor))
+                    context.draw(label, at: CGPoint(x: badge.midX, y: badge.midY))
+                }
+                if i > 0 {
+                    context.fill(Path(CGRect(x: x - 1.5, y: 0, width: 3, height: size.height)),
+                                 with: .color(.black.opacity(0.35)))
+                    context.fill(Path(CGRect(x: x - 1, y: 0, width: 2, height: size.height)), with: .color(.white))
+                }
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     // MARK: Zooms and marks

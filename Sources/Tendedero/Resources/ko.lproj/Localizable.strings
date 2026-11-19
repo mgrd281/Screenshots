@@ -2072,3 +2072,10 @@
 "The smallest file, as Macs and iPhones play it." = "가장 작은 파일로, Mac과 iPhone에서 재생됩니다.";
 "Plays everywhere: on websites, Windows and Android." = "어디서나 재생됩니다. 웹사이트, Windows, Android에서도요.";
 "Plays in any chat, on a loop, without sound." = "어느 채팅에서나 반복 재생되며 소리는 없습니다.";
+"Split Here" = "여기서 나누기";
+"Cut Out" = "잘라내기";
+"Put Back" = "되살리기";
+"Join with Next" = "다음과 합치기";
+"Cut and Speed" = "자르기와 속도";
+"Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "영상이 멈춘 곳에서 나눈 뒤, 한 부분을 잘라내거나 더 빠르게 재생하세요. 영상 길이는 %@입니다.";
+"This part is cut out." = "이 부분은 잘려 있습니다.";

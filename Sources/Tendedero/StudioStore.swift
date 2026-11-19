@@ -28,6 +28,9 @@ struct StudioProject: Codable, Equatable, Sendable {
     /// The recording set on a colour, with room round it, rounded corners
     /// and a shadow, in the shape a post wants; nil for the recording alone.
     var backdrop: Backdrop?
+    /// The recording split into parts, some cut out or faster; none for
+    /// the whole recording as it is (`StudioCuts`).
+    var parts: [StudioPart] = []
 
     init() {}
 
@@ -40,6 +43,7 @@ struct StudioProject: Codable, Equatable, Sendable {
         autoScale = try kept.decodeIfPresent(Double.self, forKey: .autoScale)
         showsClicks = try kept.decodeIfPresent(Bool.self, forKey: .showsClicks) ?? true
         backdrop = try? kept.decodeIfPresent(Backdrop.self, forKey: .backdrop)
+        parts = (try? kept.decodeIfPresent([StudioPart].self, forKey: .parts)) ?? []
     }
 
     /// The steps' numbers, in the order they show.
@@ -71,6 +75,7 @@ struct StudioProject: Codable, Equatable, Sendable {
             mark.end = min(duration, mark.end - offset)
             return mark.end - mark.start >= StudioFade.shortest ? mark : nil
         }
+        trimmed.parts = StudioCuts.trimmed(parts, from: offset, keeping: duration)
         return trimmed
     }
 }

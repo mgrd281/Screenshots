@@ -6,6 +6,10 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio cuts and speeds up: split a recording where it stands, leave a
+  part out, or play it 1.5, 2, 4 or 8 times as fast, sound and all. The
+  timeline shows each part, and playing skips and speeds up as the saved
+  video will.
 - Studio sets a recording on a background, as Background… sets a photo:
   one of eight colours, with room round it, rounded corners and a soft
   shadow, in the shape a post wants (16:9, 1:1, 4:5 or 9:16). Save Video

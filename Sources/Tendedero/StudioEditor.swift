@@ -287,6 +287,9 @@ final class StudioModel: ObservableObject {
     @Published private var redone: [StudioProject] = []
     private var before: StudioProject?
     private var finished: NSObjectProtocol?
+    /// Follows the video while it plays, past the parts cut out and at the
+    /// speed of each part.
+    private var pacer: Any?
     /// The work as it was opened or last kept with Save Video.
     private var keptWork: StudioProject
 
@@ -320,6 +323,9 @@ final class StudioModel: ObservableObject {
                                                           object: player.currentItem, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.reachedEnd() }
         }
+        pacer = player.addPeriodicTimeObserver(forInterval: CMTime(value: 1, timescale: 60), queue: .main) { [weak self] time in
+            MainActor.assumeIsolated { self?.pace(at: time.seconds) }
+        }
         let url = url
         Task { [weak self] in
             let strip = await StudioMedia.strip(of: url, count: 24, height: 40)
@@ -334,6 +340,32 @@ final class StudioModel: ObservableObject {
         playing = false
         if let finished { NotificationCenter.default.removeObserver(finished) }
         finished = nil
+        if let pacer { player.removeTimeObserver(pacer) }
+        pacer = nil
+    }
+
+    /// While it plays: on past a part cut out, and each part at its speed,
+    /// as the saved video has them.
+    private func pace(at t: Double) {
+        guard playing, t.isFinite else { return }
+        let parts = look.parts
+        guard StudioCuts.edits(parts), let i = StudioCuts.index(at: t, in: parts) else {
+            if player.rate != 1 { player.rate = 1 }
+            return
+        }
+        guard !parts[i].removed else {
+            if let next = StudioCuts.playable(from: t, in: parts) {
+                player.seek(to: CMTime(seconds: next, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+            } else {
+                // Nothing kept follows: it ends here.
+                player.pause()
+                playing = false
+                time = parts[i].start
+            }
+            return
+        }
+        let rate = Float(parts[i].speed)
+        if player.rate != rate { player.rate = rate }
     }
 
     // MARK: Playing
@@ -730,5 +762,69 @@ final class StudioModel: ObservableObject {
 
     var ratio: Backdrop.Ratio {
         project.backdrop?.ratio ?? .fit
+    }
+
+    // MARK: Cut and speed
+
+    /// The part the video stands in, while it is still.
+    var part: StudioPart? {
+        let parts = look.parts
+        return StudioCuts.index(at: time, in: parts).map { parts[$0] }
+    }
+
+    /// How long the saved video is.
+    var savedLength: Double {
+        StudioCuts.length(of: look.parts)
+    }
+
+    /// Whether the video can be split where it stands: not too near a split.
+    var canSplit: Bool {
+        StudioCuts.split(look.parts, at: time) != nil
+    }
+
+    /// Splits the part the video stands in, where it stands.
+    func split() {
+        pause()
+        guard let split = StudioCuts.split(look.parts, at: time) else { return }
+        change { $0.parts = split }
+    }
+
+    /// The part the video stands in, at a speed.
+    func setSpeed(_ speed: Double) {
+        editPart { $0.speed = speed }
+    }
+
+    /// Whether the part the video stands in can be cut out: not the last
+    /// one kept.
+    var canCut: Bool {
+        guard let part else { return false }
+        return part.removed || look.parts.contains { !$0.removed && $0.id != part.id }
+    }
+
+    /// The part the video stands in cut out, or back in.
+    func toggleCut() {
+        guard canCut else { return }
+        editPart { $0.removed.toggle() }
+    }
+
+    /// Whether a part follows the one the video stands in, to join it to.
+    var canJoin: Bool {
+        guard let i = StudioCuts.index(at: time, in: look.parts) else { return false }
+        return i + 1 < look.parts.count
+    }
+
+    /// The part the video stands in joined to the next, as one.
+    func joinNext() {
+        let parts = look.parts
+        guard let i = StudioCuts.index(at: time, in: parts), let joined = StudioCuts.joined(parts, at: i) else { return }
+        change { $0.parts = joined.count > 1 || StudioCuts.edits(joined) ? joined : [] }
+    }
+
+    private func editPart(_ make: (inout StudioPart) -> Void) {
+        pause()
+        var parts = look.parts
+        guard let i = StudioCuts.index(at: time, in: parts) else { return }
+        make(&parts[i])
+        change { $0.parts = parts.count > 1 || StudioCuts.edits(parts) ? parts : [] }
     }
 }

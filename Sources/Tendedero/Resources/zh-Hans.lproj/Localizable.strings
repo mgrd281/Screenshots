@@ -2072,3 +2072,10 @@
 "The smallest file, as Macs and iPhones play it." = "文件最小，可在 Mac 和 iPhone 上播放。";
 "Plays everywhere: on websites, Windows and Android." = "随处可播放：网站、Windows 和 Android。";
 "Plays in any chat, on a loop, without sound." = "可在任何聊天中循环播放，无声音。";
+"Split Here" = "在此拆分";
+"Cut Out" = "剪掉";
+"Put Back" = "恢复";
+"Join with Next" = "与下一段合并";
+"Cut and Speed" = "剪辑与速度";
+"Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "在视频当前位置拆分，然后剪掉某段或让它播放得更快。视频时长将为 %@。";
+"This part is cut out." = "此段已剪掉。";

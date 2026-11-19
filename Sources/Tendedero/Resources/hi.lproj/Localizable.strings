@@ -2074,3 +2074,10 @@
 "The smallest file, as Macs and iPhones play it." = "सबसे छोटी फ़ाइल, जैसी Mac और iPhone चलाते हैं।";
 "Plays everywhere: on websites, Windows and Android." = "हर जगह चलता है: वेबसाइटों, Windows और Android पर।";
 "Plays in any chat, on a loop, without sound." = "किसी भी चैट में बार-बार चलता है, बिना आवाज़ के।";
+"Split Here" = "यहाँ बाँटें";
+"Cut Out" = "काटकर हटाएँ";
+"Put Back" = "वापस लाएँ";
+"Join with Next" = "अगले से जोड़ें";
+"Cut and Speed" = "काट और गति";
+"Split where the video stands, then cut a part out or play it faster. The video will be %@ long." = "जहाँ वीडियो रुका है वहाँ बाँटें, फिर कोई हिस्सा काटें या उसे तेज़ चलाएँ। वीडियो %@ लंबा होगा।";
+"This part is cut out." = "यह हिस्सा काट दिया गया है।";
