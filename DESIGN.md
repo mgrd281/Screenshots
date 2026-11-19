@@ -239,6 +239,8 @@ components:
     color: "#FF3B30"               # Color.red: a 1.5pt line under a 9 × 12pt head, rounded 2
   studio-click-ring:
     size: "unit × 0.034"           # a click in Studio's video: white at 95% over a dark edge at 28%, white at 18% inside, spreading from 0.45 to 1 and fading over 0.45s
+  studio-shape-tile:
+    rounded: "7pt"                 # one of Studio's five shapes (the recording's own, 1:1, 16:9, 4:5, 9:16), a row sharing the inspector's width 4pt apart: its outline (1.5pt `.secondary`, rounded 2) drawn to its proportions in 26pt within a 30pt square, over its name in 10pt medium; chosen, both in the accent on the accent at 12%
   phone-dock-icon:
     size: "44pt"                   # a tool on the iPhone editor's bar; glyph 18pt semibold; the tool in hand: phone-protect-tint on a 36pt circle of phone-protect at 14%, which glides to the next tool chosen
   phone-glass:
@@ -1408,8 +1410,20 @@ apps.
     tools of Draw on Photo that a video takes (Select, Arrow, Box, Circle,
     Numbered Steps, Text, with their keys), then Color and Size as there; a
     chosen mark's name, when it shows, its words for words, and Delete;
-    Show clicks. The footer has Undo and Redo, then Cancel and Save Video;
-    while saving, a small bar and Stop.
+    Show clicks; Size, a row of five shape tiles (`studio-shape-tile`) with
+    the video's size in pixels under it ("1080 × 1920", `.secondary`,
+    monospaced digits); Background, a switch and, when on, Background…'s
+    grid of eight swatches, small Padding and Corners sliders and Shadow;
+    Save, File Type (MOV, MP4, GIF, segmented), Quality (Original, 4K,
+    1080p, 720p, a menu, hidden for a GIF) and a line on what the file is
+    for. A shape other than the recording's own turns the background on.
+    The footer has Undo and Redo, then Cancel and Save Video; while saving,
+    a small bar and Stop.
+  - **On a background**, the canvas shows the whole video as saved: the
+    colour fills it, under the floating card's shadow, and the recording
+    sits in it with its corners and its shadow, by the same measures as the
+    saved video (`StudioFraming`), which Background… gives a photo. Marks
+    and click rings stay inside the recording's corners.
   - **In the video**: the camera eases in and out of each zoom on a spring
     with no overshoot and follows the pointer only once it nears the edge
     (`StudioCamera`). Marks are drawn in over 0.35 s on an ease-out, an
@@ -1417,8 +1431,9 @@ apps.
     or a circle from 0.92, and fade over 0.25 s before they go; their size
     stays the same as the camera comes closer, and their place stays on
     what they point at. A click ring (`studio-click-ring`) is white with a
-    dark edge, so it shows on light and dark pages. The video is the
-    recording's size, sixty frames a second.
+    dark edge, so it shows on light and dark pages. The video is sixty
+    frames a second, at the recording's size or the one chosen, by the
+    shorter side (2160, 1080 or 720), never over 4K and even on both sides.
 - **Convert to SVG** (`VectorEditor.swift`, `VectorCanvas.swift`) is Hide
   Part's window, laid out the same (`HidePartLayout`, opening for the
   picture's size with the 36 pt bar under the canvas counted), titled "name

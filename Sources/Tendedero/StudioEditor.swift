@@ -134,25 +134,43 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         }
     }
 
-    /// Writes the video as Studio shows it, beside the recording, keeps the
-    /// work for next time, and hangs the video on the line.
+    /// Writes the video as Studio shows it, beside the recording, at the
+    /// size and as the kind of file chosen, keeps the work for next time,
+    /// and hangs the video on the line.
     private func save(_ model: StudioModel) {
         guard export == nil else { return }
         model.pause()
         model.end()
         StudioStore.setProject(model.project, for: model.url)
         model.markKept()
+        if let backdrop = model.project.backdrop { StudioModel.lastBackdrop = backdrop }
         let base = model.url.deletingPathExtension().lastPathComponent
-        let target = Collage.newFile(String(format: L("%@ (edited)"), base), "mov")
+        let name = String(format: L("%@ (edited)"), base)
+        let output = model.output
+        // A GIF is made from a movie made first, out of sight.
+        let gif = output.kind == .gif
+        let movie = gif
+            ? FileManager.default.temporaryDirectory.appendingPathComponent("Snapfly-Studio-\(UUID().uuidString).mov")
+            : Collage.newFile(name, output.kind.rawValue)
         let stop = StudioExport.Stop()
         export = stop
         model.exporting = 0
         let look = model.look
+        let backdrop = model.project.backdrop
         let source = model.url
         Task { @MainActor in
             do {
-                try await StudioExport.run(source, look: look, to: target, stop: stop) { progress in
-                    DispatchQueue.main.async { MainActor.assumeIsolated { StudioEditor.shared.progressed(progress) } }
+                defer { if gif { try? FileManager.default.removeItem(at: movie) } }
+                try await StudioExport.run(source, look: look, backdrop: backdrop, quality: output.size, to: movie,
+                                           stop: stop) { progress in
+                    let shown = gif ? progress * 0.8 : progress
+                    DispatchQueue.main.async { MainActor.assumeIsolated { StudioEditor.shared.progressed(shown) } }
+                }
+                var target = movie
+                if gif {
+                    progressed(0.9)
+                    guard let made = await GIF.make(from: movie, named: name) else { throw StudioExport.Failure.cannotWrite }
+                    target = made
                 }
                 onSaved(target)
                 // The window it was saved from, unless it was closed meanwhile.
@@ -260,6 +278,10 @@ final class StudioModel: ObservableObject {
     /// A still of the video under it, for pictures of the window made in
     /// CI, where the video itself is not drawn. Nil in use.
     @Published var poster: CGImage?
+    /// How large, and as which kind of file, Save Video writes it.
+    @Published var output: StudioOutput {
+        didSet { Self.lastOutput = output }
+    }
 
     @Published private var undone: [StudioProject] = []
     @Published private var redone: [StudioProject] = []
@@ -280,6 +302,7 @@ final class StudioModel: ObservableObject {
         self.project = project
         keptWork = project
         look = StudioLook(project: project, events: events, duration: duration, pixels: pixels)
+        output = Self.lastOutput
         player = AVPlayer(playerItem: AVPlayerItem(url: url))
         player.actionAtItemEnd = .pause
         let defaults = UserDefaults.standard
@@ -647,5 +670,65 @@ final class StudioModel: ObservableObject {
 
     func setShowsClicks(_ on: Bool) {
         change { $0.showsClicks = on }
+    }
+
+    // MARK: Background and saving
+
+    private static let backdropKey = "studioBackdrop"
+    private static let outputKey = "studioOutput"
+
+    /// The background last saved with, the one a recording starts from when
+    /// it is turned on.
+    static var lastBackdrop: Backdrop {
+        get {
+            UserDefaults.standard.data(forKey: backdropKey).flatMap { try? JSONDecoder().decode(Backdrop.self, from: $0) }
+                ?? Backdrop()
+        }
+        set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: backdropKey) }
+    }
+
+    /// How Save Video writes the video, as last chosen.
+    static var lastOutput: StudioOutput {
+        get {
+            UserDefaults.standard.data(forKey: outputKey).flatMap { try? JSONDecoder().decode(StudioOutput.self, from: $0) }
+                ?? StudioOutput()
+        }
+        set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: outputKey) }
+    }
+
+    /// Where the recording sits, as the preview shows it.
+    var framing: StudioFraming {
+        StudioFraming(pixels: pixels, backdrop: project.backdrop)
+    }
+
+    /// The video's size in pixels as it will be saved.
+    var savedSize: CGSize {
+        StudioFraming(pixels: pixels, backdrop: project.backdrop, quality: output.size).canvas
+    }
+
+    func setBackdrop(_ on: Bool) {
+        change { $0.backdrop = on ? ($0.backdrop ?? Self.lastBackdrop) : nil }
+    }
+
+    /// A change to the background, turning it on if it was off, as a shape
+    /// other than the recording's needs it: one step for Undo, or, `going`,
+    /// part of one that goes on, like a slider being moved, ended by `end`.
+    func adjustBackdrop(going: Bool = false, _ make: (inout Backdrop) -> Void) {
+        if going { changing() } else { begin() }
+        var backdrop = project.backdrop ?? Self.lastBackdrop
+        make(&backdrop)
+        project.backdrop = backdrop
+        if !going { end() }
+    }
+
+    /// The shape of the video: the recording's own, without a background
+    /// unless one was chosen, or a post's, on its background.
+    func setRatio(_ ratio: Backdrop.Ratio) {
+        guard ratio != .fit || project.backdrop != nil else { return }
+        adjustBackdrop { $0.ratio = ratio }
+    }
+
+    var ratio: Backdrop.Ratio {
+        project.backdrop?.ratio ?? .fit
     }
 }

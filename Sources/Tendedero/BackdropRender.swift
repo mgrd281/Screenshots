@@ -12,25 +12,9 @@ extension Backdrop {
         else { return nil }
         context.interpolationQuality = .high
 
-        // The colour, from the top left to the bottom right.
-        let stops = backdrop.fill.stops
-        let colors = stops.map { CGColor(srgbRed: $0.red, green: $0.green, blue: $0.blue, alpha: 1) } as CFArray
-        let locations = stops.indices.map { CGFloat($0) / CGFloat(max(1, stops.count - 1)) }
-        if let gradient = CGGradient(colorsSpace: space, colors: colors, locations: locations) {
-            context.drawLinearGradient(gradient, start: CGPoint(x: 0, y: height), end: CGPoint(x: width, y: 0), options: [])
-        }
-
+        paint(backdrop.fill, in: context, size: layout.canvas)
         let shape = CGPath(roundedRect: layout.picture, cornerWidth: layout.radius, cornerHeight: layout.radius, transform: nil)
-        if layout.blur > 0 {
-            // The shadow comes from a shape of the photo's own size under it.
-            context.saveGState()
-            context.setShadow(offset: CGSize(width: 0, height: -layout.drop), blur: layout.blur,
-                              color: CGColor(gray: 0, alpha: 0.32))
-            context.addPath(shape)
-            context.setFillColor(CGColor(gray: 1, alpha: 1))
-            context.fillPath()
-            context.restoreGState()
-        }
+        castShadow(of: shape, blur: layout.blur, drop: layout.drop, in: context)
         context.saveGState()
         context.addPath(shape)
         context.clip()
@@ -38,5 +22,29 @@ extension Backdrop {
         context.restoreGState()
         guard let made = context.makeImage() else { return nil }
         return (made, layout)
+    }
+
+    /// The colour over the whole context, from the top left to the bottom
+    /// right, as a photo's and a video's background have it.
+    static func paint(_ fill: Fill, in context: CGContext, size: CGSize) {
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB) else { return }
+        let stops = fill.stops
+        let colors = stops.map { CGColor(srgbRed: $0.red, green: $0.green, blue: $0.blue, alpha: 1) } as CFArray
+        let locations = stops.indices.map { CGFloat($0) / CGFloat(max(1, stops.count - 1)) }
+        guard let gradient = CGGradient(colorsSpace: space, colors: colors, locations: locations) else { return }
+        context.drawLinearGradient(gradient, start: CGPoint(x: 0, y: size.height), end: CGPoint(x: size.width, y: 0),
+                                   options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
+    }
+
+    /// The soft shadow under a photo or a video, from a shape of its own size
+    /// under it; nothing without a blur.
+    static func castShadow(of shape: CGPath, blur: CGFloat, drop: CGFloat, in context: CGContext) {
+        guard blur > 0 else { return }
+        context.saveGState()
+        context.setShadow(offset: CGSize(width: 0, height: -drop), blur: blur, color: CGColor(gray: 0, alpha: 0.32))
+        context.addPath(shape)
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fillPath()
+        context.restoreGState()
     }
 }

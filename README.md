@@ -64,7 +64,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Edit › Crop…, or <kbd>⌥</kbd>-click | The photo opens large over the dimmed screen: drag over the part to keep, and it is kept when you let go. Return keeps the whole photo, Escape cancels. It goes out cropped, and the line shows it so; the file stays as it is. Keep Whole Photo, in the menu of a cropped photo, takes the crop away. Either way, a note offers to undo it for a few seconds. |
 | Right-click, then Edit › Hide Part | Click a word to hide it, or drag a box over anything the covering missed. It stays hidden in whatever leaves the line, and a note offers to undo it. Always cover, under the word just hidden, covers that word in every photo from then on, as a rule of your own under Privacy. |
 | Right-click, then Edit › Draw on Photo | Point things out with an arrow, a box, a red circle, a highlight, numbered steps or words, and crop it to the part that matters. It is drawn on whatever leaves the line; the file stays as it is. |
-| Right-click a recording, then Edit › Edit in Studio… | Zoomed in where you clicked and typed, a ring at each click, and arrows, boxes, circles, numbered steps and words for as long as you want each. Save Video hangs the new video beside the recording. |
+| Right-click a recording, then Edit › Edit in Studio… | Zoomed in where you clicked and typed, a ring at each click, and arrows, boxes, circles, numbered steps and words for as long as you want each, on a background in a post's shape if you like. Save Video hangs the new video beside the recording, as MOV, MP4 or GIF, at its own size, 4K, 1080p or 720p. |
 | Right-click, then Edit › Background… | Set it on a colour, with room round it, rounded corners and a soft shadow, square or the shape a post or a story wants, so it looks finished in a post, a shop or a slide. It goes out that way; the file stays as it is. Remove Background takes it off again. |
 | Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
@@ -276,9 +276,19 @@ as it comes; drag it on the timeline to change when and for how long. Steps
 are numbered in the order they show. Marks stay on what they point at as the
 camera moves. Space plays and pauses, ← and → move a second, ⌘Z undoes.
 
-Save Video writes a new video beside the recording, at its size and sixty
-frames a second, in HEVC like the recording, with its sound, and hangs it on the line; the recording
-itself is never changed. What you changed stays with the recording for the
+Set it on a background, in the inspector under Background: one of eight
+colours, with room round the recording, rounded corners and a soft shadow,
+as Background… sets a photo. Size gives it the shape a post wants: the
+recording's own, 16:9, 1:1, 4:5 or 9:16, on its background, with the size
+in pixels it will have under it. The picture shows it as it will be saved.
+
+Save Video writes a new video beside the recording, sixty frames a second,
+with its sound, and hangs it on the line; the recording itself is never
+changed. Under Save, choose the file: MOV in HEVC like the recording, the
+smallest; MP4 in H.264, which every website, Windows and Android play; or a
+GIF that loops in any chat, without sound. And how large: the recording's
+own size, 4K, 1080p or 720p, by the shorter side, never over 4K. Both are
+kept for the next video. What you changed stays with the recording for the
 next time, also when you close the window or open another recording in
 Studio, and Trim keeps it in step; only Cancel leaves it as it was. A
 recording just made waits, with a note, until you close Studio, so it never
@@ -1942,7 +1952,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
 | `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
 | `FullPage.swift` | Captures a whole page by scrolling the window in front |
-| `VideoQuality.swift` | How recordings and Studio's videos are compressed: HEVC, or H.264 where it cannot be written, at a bit rate that follows the picture |
+| `VideoQuality.swift` | How recordings and Studio's videos are compressed: HEVC, or H.264 where it cannot be written or for an MP4 to share, at a bit rate that follows the picture |
 | `PhoneHandoff.swift` | Offers the newest photo to the iPhone nearby with Handoff, and sends it when asked |
 | `ChatCapture.swift` | Captures a whole chat by scrolling it: a screenshot of each view and a video of the scroll |
 | `PageStitch.swift` | Joins the views of a scrolled page into one picture |
@@ -1977,7 +1987,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Trim.swift` | Trims a screen recording and saves the result |
 | `StudioPlanning.swift` | Studio without a screen: what was done while recording, where to zoom, the camera's path, how marks and clicks come and go, and the timeline's rules |
 | `StudioStore.swift` | Studio's work on each recording and what was done while recording, kept on the Mac; notes the pointer, clicks and key times while recording |
-| `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks, writes the video, and reads the timeline's pictures and sound |
+| `StudioFraming.swift` | Where the recording sits in Studio's video on a background, in a post's shape and at the size chosen, and how Save Video writes it (MOV, MP4 or GIF) |
+| `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks on its background, writes the video, and reads the timeline's pictures and sound |
 | `StudioEditor.swift`, `StudioEditorView.swift` | Studio's window: the video as it will be saved, the timeline, the inspector, Undo and Save Video |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
 | `Tests/TendederoTests/CoverCorpus.swift`, `CoverCorpusGerman.swift`, `CoverCorpusPostal.swift`, `CoverAccuracyTests.swift` | 116 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, and more German papers (a tax notice, a tenancy agreement, a bank statement, a chat export, a CV, an order confirmation; a sick note's insured copy whose name has no label read over it and whose stamp repeats the practice's and the doctor's numbers, a company's letter, a newsletter whose words with a number are no streets), each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |

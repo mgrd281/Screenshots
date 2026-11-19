@@ -72,6 +72,49 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertEqual(Double(rate), 60, accuracy: 1.5)
     }
 
+    func testTheRecordingSitsOnItsBackgroundInThePostsShape() async throws {
+        let source = folder.appendingPathComponent("quarters.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 1, draw: StudioSample.quarters)
+        var project = StudioProject()
+        var backdrop = Backdrop()
+        backdrop.fill = .graphite
+        backdrop.ratio = .square
+        project.backdrop = backdrop
+        let made = try await export(source, project)
+        let asset = AVURLAsset(url: made)
+        let tracks = try await asset.loadTracks(withMediaType: .video)
+        let track = try XCTUnwrap(tracks.first)
+        let size = try await track.load(.naturalSize)
+        let framing = StudioFraming(pixels: CGSize(width: 320, height: 180), backdrop: backdrop)
+        XCTAssertEqual(size, framing.canvas)
+        XCTAssertEqual(size.width, size.height)
+        let frame = try await StudioSample.frame(of: made, at: 0.5)
+        // The colour in the corners, the recording in the middle.
+        XCTAssertTrue(StudioSample.pixel(frame, x: 0.01, y: 0.99).isDark)
+        XCTAssertTrue(StudioSample.pixel(frame, x: 0.99, y: 0.01).isDark)
+        let c = framing.canvas, v = framing.video
+        let blue = StudioSample.pixel(frame, x: (v.minX + v.width / 4) / c.width, y: (v.minY + v.height * 3 / 4) / c.height)
+        XCTAssertTrue(blue.isBlue)
+        let green = StudioSample.pixel(frame, x: (v.minX + v.width * 3 / 4) / c.width, y: (v.minY + v.height / 4) / c.height)
+        XCTAssertTrue(green.isGreen)
+    }
+
+    func testAnMP4IsMadeInH264AtTheSizeChosen() async throws {
+        let source = folder.appendingPathComponent("quarters.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 1, draw: StudioSample.quarters)
+        let made = try await export(source, StudioProject(), quality: .hd, as: "mp4")
+        let asset = AVURLAsset(url: made)
+        let tracks = try await asset.loadTracks(withMediaType: .video)
+        let track = try XCTUnwrap(tracks.first)
+        let size = try await track.load(.naturalSize)
+        XCTAssertEqual(size, CGSize(width: 1280, height: 720))
+        let formats = try await track.load(.formatDescriptions)
+        let format = try XCTUnwrap(formats.first)
+        XCTAssertEqual(CMFormatDescriptionGetMediaSubType(format), kCMVideoCodecType_H264)
+        let frame = try await StudioSample.frame(of: made, at: 0.5)
+        XCTAssertTrue(StudioSample.pixel(frame, x: 0.25, y: 0.75).isBlue)
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)
@@ -88,15 +131,17 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertEqual(left, [])
     }
 
-    private func export(_ source: URL, _ project: StudioProject, events: StudioEvents? = nil) async throws -> URL {
+    private func export(_ source: URL, _ project: StudioProject, events: StudioEvents? = nil,
+                        quality: StudioOutput.Quality = .original, as kind: String = "mov") async throws -> URL {
         let asset = AVURLAsset(url: source)
         let duration = try await asset.load(.duration).seconds
         let tracks = try await asset.loadTracks(withMediaType: .video)
         let track = try XCTUnwrap(tracks.first)
         let size = try await track.load(.naturalSize)
         let look = StudioLook(project: project, events: events, duration: duration, pixels: size)
-        let target = folder.appendingPathComponent("made-\(UUID().uuidString).mov")
-        try await StudioExport.run(source, look: look, to: target, stop: StudioExport.Stop()) { _ in }
+        let target = folder.appendingPathComponent("made-\(UUID().uuidString)").appendingPathExtension(kind)
+        try await StudioExport.run(source, look: look, backdrop: project.backdrop, quality: quality, to: target,
+                                   stop: StudioExport.Stop()) { _ in }
         return target
     }
 
@@ -180,6 +225,18 @@ final class StudioRenderTests: XCTestCase {
             let image = try await StudioSample.frame(of: made, at: t)
             try StudioSample.png(image, to: out.appendingPathComponent(String(format: "frame-%04.1f.png", t)))
         }
+        // On a background, in a story's shape, as a post wants it.
+        var backdrop = Backdrop()
+        backdrop.ratio = .story
+        project.backdrop = backdrop
+        let framed = try await export(source, project, events: events, quality: .fullHD, as: "mp4")
+        try? fm.removeItem(at: out.appendingPathComponent("studio-story.mp4"))
+        try fm.copyItem(at: framed, to: out.appendingPathComponent("studio-story.mp4"))
+        for t in [1.0, 3.0, 4.6] {
+            let image = try await StudioSample.frame(of: framed, at: t)
+            try StudioSample.png(image, to: out.appendingPathComponent(String(format: "story-%04.1f.png", t)))
+        }
+        project.backdrop = nil
         let zooms = project.zooms.map { String(format: "%.2f–%.2f ×%.1f", $0.start, $0.end, $0.scale) }
         try zooms.joined(separator: "\n").write(to: out.appendingPathComponent("zooms.txt"), atomically: true, encoding: .utf8)
     }
@@ -195,9 +252,15 @@ final class StudioRenderTests: XCTestCase {
         var project = StudioProject.first(events: events, duration: StudioSample.length)
         project.marks = StudioSample.marks
         for (name, appearance) in [("light", NSAppearance.Name.aqua), ("dark", NSAppearance.Name.darkAqua)] {
-            for chosen in ["mark", "zoom"] {
+            for chosen in ["mark", "zoom", "background"] {
+                var shown = project
+                if chosen == "background" {
+                    var backdrop = Backdrop()
+                    backdrop.ratio = .wide
+                    shown.backdrop = backdrop
+                }
                 let model = StudioModel(url: source, duration: StudioSample.length, pixels: CGSize(width: 1280, height: 800),
-                                        events: events, project: project)
+                                        events: events, project: shown)
                 let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1320, height: 860),
                                       styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
                 window.appearance = NSAppearance(named: appearance)
@@ -206,13 +269,13 @@ final class StudioRenderTests: XCTestCase {
                 window.contentView = hosting
                 window.orderFrontRegardless()
                 model.load()
-                let t = chosen == "mark" ? 3.0 : 2.4
+                let t = chosen == "zoom" ? 2.4 : 3.0
                 model.seek(to: t)
                 model.poster = StudioSample.image(at: t, width: 1280, height: 800, draw: StudioSample.screen)
                 if chosen == "mark", let step = project.marks.first(where: { $0.mark.kind == .step }) {
                     model.tool = .select
                     model.choose(.mark(step.id))
-                } else if let zoom = project.zooms.first(where: { $0.contains(t) }) {
+                } else if chosen == "zoom", let zoom = project.zooms.first(where: { $0.contains(t) }) {
                     model.choose(.zoom(zoom.id))
                 }
                 Self.spin(4)
@@ -457,6 +520,8 @@ private enum StudioSample {
 
         var isBlue: Bool { b > 170 && r < 110 && g < 170 }
         var isGreen: Bool { g > 170 && r < 110 && b < 110 }
+        /// Graphite, the background's darkest colour.
+        var isDark: Bool { r < 100 && g < 100 && b < 100 }
     }
 
     /// A pixel's colour, at a place from 0 to 1 from the bottom left.

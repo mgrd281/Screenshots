@@ -103,20 +103,32 @@ enum StudioDraw {
     }
 
     /// A frame of the video: the recording's picture through the camera at
-    /// that time, at the recording's own size, then what is drawn over it.
-    static func frame(_ source: CVPixelBuffer, into output: CVPixelBuffer, look: StudioLook, at t: Double,
-                      context: CIContext) {
+    /// that time, in its place on the video, on its background when it has
+    /// one, then what is drawn over it.
+    static func frame(_ source: CVPixelBuffer, into output: CVPixelBuffer, look: StudioLook, framing: StudioFraming,
+                      ground: StudioGround?, at t: Double, context: CIContext) {
         let width = CVPixelBufferGetWidth(output), height = CVPixelBufferGetHeight(output)
         let size = CGSize(width: width, height: height)
+        let video = framing.isFramed ? framing.video : CGRect(origin: .zero, size: size)
         let rect = look.camera.rect(at: t)
         let picture = CIImage(cvPixelBuffer: source)
         let extent = picture.extent
         let crop = CGRect(x: extent.minX + rect.minX * extent.width, y: extent.minY + rect.minY * extent.height,
                           width: rect.width * extent.width, height: rect.height * extent.height)
         let move = CGAffineTransform(translationX: -crop.minX, y: -crop.minY)
-            .concatenating(CGAffineTransform(scaleX: size.width / crop.width, y: size.height / crop.height))
-        let seen = picture.clampedToExtent().cropped(to: crop).transformed(by: move)
-            .cropped(to: CGRect(origin: .zero, size: size))
+            .concatenating(CGAffineTransform(scaleX: video.width / crop.width, y: video.height / crop.height))
+            .concatenating(CGAffineTransform(translationX: video.minX, y: video.minY))
+        var seen = picture.clampedToExtent().cropped(to: crop).transformed(by: move).cropped(to: video)
+        if let ground {
+            // Cut to its rounded corners, on its colour and shadow.
+            if let mask = ground.mask {
+                seen = seen.applyingFilter("CIBlendWithAlphaMask", parameters: [
+                    kCIInputBackgroundImageKey: ground.image, kCIInputMaskImageKey: mask,
+                ])
+            } else {
+                seen = seen.composited(over: ground.image)
+            }
+        }
         context.render(seen, to: output, bounds: CGRect(origin: .zero, size: size), colorSpace: nil)
         guard look.draws(at: t) else { return }
         CVPixelBufferLockBaseAddress(output, [])
@@ -126,13 +138,63 @@ enum StudioDraw {
                                       bytesPerRow: CVPixelBufferGetBytesPerRow(output), space: space,
                                       bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue
                                           | CGBitmapInfo.byteOrder32Little.rawValue) else { return }
-        overlay(look, at: t, rect: rect, in: drawing, size: size)
+        // Marks stay on the recording, inside its corners.
+        drawing.translateBy(x: video.minX, y: video.minY)
+        if framing.isFramed {
+            let inside = CGRect(origin: .zero, size: video.size)
+            drawing.addPath(CGPath(roundedRect: inside, cornerWidth: framing.radius, cornerHeight: framing.radius,
+                                   transform: nil))
+            drawing.clip()
+        }
+        overlay(look, at: t, rect: rect, in: drawing, size: video.size)
+    }
+}
+
+/// What is drawn round the recording, made once for a whole video: its
+/// colour with the shadow, and the rounded shape the recording is cut to.
+struct StudioGround {
+    let image: CIImage
+    /// Opaque where the recording shows; nil with square corners.
+    let mask: CIImage?
+
+    init?(_ framing: StudioFraming) {
+        guard let fill = framing.fill else { return nil }
+        let size = framing.canvas
+        guard let ground = Self.picture(size, draw: { context in
+            Backdrop.paint(fill, in: context, size: size)
+            // Under the recording's opaque part only, so no edge of it shows.
+            let under = framing.video.insetBy(dx: 1, dy: 1)
+            let radius = max(0, framing.radius - 1)
+            Backdrop.castShadow(of: CGPath(roundedRect: under, cornerWidth: radius, cornerHeight: radius, transform: nil),
+                                blur: framing.blur, drop: framing.drop, in: context)
+        }) else { return nil }
+        image = CIImage(cgImage: ground)
+        guard framing.radius > 0 else {
+            mask = nil
+            return
+        }
+        guard let shape = Self.picture(size, draw: { context in
+            context.addPath(CGPath(roundedRect: framing.video, cornerWidth: framing.radius, cornerHeight: framing.radius,
+                                   transform: nil))
+            context.setFillColor(CGColor(gray: 1, alpha: 1))
+            context.fillPath()
+        }) else { return nil }
+        mask = CIImage(cgImage: shape)
+    }
+
+    private static func picture(_ size: CGSize, draw: (CGContext) -> Void) -> CGImage? {
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: 8,
+                                      bytesPerRow: 0, space: space,
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+        draw(context)
+        return context.makeImage()
     }
 }
 
 /// Writes the recording as Studio shows it: sixty frames a second, each
-/// through the camera with the marks and clicks drawn on, at the
-/// recording's own size, and its sound as it was.
+/// through the camera with the marks and clicks drawn on, on its
+/// background at the size chosen, and its sound as it was.
 enum StudioExport {
     enum Failure: Error {
         case noPicture, cannotRead, cannotWrite, cancelled
@@ -186,8 +248,11 @@ enum StudioExport {
     static let rate: Int32 = 60
 
     /// Writes `source` as Studio shows it to `target`, by way of a hidden
-    /// file beside it so the folder watcher ignores it until it is done.
-    static func run(_ source: URL, look: StudioLook, to target: URL, stop: Stop,
+    /// file beside it so the folder watcher ignores it until it is done: a
+    /// QuickTime movie, or an MP4 for `.mp4`, in H.264, which every player
+    /// and website takes.
+    static func run(_ source: URL, look: StudioLook, backdrop: Backdrop? = nil,
+                    quality: StudioOutput.Quality = .original, to target: URL, stop: Stop,
                     progress: @escaping @Sendable (Double) -> Void) async throws {
         let asset = AVURLAsset(url: source)
         let duration = try await asset.load(.duration).seconds
@@ -200,12 +265,14 @@ enum StudioExport {
         for sound in sounds { found.append(try await sound.load(.formatDescriptions).first) }
         let hints = found
         let temp = target.deletingLastPathComponent()
-            .appendingPathComponent(".studio-\(UUID().uuidString)").appendingPathExtension("mov")
+            .appendingPathComponent(".studio-\(UUID().uuidString)").appendingPathExtension(target.pathExtension)
+        let mp4 = target.pathExtension.lowercased() == "mp4"
+        let framing = StudioFraming(pixels: natural, backdrop: backdrop, quality: quality)
         do {
             try await withCheckedThrowingContinuation { (done: CheckedContinuation<Void, Error>) in
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
-                        try write(asset: asset, track: track, size: natural, sounds: sounds, hints: hints,
+                        try write(asset: asset, track: track, framing: framing, mp4: mp4, sounds: sounds, hints: hints,
                                   duration: duration, look: look, to: temp, stop: stop, progress: progress)
                         done.resume()
                     } catch {
@@ -225,7 +292,7 @@ enum StudioExport {
 
     // The reader and writer are kept to this one queue's work and the
     // inputs' own queues, so they are never used from two places at once.
-    private static func write(asset: AVAsset, track: AVAssetTrack, size natural: CGSize, sounds: [AVAssetTrack],
+    private static func write(asset: AVAsset, track: AVAssetTrack, framing: StudioFraming, mp4: Bool, sounds: [AVAssetTrack],
                               hints: [CMFormatDescription?], duration: Double, look: StudioLook, to temp: URL,
                               stop: Stop, progress: @escaping @Sendable (Double) -> Void) throws {
         let reader = try AVAssetReader(asset: asset)
@@ -236,13 +303,18 @@ enum StudioExport {
         guard reader.canAdd(pictures) else { throw Failure.cannotRead }
         reader.add(pictures)
 
-        let width = max(2, Int((natural.width / 2).rounded()) * 2)
-        let height = max(2, Int((natural.height / 2).rounded()) * 2)
-        let writer = try AVAssetWriter(outputURL: temp, fileType: .mov)
+        let width = Int(framing.canvas.width), height = Int(framing.canvas.height)
+        let writer = try AVAssetWriter(outputURL: temp, fileType: mp4 ? .mp4 : .mov)
+        // An MP4 is for websites: it starts playing before it has all come.
+        writer.shouldOptimizeForNetworkUse = mp4
         // About as sharp as the recording, for text that stays crisp when
         // zoomed in on, and as small as that allows (`VideoQuality`).
-        let picture = AVAssetWriterInput(mediaType: .video, outputSettings: VideoQuality.settings(
-            for: writer, width: width, height: height, frameRate: Double(rate), bitsPerPixel: VideoQuality.studio))
+        let settings = mp4
+            ? VideoQuality.compatibleSettings(for: writer, width: width, height: height, frameRate: Double(rate),
+                                              bitsPerPixel: VideoQuality.studio)
+            : VideoQuality.settings(for: writer, width: width, height: height, frameRate: Double(rate),
+                                    bitsPerPixel: VideoQuality.studio)
+        let picture = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
         picture.expectsMediaDataInRealTime = false
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: picture, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
@@ -276,6 +348,7 @@ enum StudioExport {
 
         let context = CIContext(options: [.workingColorSpace: NSNull(), .outputColorSpace: NSNull(),
                                           .cacheIntermediates: false])
+        let ground = StudioGround(framing)
         let total = max(1, Int((duration * Double(rate)).rounded(.down)))
         let group = DispatchGroup()
         let failed = Flag()
@@ -313,7 +386,8 @@ enum StudioExport {
                 guard let pool = adaptor.pixelBufferPool,
                       CVPixelBufferPoolCreatePixelBuffer(nil, pool, &made) == kCVReturnSuccess, let output = made
                 else { return finish(true) }
-                StudioDraw.frame(source, into: output, look: look, at: t, context: context)
+                StudioDraw.frame(source, into: output, look: look, framing: framing, ground: ground, at: t,
+                                 context: context)
                 let time = CMTimeAdd(start, CMTime(value: CMTimeValue(state.index), timescale: rate))
                 guard adaptor.append(output, withPresentationTime: time) else { return finish(true) }
                 state.index += 1

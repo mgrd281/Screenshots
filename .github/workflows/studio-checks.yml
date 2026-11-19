@@ -50,7 +50,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           shopt -s nullglob
-          files=(captures/studio/*.png captures/studio/*.mov captures/studio/*.txt)
+          files=(captures/studio/*.png captures/studio/*.mov captures/studio/*.mp4 captures/studio/*.txt)
           if [ ${#files[@]} -eq 0 ]; then
             echo "Nothing to publish."
             exit 0

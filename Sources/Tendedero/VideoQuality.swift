@@ -50,4 +50,13 @@ enum VideoQuality {
         if writer.canApply(outputSettings: hevc, forMediaType: .video) { return hevc }
         return settings(width: width, height: height, frameRate: frameRate, bitsPerPixel: bitsPerPixel, hevc: false)
     }
+
+    /// H.264, which every player, phone and website takes, for an MP4 made
+    /// to be shared; HEVC only where this writer cannot take H.264.
+    static func compatibleSettings(for writer: AVAssetWriter, width: Int, height: Int, frameRate: Double,
+                                   bitsPerPixel: Double) -> [String: Any] {
+        let h264 = settings(width: width, height: height, frameRate: frameRate, bitsPerPixel: bitsPerPixel, hevc: false)
+        if writer.canApply(outputSettings: h264, forMediaType: .video) { return h264 }
+        return settings(width: width, height: height, frameRate: frameRate, bitsPerPixel: bitsPerPixel, hevc: true)
+    }
 }

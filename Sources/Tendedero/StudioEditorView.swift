@@ -96,6 +96,9 @@ struct StudioEditorView: View {
                 style
                 if let item = model.selectedMark { chosen(item) }
                 clicks
+                shapes
+                backdropSettings
+                saving
             }
             .formStyle(.grouped)
             .disabled(model.exporting != nil)
@@ -316,6 +319,105 @@ struct StudioEditorView: View {
         }
     }
 
+    // MARK: The video's shape, its background, and saving
+
+    /// The recording's own shape, or a post's, with the size it is saved at.
+    private var shapes: some View {
+        Section {
+            HStack(spacing: 4) {
+                ForEach(Backdrop.Ratio.allCases, id: \.self) { ratio in
+                    StudioShapeTile(ratio: ratio, recording: model.pixels, chosen: model.ratio == ratio) {
+                        model.setRatio(ratio)
+                    }
+                }
+            }
+            .padding(.vertical, 2)
+        } header: {
+            Text(L("Size"))
+        } footer: {
+            let size = model.savedSize
+            Text(verbatim: "\(Int(size.width)) × \(Int(size.height))")
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// The recording on a colour, with room round it, rounded corners and a
+    /// shadow, as Background… sets a photo.
+    private var backdropSettings: some View {
+        Section {
+            Toggle(L("Set on a background"), isOn: Binding(get: { model.project.backdrop != nil },
+                                                           set: { model.setBackdrop($0) }))
+            if let backdrop = model.project.backdrop {
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(32), spacing: 12), count: 4), spacing: 12) {
+                    ForEach(Backdrop.Fill.allCases, id: \.self) { fill in
+                        Swatch(fill: fill, chosen: backdrop.fill == fill) { model.adjustBackdrop { $0.fill = fill } }
+                    }
+                }
+                .padding(.vertical, 4)
+                LabeledContent(L("Padding")) {
+                    Slider(value: backdropValue(\.padding), in: Backdrop.paddings, onEditingChanged: { editing in
+                        if !editing { model.end() }
+                    })
+                    .controlSize(.small)
+                    .accessibilityLabel(L("Padding"))
+                }
+                LabeledContent(L("Corners")) {
+                    Slider(value: backdropValue(\.corners), in: 0...1, onEditingChanged: { editing in
+                        if !editing { model.end() }
+                    })
+                    .controlSize(.small)
+                    .accessibilityLabel(L("Corners"))
+                }
+                Toggle(L("Shadow"), isOn: Binding(get: { backdrop.shadow },
+                                                  set: { on in model.adjustBackdrop { $0.shadow = on } }))
+            }
+        } header: {
+            Text(L("Background"))
+        } footer: {
+            Text(L("Room round the recording, rounded corners and a soft shadow, as a post or a slide wants it."))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func backdropValue(_ key: WritableKeyPath<Backdrop, Double>) -> Binding<Double> {
+        Binding(get: { model.project.backdrop?[keyPath: key] ?? 0 },
+                set: { value in model.adjustBackdrop(going: true) { $0[keyPath: key] = value } })
+    }
+
+    /// As which kind of file, and how large.
+    private var saving: some View {
+        Section {
+            Picker(L("File Type"), selection: $model.output.kind) {
+                Text(verbatim: "MOV").tag(StudioOutput.Kind.mov)
+                Text(verbatim: "MP4").tag(StudioOutput.Kind.mp4)
+                Text(verbatim: "GIF").tag(StudioOutput.Kind.gif)
+            }
+            .pickerStyle(.segmented)
+            if model.output.kind != .gif {
+                Picker(L("Quality"), selection: $model.output.quality) {
+                    Text(L("Original")).tag(StudioOutput.Quality.original)
+                    Text(verbatim: "4K").tag(StudioOutput.Quality.uhd)
+                    Text(verbatim: "1080p").tag(StudioOutput.Quality.fullHD)
+                    Text(verbatim: "720p").tag(StudioOutput.Quality.hd)
+                }
+            }
+        } header: {
+            Text(L("Save"))
+        } footer: {
+            Text(Self.about(model.output.kind))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    static func about(_ kind: StudioOutput.Kind) -> String {
+        switch kind {
+        case .mov: L("The smallest file, as Macs and iPhones play it.")
+        case .mp4: L("Plays everywhere: on websites, Windows and Android.")
+        case .gif: L("Plays in any chat, on a loop, without sound.")
+        }
+    }
+
     /// Undo and Redo on the leading edge; Cancel and Save Video on the
     /// trailing, and how far Save Video has come while it works.
     private var footer: some View {
@@ -357,6 +459,61 @@ struct StudioEditorView: View {
     }
 }
 
+/// One shape the video can take: its outline drawn to its proportions
+/// over its name, both in the accent on a light accent ground when chosen.
+private struct StudioShapeTile: View {
+    let ratio: Backdrop.Ratio
+    /// The recording's pixels, for the shape of its own.
+    let recording: CGSize
+    let chosen: Bool
+    let choose: () -> Void
+
+    private var title: String {
+        ratio == .fit ? L("Original") : ratio.title
+    }
+
+    private var label: String {
+        switch ratio {
+        case .fit: L("Original")
+        case .square: "1:1"
+        case .wide: "16:9"
+        case .portrait: "4:5"
+        case .story: "9:16"
+        }
+    }
+
+    /// The outline, at most 26 points either way.
+    private var outline: CGSize {
+        let across = ratio.value ?? Double(recording.width / max(recording.height, 1))
+        return across >= 1 ? CGSize(width: 26, height: 26 / across) : CGSize(width: 26 * across, height: 26)
+    }
+
+    var body: some View {
+        Button(action: choose) {
+            VStack(spacing: 5) {
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .strokeBorder(chosen ? Color.accentColor : Color.secondary, lineWidth: 1.5)
+                    .frame(width: outline.width, height: outline.height)
+                    .frame(width: 30, height: 30)
+                Text(verbatim: label)
+                    .font(.system(size: 10, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .foregroundStyle(chosen ? Color.accentColor : Color.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(chosen ? Color.accentColor.opacity(0.12) : Color.clear))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(title)
+        .accessibilityLabel(title)
+        .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
+    }
+}
+
 // MARK: - The picture
 
 /// The recording as it will be saved, and what is drawn on it: marks are
@@ -388,27 +545,49 @@ private struct StudioCanvas: View {
     var body: some View {
         GeometryReader { geometry in
             let margin = StudioLayout.margin
-            let size = HidePartLayout.fitted(model.pixels, in: CGSize(width: geometry.size.width - 2 * margin,
-                                                                     height: geometry.size.height - 2 * margin))
-            StudioSurface(model: model)
-                .frame(width: size.width, height: size.height)
-                .clipShape(Rectangle())
-                .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
-                .overlay {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { drag($0, in: size) }
-                                .onEnded { ended($0, in: size) }
-                        )
-                        .onHover { inside in pointer(inside ? cursorShape : nil) }
+            // The whole video, and the recording's place on it, as saved.
+            let framing = model.framing
+            let whole = HidePartLayout.fitted(framing.canvas, in: CGSize(width: geometry.size.width - 2 * margin,
+                                                                        height: geometry.size.height - 2 * margin))
+            let k = whole.width / max(framing.canvas.width, 1)
+            let size = CGSize(width: framing.video.width * k, height: framing.video.height * k)
+            let radius = framing.radius * k
+            ZStack(alignment: .topLeading) {
+                if let fill = framing.fill {
+                    Rectangle().fill(fill.gradient)
+                    if framing.blur > 0 {
+                        // The shadow under the recording, as the video has it.
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color.black)
+                            .frame(width: max(0, size.width - 2), height: max(0, size.height - 2))
+                            .shadow(color: .black.opacity(0.32), radius: framing.blur * k / 2, y: framing.drop * k)
+                            .padding(.leading, framing.video.minX * k + 1)
+                            .padding(.top, (framing.canvas.height - framing.video.maxY) * k + 1)
+                    }
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(title)
-                .accessibilityValue(String(format: L("Zooms: %d"), model.project.zooms.count) + ", "
-                                    + String(format: L("Drawings: %d"), model.project.marks.count))
+                StudioSurface(model: model, radius: radius)
+                    .frame(width: size.width, height: size.height)
+                    .overlay {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { drag($0, in: size) }
+                                    .onEnded { ended($0, in: size) }
+                            )
+                            .onHover { inside in pointer(inside ? cursorShape : nil) }
+                    }
+                    .padding(.leading, framing.video.minX * k)
+                    .padding(.top, (framing.canvas.height - framing.video.maxY) * k)
+            }
+            .frame(width: whole.width, height: whole.height, alignment: .topLeading)
+            .clipShape(Rectangle())
+            .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(title)
+            .accessibilityValue(String(format: L("Zooms: %d"), model.project.zooms.count) + ", "
+                                + String(format: L("Drawings: %d"), model.project.marks.count))
         }
         // Laid out from the left, as the recording is, in every language, so
         // what is drawn lands where the pointer is.
@@ -596,15 +775,19 @@ private struct StudioCanvas: View {
 /// frame by frame while it plays, outside SwiftUI, so playing stays smooth.
 private struct StudioSurface: NSViewRepresentable {
     @ObservedObject var model: StudioModel
+    /// How round its corners are, on a background.
+    var radius: CGFloat = 0
 
     func makeNSView(context: Context) -> StudioSurfaceView {
         let view = StudioSurfaceView()
         view.model = model
+        view.layer?.cornerRadius = radius
         return view
     }
 
     func updateNSView(_ view: StudioSurfaceView, context: Context) {
         view.model = model
+        if view.layer?.cornerRadius != radius { view.layer?.cornerRadius = radius }
         view.refresh()
     }
 

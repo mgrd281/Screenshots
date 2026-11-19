@@ -6,6 +6,11 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio sets a recording on a background, as Background… sets a photo:
+  one of eight colours, with room round it, rounded corners and a soft
+  shadow, in the shape a post wants (16:9, 1:1, 4:5 or 9:16). Save Video
+  saves it as MOV, MP4 (which plays everywhere) or a GIF, at the
+  recording's own size, 4K, 1080p or 720p.
 - The menu bar menu is in groups under headings (what hangs, Capture,
   Files, Options), with an icon before every line, on every macOS.
 - Claude on your Mac can ask Snapfly for the newest screenshot, any photo

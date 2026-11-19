@@ -25,6 +25,22 @@ struct StudioProject: Codable, Equatable, Sendable {
     var autoScale: Double?
     /// A ring where each click landed.
     var showsClicks = true
+    /// The recording set on a colour, with room round it, rounded corners
+    /// and a shadow, in the shape a post wants; nil for the recording alone.
+    var backdrop: Backdrop?
+
+    init() {}
+
+    // Read field by field, so work kept before a field was added still opens.
+    init(from decoder: Decoder) throws {
+        let kept = try decoder.container(keyedBy: CodingKeys.self)
+        zooms = try kept.decodeIfPresent([StudioZoom].self, forKey: .zooms) ?? []
+        marks = try kept.decodeIfPresent([Mark].self, forKey: .marks) ?? []
+        autoZoom = try kept.decodeIfPresent(Bool.self, forKey: .autoZoom) ?? true
+        autoScale = try kept.decodeIfPresent(Double.self, forKey: .autoScale)
+        showsClicks = try kept.decodeIfPresent(Bool.self, forKey: .showsClicks) ?? true
+        backdrop = try? kept.decodeIfPresent(Backdrop.self, forKey: .backdrop)
+    }
 
     /// The steps' numbers, in the order they show.
     var numbers: [UUID: Int] {
