@@ -1427,6 +1427,7 @@ private struct LinePane: View {
                 shortcutRow(.searchScreenshots, L("Search screenshots"), .search)
                 shortcutRow(.takeAScreenshot, L("Take a screenshot"), .capture)
                 shortcutRow(.captureAndAsk, L("Capture and ask AI"), .ask)
+                shortcutRow(.copyTextFromScreen, L("Copy text from the screen"), .text)
                 shortcutRow(.captureAWholePage, L("Capture a whole page"), .page)
                 shortcutRow(.recordTheScreen, L("Record the screen"), .record)
             }

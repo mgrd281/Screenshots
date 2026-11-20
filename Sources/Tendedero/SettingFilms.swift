@@ -11,7 +11,7 @@ extension SettingFilm {
         case takePhotosDownOnceSent, markPhotosSentBefore, keepAHistory, iconsUnderPhotos, websitesOpenIn
         case sendEachScreenshotTo, whereItGoes, keepItOnTheLine, showTheScreenshotButton, captureButtonClick
         case captureButtonIcon, captureButtonColor, showOrHideTheLine, sendTheNewestPhoto, searchScreenshots
-        case takeAScreenshot, captureAndAsk, captureAWholePage, recordTheScreen, showItWhilePhotosHang, inChatApps
+        case takeAScreenshot, captureAndAsk, copyTextFromScreen, captureAWholePage, recordTheScreen, showItWhilePhotosHang, inChatApps
         case chatButtonPosition, chatButtonStyle, chatButtonIcon, chatButtonColor, chatApps, chatWebsites
         case hidePrivateDetails, detailNames, detailPatientNames, detailOtherPeople, detailAddresses
         case detailBirthDates, detailEmails, detailPhones, detailUsernames, detailFaces, detailOrganizations
@@ -934,6 +934,23 @@ enum SettingFilms {
                 .move(.card(1, covered: true), FilmScene.slot(1), Box(0.6, 0.7, 0.1, 0.12), start: 2.05, end: 2.5,
                       appear: 2.0, angles: (FilmScene.tilt(1), 0)),
                 .show(.bubble(mine: true), Box(0.76, 0.84, 0.22, 0.08), from: 2.5),
+            ])
+        case .copyTextFromScreen:
+            // ⌃⌥C and a drag over a line of the page; its words land on the clipboard, and nothing hangs.
+            return SettingFilm("text.viewfinder", FilmScene.line(cards: 1) + [
+                .show(.window(.browser), Box(0.42, 0.64, 0.56, 0.52)),
+                .show(.key("⌃"), Box(0.41, 0.6, 0.07, 0.11), from: 0.1, to: 0.6),
+                .show(.key("⌥"), Box(0.5, 0.6, 0.07, 0.11), from: 0.2, to: 0.6),
+                .show(.key("C"), Box(0.59, 0.6, 0.07, 0.11), from: 0.3, to: 0.6),
+                .move(.selection, Box(0.26, 0.72, 0.02, 0.03), Box(0.42, 0.74, 0.34, 0.08), start: 0.85, end: 1.3,
+                      appear: 0.85, leave: 1.5),
+                Part(kind: .cursor, keys: [
+                    .init(0.7, Box(0.25, 0.71, 0.05, 0.08), opacity: 0), .init(0.85, Box(0.25, 0.71, 0.05, 0.08)),
+                    .init(1.3, Box(0.59, 0.77, 0.05, 0.08)), .init(1.5, Box(0.59, 0.77, 0.05, 0.08), opacity: 0),
+                ]),
+                .move(.symbol("doc.on.clipboard"), Box(0.42, 0.74, 0.09, 0.144), Box(0.82, 0.42, 0.09, 0.144),
+                      start: 1.6, end: 2.1, appear: 1.5),
+                .show(.symbol("checkmark.circle.fill"), Box(0.88, 0.36, 0.06, 0.096), from: 2.2),
             ])
         case .captureAWholePage:
             // ⌃⌥P: the page in front scrolls itself from top to bottom, and the whole page comes out of it as one

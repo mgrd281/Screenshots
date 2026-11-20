@@ -959,7 +959,8 @@ apps.
     (`rectangle.stack.badge.minus`), the last three enabled only when they
     can act.
   - **Capture**: Take Screenshot (`camera.viewfinder`), Capture and Ask AI
-    (`questionmark.bubble`, ⌃⌥A), Take Screenshot with
+    (`questionmark.bubble`, ⌃⌥A), Copy Text from Screen (`text.viewfinder`,
+    ⌃⌥C), Take Screenshot with
     Timer (`timer`), Capture Whole Page (`rectangle.expand.vertical`),
     Capture Whole Chat (`bubble.left.and.text.bubble.right`), Record Screen
     (`record.circle`), Record a Guide (`list.bullet.clipboard`) and Recent
@@ -1977,6 +1978,15 @@ apps.
     grouped list of toggles with a remove button each and a field to add
     one. The chat apps are a list too: each app's 20 pt icon and name, a
     toggle and a remove button, and Add App… to choose another.
+- **Copy Text from Screen** (`ScreenText.swift`, ⌃⌥C, and in the menu bar
+  menu under Capture, `text.viewfinder`) is chosen on the still screens as a
+  screenshot is, with its own hint; nothing hangs and no picture is kept.
+  A working note ("Reading the text…") while it reads, then a done note
+  with the start of what was copied, on one line, at most 40 letters
+  ("Copied: Order 12345 …"), or "No text found here." Rows come from the
+  top, a row's parts from the left (from the right in Arabic or Hebrew),
+  a blank line where a paragraph breaks. Nothing is covered: it copies what
+  you chose, as ⌘C does.
 - **Capture and Ask AI** (`AskPanel.swift`, ⌃⌥A, and in the menu bar menu
   under Capture, `questionmark.bubble`): the screenshot is taken as Take
   Screenshot takes it and hangs; then, once it has flown onto the line, a

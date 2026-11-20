@@ -112,6 +112,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>V</kbd> | Send the newest photo, or the ones picked, straight into the app in front. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>F</kbd> | Search the words in your screenshots. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd> | Take a screenshot: click what is outlined (scroll for a bigger or smaller part), drag over an area, click a window, or press Return for the whole screen. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>C</kbd> | Copy text from the screen: drag over any words, even in a picture, a video or a PDF where they cannot be selected, and they are copied, ready to paste. Nothing hangs on the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>A</kbd> | Capture and ask AI: take a screenshot as with ⌃⌥S, then choose what to ask about it, and in which AI chat: a question kept in Settings (⌘1 to ⌘9) or your own, then Return. The covered copy goes into the chat with the question under it, waiting for your Return there. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
@@ -195,6 +196,14 @@ with a preview, or turn it off.
 Press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>S</kbd>, or choose Take Screenshot
 in the menu bar. The screen holds still. Drag over an area, click a window,
 or press Return for the whole screen; Escape cancels.
+
+To copy words you cannot select, an order number in a picture, a tracking
+number in a video, an address in a scanned letter, press
+<kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>C</kbd> or choose Copy Text
+from Screen, and drag over them, or click what is outlined. They are read on
+your Mac and copied, line by line, ready to paste; a note shows how they
+start. No picture is kept and nothing hangs. Nothing is covered either: it
+copies what you chose, as ⌘C does.
 
 To ask an AI about what is on screen, press <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>A</kbd>,
 or choose Capture and Ask AI. Take the screenshot the same way; once it
@@ -2018,6 +2027,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Trim.swift` | Trims a screen recording and saves the result |
 | `StudioPlanning.swift` | Studio without a screen: what was done while recording, where to zoom, the camera's path, how marks and clicks come and go, and the timeline's rules |
 | `StudioStore.swift` | Studio's work on each recording and what was done while recording, kept on the Mac; notes the pointer, clicks and key times while recording |
+| `ScreenText.swift` | Copy Text from Screen: the words in a part of the screen, read on the Mac and copied in reading order |
 | `AskPanel.swift` | Capture and Ask AI: the card that asks what to ask about a new screenshot, and in which AI chat |
 | `StudioCaptions.swift` | Studio's captions: what is said in a recording heard on the Mac, made into short timed lines |
 | `StudioCuts.swift` | Studio's parts: splitting the recording, cutting parts out and speeding them up, how long the video is and which moment of the recording shows when |

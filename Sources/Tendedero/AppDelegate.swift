@@ -1284,6 +1284,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         case .page: FullPage.shared.start()
         case .ask: Capture.shared.start(mode: .ask)
+        case .text: Capture.shared.start(mode: .text)
         }
     }
 
@@ -1625,6 +1626,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             Self.show(Shortcut.current(.ask), on: askItem)
             menu.addItem(askItem)
+            // The words on screen, copied, without a picture.
+            let textItem = Self.item(L("Copy Text from Screen"), MenuSymbol.text) {
+                Capture.shared.start(after: 0.2, mode: .text)
+            }
+            Self.show(Shortcut.current(.text), on: textItem)
+            menu.addItem(textItem)
             let timerItem = NSMenuItem(title: L("Take Screenshot with Timer"), action: nil, keyEquivalent: "")
             Self.icon(MenuSymbol.timer, on: timerItem)
             let seconds = NSMenu()
