@@ -14,6 +14,8 @@ enum MenuSymbol {
     static let screenshot = "camera.viewfinder"
     /// Capture and Ask AI.
     static let ask = "questionmark.bubble"
+    /// Copy Text from Screen.
+    static let text = "text.viewfinder"
     static let timer = "timer"
     static let wholePage = "rectangle.expand.vertical"
     static let wholeChat = "bubble.left.and.text.bubble.right"
@@ -58,7 +60,7 @@ enum MenuSymbol {
     static let box = NSSize(width: 18, height: 16)
 
     static let all = [
-        permissions, paste, showLine, hideLine, search, history, clear, screenshot, ask, timer, wholePage, wholeChat,
+        permissions, paste, showLine, hideLine, search, history, clear, screenshot, ask, text, timer, wholePage, wholeChat,
         record, stop, cancel, guide, recentGuides, addFiles, coverFiles, folder, privacy, button, desktopIcons,
         settings, updates, help, introduction, quit,
     ]

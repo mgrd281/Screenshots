@@ -2102,3 +2102,9 @@
 "Capture and ask AI" = "撮ってAIに聞く";
 "Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "送る前に個人情報は隠されます。チャットで Return を押すまで何も送信されません。";
 "Or type your own question…" = "または自分の質問を入力…";
+"Copy Text from Screen" = "画面のテキストをコピー";
+"Copy text from the screen" = "画面のテキストをコピー";
+"Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels." = "コピーしたい文字の上をドラッグするか、枠で囲まれた部分をクリックします。スクロールで範囲を広げたり狭めたりできます。Return で画面全体を読み取り、Escape でキャンセルします。";
+"Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "コピーしたい文字の上をドラッグするか、ウインドウをクリックします。Return で画面全体を読み取り、Escape でキャンセルします。";
+"No text found here." = "ここにテキストは見つかりませんでした。";
+"Copied: %@" = "コピーしました：%@";

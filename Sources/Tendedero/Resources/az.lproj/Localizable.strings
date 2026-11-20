@@ -2104,3 +2104,9 @@
 "Capture and ask AI" = "Çək və süni intellektdən soruş";
 "Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "Şəxsi məlumatlar getməzdən əvvəl gizlədilir. Söhbətdə Return basana qədər heç nə göndərilmir.";
 "Or type your own question…" = "Və ya öz sualını yaz…";
+"Copy Text from Screen" = "Ekrandan mətni kopyala";
+"Copy text from the screen" = "Ekrandan mətni kopyalamaq";
+"Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels." = "Kopyalamaq üçün sözlərin üzərindən sürüşdür və ya çərçivəyə alınana kliklə. Böyük və ya kiçik hissə üçün sürüşdür. Return bütün ekranı oxuyur, Escape ləğv edir.";
+"Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "Kopyalamaq üçün sözlərin üzərindən sürüşdür və ya pəncərəyə kliklə. Return bütün ekranı oxuyur, Escape ləğv edir.";
+"No text found here." = "Burada mətn tapılmadı.";
+"Copied: %@" = "Kopyalandı: %@";

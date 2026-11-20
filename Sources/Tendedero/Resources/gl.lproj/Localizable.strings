@@ -2102,3 +2102,9 @@
 "Capture and ask AI" = "Capturar e preguntar á IA";
 "Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "Os datos privados cóbrense antes de envialos. Non se envía nada ata que premas Retorno no chat.";
 "Or type your own question…" = "Ou escribe a túa propia pregunta…";
+"Copy Text from Screen" = "Copiar texto da pantalla";
+"Copy text from the screen" = "Copiar texto da pantalla";
+"Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels." = "Arrastra sobre as palabras que queiras copiar ou fai clic no destacado. Despraza para unha parte maior ou menor. Retorno le toda a pantalla, Escape cancela.";
+"Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "Arrastra sobre as palabras que queiras copiar ou fai clic nunha xanela. Retorno le toda a pantalla, Escape cancela.";
+"No text found here." = "Non se atopou texto aquí.";
+"Copied: %@" = "Copiado: %@";

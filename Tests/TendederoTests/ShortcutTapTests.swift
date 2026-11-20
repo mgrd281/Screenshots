@@ -18,6 +18,6 @@ final class ShortcutTapTests: XCTestCase {
     }
 
     func testOnlyTheShortcutsThatTakeTheScreenAreHeardUnderMenus() {
-        XCTAssertEqual(Set(ShortcutTap.roles), [.capture, .record, .ask])
+        XCTAssertEqual(Set(ShortcutTap.roles), [.capture, .record, .ask, .text])
     }
 }

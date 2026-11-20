@@ -43,6 +43,8 @@ final class Capture {
         /// A screenshot of the still screens, then a question about it for an
         /// AI chat.
         case ask
+        /// The words in what is chosen, read and copied; nothing hangs.
+        case text
 
         var title: String {
             switch self {
@@ -50,6 +52,7 @@ final class Capture {
             case .timer: L("Take Screenshot with Timer")
             case .record: L("Record Screen")
             case .ask: L("Capture and Ask AI")
+            case .text: L("Copy Text from Screen")
             }
         }
 
@@ -62,12 +65,15 @@ final class Capture {
                     return L("Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends.")
                 case .record:
                     return L("Click what is outlined or drag over an area to record it. Scroll for a bigger or smaller part. Return records the whole screen, Escape cancels.")
+                case .text:
+                    return L("Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels.")
                 }
             }
             return switch self {
             case .screenshot, .ask: L("Drag over an area or click a window. Return takes the whole screen, Escape cancels.")
             case .timer: L("Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends.")
             case .record: L("Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.")
+            case .text: L("Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels.")
             }
         }
     }
@@ -222,7 +228,12 @@ final class Capture {
         NSCursor.arrow.set()
         if case let .area(rect, screen, _) = choice { rememberArea(rect, on: screen) }
         let asking = mode == .ask
-        if mode != .screenshot, !asking, let region = Self.region(of: choice) {
+        let reading = mode == .text
+        // What is taken: saved and hung, or only read for its words.
+        let take: (CGImage, CGRect) -> Void = { [weak self] image, rect in
+            if reading { ScreenText.copy(from: image) } else { self?.save(image, from: rect, asking: asking) }
+        }
+        if mode != .screenshot, !asking, !reading, let region = Self.region(of: choice) {
             if case let .timer(seconds) = mode {
                 takeLater(region, after: seconds)
             } else {
@@ -234,14 +245,14 @@ final class Capture {
         case .cancel:
             return
         case let .screen(screen, image):
-            save(image, from: screen.frame, asking: asking)
+            take(image, screen.frame)
         case let .area(rect, screen, image):
             let sx = CGFloat(image.width) / screen.frame.width
             let sy = CGFloat(image.height) / screen.frame.height
             let pixels = CGRect(x: (rect.minX - screen.frame.minX) * sx, y: (screen.frame.maxY - rect.maxY) * sy,
                                 width: rect.width * sx, height: rect.height * sy).integral
             guard let cropped = image.cropping(to: pixels) else { return }
-            save(cropped, from: rect, asking: asking)
+            take(cropped, rect)
         case let .window(target):
             Task { @MainActor in
                 let filter = SCContentFilter(desktopIndependentWindow: target.window)
@@ -254,7 +265,7 @@ final class Capture {
                 config.ignoreShadowsSingleWindow = true
                 do {
                     let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
-                    self.save(image, from: target.frame, asking: asking)
+                    take(image, target.frame)
                 } catch {
                     log.error("Could not capture a window: \(error.localizedDescription, privacy: .public)")
                 }

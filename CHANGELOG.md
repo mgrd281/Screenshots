@@ -6,6 +6,8 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Copy Text from Screen (⌃⌥C, or in the menu): drag over any words, even in
+  a picture or a video, and they are copied, ready to paste. Nothing hangs.
 - Capture and Ask AI (⌃⌥A, or in the menu): take a screenshot, then pick a
   ready question or type your own, and the AI chat to ask. The covered copy
   goes in with the question, waiting for your Return.

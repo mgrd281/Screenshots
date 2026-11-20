@@ -2102,3 +2102,9 @@
 "Capture and ask AI" = "التقط واسأل الذكاء الاصطناعي";
 "Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "تُغطّى البيانات الخاصة قبل أن تذهب. ولا يُرسل شيء حتى تضغط Return في المحادثة.";
 "Or type your own question…" = "أو اكتب سؤالك…";
+"Copy Text from Screen" = "انسخ النص من الشاشة";
+"Copy text from the screen" = "نسخ النص من الشاشة";
+"Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels." = "اسحب فوق الكلمات لنسخها، أو انقر ما هو محدد. مرّر لجزء أكبر أو أصغر. Return يقرأ الشاشة كلها، وEscape يلغي.";
+"Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "اسحب فوق الكلمات لنسخها، أو انقر نافذة. Return يقرأ الشاشة كلها، وEscape يلغي.";
+"No text found here." = "لم يُعثر على نص هنا.";
+"Copied: %@" = "نُسخ: %@";

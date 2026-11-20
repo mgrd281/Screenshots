@@ -2102,3 +2102,9 @@
 "Capture and ask AI" = "截图并问 AI";
 "Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "发送前会遮盖私人信息。在聊天中按下 Return 之前不会发送任何内容。";
 "Or type your own question…" = "或输入你自己的问题…";
+"Copy Text from Screen" = "拷贝屏幕上的文字";
+"Copy text from the screen" = "拷贝屏幕上的文字";
+"Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels." = "在要拷贝的文字上拖动，或点按带轮廓的部分。滚动可选更大或更小的范围。按 Return 读取整个屏幕，按 Escape 取消。";
+"Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "在要拷贝的文字上拖动，或点按一个窗口。按 Return 读取整个屏幕，按 Escape 取消。";
+"No text found here." = "这里没有找到文字。";
+"Copied: %@" = "已拷贝：%@";

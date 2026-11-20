@@ -2102,3 +2102,9 @@
 "Capture and ask AI" = "캡처하고 AI에게 묻기";
 "Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "보내기 전에 개인 정보가 가려집니다. 채팅에서 Return을 누를 때까지 아무것도 전송되지 않습니다.";
 "Or type your own question…" = "또는 직접 질문을 입력…";
+"Copy Text from Screen" = "화면의 텍스트 복사";
+"Copy text from the screen" = "화면의 텍스트 복사";
+"Drag over the words to copy, or click what is outlined. Scroll for a bigger or smaller part. Return reads the whole screen, Escape cancels." = "복사할 글자 위로 드래그하거나 테두리 표시된 부분을 클릭하세요. 스크롤하면 더 크거나 작은 부분을 고릅니다. Return은 화면 전체를 읽고, Escape는 취소합니다.";
+"Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "복사할 글자 위로 드래그하거나 윈도우를 클릭하세요. Return은 화면 전체를 읽고, Escape는 취소합니다.";
+"No text found here." = "여기에서 텍스트를 찾지 못했습니다.";
+"Copied: %@" = "복사함: %@";
