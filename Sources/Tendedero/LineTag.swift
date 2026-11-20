@@ -110,7 +110,7 @@ struct LineTag: View {
 
     /// To the left of the tag, its top level with search (or Make PDF, in its
     /// place): the AI chats shown in Settings, each sending the photos
-    /// picked, or else the newest, straight into it. Laid out, not moved, so
+    /// picked, or else all of them, straight into it. Laid out, not moved, so
     /// the line knows where it is and takes its clicks.
     @ViewBuilder
     private var aiColumn: some View {
