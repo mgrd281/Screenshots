@@ -7,7 +7,8 @@ import SwiftUI
 /// searches the words in them, its send button pastes the photos into the
 /// app in front, like a chat, its arrow saves them into Downloads as they
 /// leave the line, and its trash takes everything down at once, each photo
-/// the way of its own corner cross.
+/// the way of its own corner cross. Beside it, level with search, the AI
+/// chats shown in Settings each take the photos straight in.
 struct LineTag: View {
     @ObservedObject var line: Line
     /// On a rope or a wire it is clipped on; in a holder, beside a stack,
@@ -58,6 +59,7 @@ struct LineTag: View {
                     TagTool(symbol: "doc.richtext", label: L("Make PDF"), style: style, height: rowHeight) {
                         line.makePDF()
                     }
+                    .overlay(alignment: .topLeading) { aiColumn }
                     .transition(.opacity)
                 }
                 if line.liveCount > 0 {
@@ -66,6 +68,7 @@ struct LineTag: View {
                                 height: rowHeight) {
                             line.onSearch?()
                         }
+                        .overlay(alignment: .topLeading) { aiColumn }
                         .transition(.opacity)
                     }
                     // The photos picked with ⌘-click, or all of them.
@@ -103,6 +106,34 @@ struct LineTag: View {
         .animation(.easeOut(duration: 0.2), value: line.liveCount > 0)
         .animation(.easeOut(duration: 0.2), value: line.pickedIDs.count > 1)
         .animation(.easeOut(duration: 0.2), value: line.pickedIDs.isEmpty)
+    }
+
+    /// To the left of the tag, its top level with search (or Make PDF, in its
+    /// place): the AI chats shown in Settings, each sending the photos
+    /// picked, or else the newest, straight into it. Laid out, not moved, so
+    /// the line knows where it is and takes its clicks.
+    @ViewBuilder
+    private var aiColumn: some View {
+        let chats = Layout.aiChats
+        if line.liveCount > 0, !chats.isEmpty {
+            VStack(spacing: 0) {
+                ForEach(chats) { chat in
+                    AIChatTool(chat: chat, style: style, height: rowHeight) { line.sendToAI(chat) }
+                }
+            }
+            .padding(.vertical, 2)
+            .background(backing)
+            .shadow(color: .black.opacity(lifted ? 0.18 : 0), radius: 6, y: 3)
+            .background(
+                GeometryReader { g in
+                    Color.clear.preference(key: TagRectKey.self, value: g.frame(in: .global))
+                }
+            )
+            .padding(.trailing, Layout.aiGap)
+            .fixedSize()
+            .frame(width: 0, alignment: .trailing)
+            .transition(.opacity)
+        }
     }
 
     /// Whether anything on the line goes to the Trash when taken down.
@@ -172,10 +203,57 @@ private struct TagTool: View {
     }
 }
 
+/// An AI chat beside the tag: its own icon, lit under the pointer, with its
+/// name as the tip, clicked through TagArea as the tag's tools are.
+private struct AIChatTool: View {
+    let chat: ChatTarget
+    let style: Layout.Style
+    var height: CGFloat = 24
+    let action: () -> Void
+
+    @State private var hovering = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        mark
+            .frame(width: LineTag.width, height: height)
+            .background(
+                Circle()
+                    .fill(style.dark ? Color.white.opacity(0.18) : Color.primary.opacity(0.1))
+                    .frame(width: min(22, height), height: min(22, height))
+                    .opacity(hovering ? 1 : 0)
+            )
+            .scaleEffect(hovering && !reduceMotion ? 1.1 : 1)
+            .overlay(TagArea(label: String(format: L("Send to %@"), chat.name),
+                             tip: String(format: L("Send to %@"), chat.name), onClick: action))
+            .onHover { hovering = $0 }
+            .animation(.easeOut(duration: 0.12), value: hovering)
+    }
+
+    /// The chat's logo or app icon, as under a photo; its first letter
+    /// without either.
+    @ViewBuilder
+    private var mark: some View {
+        if let icon = chat.icon {
+            Image(nsImage: icon)
+                .resizable()
+                .interpolation(.high)
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 16, height: 16)
+        } else {
+            Text(verbatim: String(chat.name.prefix(1)))
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(style.dark ? Color.white.opacity(0.9) : Color.primary)
+        }
+    }
+}
+
 /// Clicks and drags on the tag, through AppKit like GrabArea: the panel
 /// never becomes key, so only a view of its own takes the first click.
 struct TagArea: NSViewRepresentable {
     let label: String
+    /// Shown when the pointer rests on it.
+    var tip: String? = nil
     var movesLine = false
     var onClick: () -> Void = {}
 
@@ -195,7 +273,7 @@ struct TagArea: NSViewRepresentable {
         view.onClick = onClick
         view.setAccessibilityRole(movesLine ? NSAccessibility.Role.handle : .button)
         view.setAccessibilityLabel(label)
-        view.toolTip = movesLine ? L("Drag to move the line up or down. Hold it first to move it anywhere.") : nil
+        view.toolTip = movesLine ? L("Drag to move the line up or down. Hold it first to move it anywhere.") : tip
         // Across the screen without dragging, one photo's place at a time.
         // AppKit runs accessibility actions on the main thread.
         view.setAccessibilityCustomActions(movesLine ? [
