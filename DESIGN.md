@@ -875,6 +875,17 @@ apps.
 - It is clipped to the rope on the clothesline and sits inside the holder on
   the shelf and the island.
 - Tools show only when they can act.
+- **AI chats beside it** (`LineTag.aiColumn`, the owner's request, November
+  2026): while photos hang, a second 26 pt capsule in the tag's own glass
+  stands 4 pt to its left, its top level with search (or Make PDF in its
+  place), holding the AI chats shown under photos in Settings, in their
+  order, at most three: each its own logo or app icon at 16 pt (its first
+  letter, 10 pt bold, without either), in rows as tall as the tag's. Under
+  the pointer, the same 22 pt circle as a tool, and the icon grows to 1.1
+  (not with Reduce Motion); its tip says "Send to ChatGPT". A click sends
+  the photos picked, or else the newest, into that chat, as the icon under
+  a photo does. The line makes room for it (`Layout.aiRoom`), so it never
+  covers a photo; with no AI chat shown it is not there and takes no room.
 - Under the pointer, a tool's glyph sits on a 22 pt circle of
   `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s;
   20 pt when the tools stand 20 pt.

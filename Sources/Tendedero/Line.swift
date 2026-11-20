@@ -574,6 +574,17 @@ final class Line: ObservableObject {
         send(photos, to: chat, asking: question, forceNew: forceNew, keep: keep)
     }
 
+    /// The AI chats beside the tag: the photos picked, or else the newest,
+    /// into that chat, as the icon under a photo sends them.
+    func sendToAI(_ chat: ChatTarget) {
+        let picked = pickedIDs
+        let photo = items.last(where: { item in
+            !item.falling && ChatTarget.takes(item) && (picked.isEmpty || picked.contains(item.id))
+        })
+        guard let photo else { return }
+        send(photo.id, to: chat)
+    }
+
     /// These photos together, as one message, like the screenshots that
     /// waited for their AI chat to be opened.
     func send(_ ids: [UUID], to chat: ChatTarget, keep: Bool) {

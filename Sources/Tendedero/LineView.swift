@@ -86,6 +86,20 @@ enum Layout {
     static let tagWidth: CGFloat = 26
     static let compactToolsHeight: CGFloat = 6 * 20 + 2
 
+    /// Between the AI chats' column and the tag.
+    static let aiGap: CGFloat = 4
+
+    /// The AI chats shown under photos in Settings, in their order, at most
+    /// three, for the column beside the tag.
+    static var aiChats: [ChatTarget] {
+        Array(ChatTarget.ordered().filter { $0.isAI && ChatTarget.shows($0) }.prefix(3))
+    }
+
+    /// Room beside the tag for the AI chats' column, while it shows.
+    static var aiRoom: CGFloat {
+        aiChats.isEmpty ? 0 : tagWidth + aiGap
+    }
+
     /// How far below the menu bar the line hangs, in points, from dragging
     /// the grip on its tag. 0 is right under the menu bar, where it always
     /// hung. A screen without room for it gets it as low as fits; see
@@ -146,7 +160,7 @@ enum Layout {
             if style.clipped {
                 // The tag stays clipped near the end of the rope, and the
                 // photos stop short of it.
-                highest = min(highest, width - 64 - tagWidth / 2 - 8 - cardWidth / 2 - last)
+                highest = min(highest, width - 64 - tagWidth / 2 - aiRoom - 8 - cardWidth / 2 - last)
             } else {
                 // The tag comes along after the last photo.
                 highest = min(highest, width - 40 - afterPhotos(last))
@@ -230,12 +244,12 @@ enum Layout {
 
     /// Where the stack sits, near the right edge with its tag beside it.
     static func stackAnchor(width: CGFloat) -> CGFloat {
-        width - cardWidth / 2 - tagWidth - 56
+        width - cardWidth / 2 - tagWidth - aiRoom - 56
     }
 
     /// The stack's tag, beside it.
     private static func stackTag(anchor: CGFloat) -> CGFloat {
-        anchor + cardWidth / 2 + 22 + tagWidth / 2
+        anchor + cardWidth / 2 + 22 + aiRoom + tagWidth / 2
     }
 
     /// Closed, the photos lie on one another, the older ones peeking out to
@@ -289,7 +303,7 @@ enum Layout {
 
     /// The tag's middle right after the last photo.
     private static func afterPhotos(_ last: CGFloat) -> CGFloat {
-        last + cardWidth / 2 + 14 + tagWidth / 2
+        last + cardWidth / 2 + 14 + aiRoom + tagWidth / 2
     }
 
     /// The glass shelf, the island or the filmstrip behind the photos and

@@ -6,6 +6,9 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- ChatGPT, Claude and the other AI chats shown in Settings stand beside the
+  line's tag, left of search: a click sends the newest screenshot, or the
+  ones picked, straight into that chat.
 - Copy Text from Screen (⌃⌥C, or in the menu): drag over any words, even in
   a picture or a video, and they are copied, ready to paste. Nothing hangs.
 - Capture and Ask AI (⌃⌥A, or in the menu): take a screenshot, then pick a
