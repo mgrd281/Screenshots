@@ -85,7 +85,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Drag into a folder | Keep it there. It leaves the line. |
 | Drag to the Trash, or click the cross | Let it go. With the cross, Take down, Move to Trash or the trash on the tag, a note above the Dock offers it back for a few seconds: a click hangs it on the line again, out of the Trash too. |
 | Click the send button on the tag at the end of the line | Paste the photos picked, or all of them, straight into the app in front, like a chat. |
-| Click ChatGPT, Claude or another AI chat beside the tag, left of the magnifying glass | Send the photos picked, or else the newest, straight into that chat, covered as in any AI chat. The AI chats shown under photos in Settings stand there, three at most, in their order. |
+| Click ChatGPT, Claude or another AI chat beside the tag, left of the magnifying glass | Send the photos picked, or else all of them, straight into that chat as one message, covered as in any AI chat. The AI chats shown under photos in Settings stand there, three at most, in their order. |
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
 | Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide, then send the covered copy straight to Gmail, WhatsApp, ChatGPT, Claude or any chat on for photos, copy it, share it with the Mac's Share menu, or save it beside the original. The original stays as it is. Several files, or a folder, open Cover Files. |

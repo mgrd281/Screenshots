@@ -883,8 +883,8 @@ apps.
   letter, 10 pt bold, without either), in rows as tall as the tag's. Under
   the pointer, the same 22 pt circle as a tool, and the icon grows to 1.1
   (not with Reduce Motion); its tip says "Send to ChatGPT". A click sends
-  the photos picked, or else the newest, into that chat, as the icon under
-  a photo does. The line makes room for it (`Layout.aiRoom`), so it never
+  the photos picked, or else all of them, into that chat as one message,
+  as the tag's send button takes them. The line makes room for it (`Layout.aiRoom`), so it never
   covers a photo; with no AI chat shown it is not there and takes no room.
 - Under the pointer, a tool's glyph sits on a 22 pt circle of
   `.primary` at 10%, or white at 18% on the island, fading in over 0.12 s;
