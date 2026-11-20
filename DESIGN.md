@@ -958,7 +958,8 @@ apps.
     History… (`clock.arrow.circlepath`) and Take everything down
     (`rectangle.stack.badge.minus`), the last three enabled only when they
     can act.
-  - **Capture**: Take Screenshot (`camera.viewfinder`), Take Screenshot with
+  - **Capture**: Take Screenshot (`camera.viewfinder`), Capture and Ask AI
+    (`questionmark.bubble`, ⌃⌥A), Take Screenshot with
     Timer (`timer`), Capture Whole Page (`rectangle.expand.vertical`),
     Capture Whole Chat (`bubble.left.and.text.bubble.right`), Record Screen
     (`record.circle`), Record a Guide (`list.bullet.clipboard`) and Recent
@@ -1976,6 +1977,30 @@ apps.
     grouped list of toggles with a remove button each and a field to add
     one. The chat apps are a list too: each app's 20 pt icon and name, a
     toggle and a remove button, and Add App… to choose another.
+- **Capture and Ask AI** (`AskPanel.swift`, ⌃⌥A, and in the menu bar menu
+  under Capture, `questionmark.bubble`): the screenshot is taken as Take
+  Screenshot takes it and hangs; then, once it has flown onto the line, a
+  floating card in the text card's look (400 pt, 20 pt corners,
+  `.regularMaterial`, 28 pt margin) under the line, in the middle of the
+  screen with the pointer. It takes the keyboard without bringing Snapfly
+  forward, as Check Before Sending does.
+  - Header: the screenshot as the line shows it, fitted in 52 × 40 pt with
+    5 pt corners and a 0.5 pt edge of `.primary` at 12%, "Ask about this
+    screenshot" in 13 pt semibold, and the close button.
+  - The AI chats shown under photos (every AI chat when none is), in their
+    order, each a capsule with its 16 pt icon and its name in 12 pt
+    medium, `.primary` at 6%; the chosen one in the accent on the accent
+    at 14% with a 1 pt accent edge at 60%. The one asked last is chosen.
+  - The questions kept in Settings › AI Assistant, up to nine, on the
+    reading panel's fill, each a row with its key ("⌘1", 11 pt semibold
+    rounded `.secondary` in a 6 pt keycap of `.primary` at 8%) and its
+    words in 13 pt, lit with the accent at 12% under the pointer.
+  - A field for one's own question, focused, with Ask (`paperplane.fill`,
+    `.borderedProminent`). Return asks what is typed, or sends the
+    screenshot alone; ⌘1 to ⌘9 ask a kept question; Escape keeps it on the
+    line.
+  - A caption: private details are covered, and nothing is sent until
+    Return in the chat.
 - **Check before sending** (`SendCheck.swift`), a floating card in the text
   card's look (380 pt, 20 pt corners, `.regularMaterial`, 28 pt margin) that
   shows before photos are pasted into an AI chat, or an app or website not

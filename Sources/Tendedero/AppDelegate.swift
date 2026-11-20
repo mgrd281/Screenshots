@@ -118,6 +118,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         FolderCover.shared.restart()
         clipboardWatcher = ClipboardWatcher { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        Capture.shared.onAsk = { [weak self] url in self?.hangCapture(url, asking: true) }
         FullPage.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         ChatCapture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
@@ -819,7 +820,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// A new screenshot lifts off from where it was taken and flies to its
     /// place on the line. Without a known capture area it simply drops in.
-    private func hangCapture(_ url: URL) {
+    /// - Parameter asking: taken to ask an AI chat about: once it has
+    ///   landed, the question comes up instead of the chat chosen in Settings.
+    private func hangCapture(_ url: URL, asking: Bool = false) {
         let from = captureRect(of: url)
         let screen = from.flatMap { from in
             NSScreen.screens.first { NSMouseInRect(CGPoint(x: from.midX, y: from.midY), $0.frame, false) }
@@ -837,7 +840,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         // Its covered copy is being made: old ones may go.
         pruneCoveredCopies()
-        sendToChatIfChosen(id)
+        if asking {
+            // Once it has flown onto the line.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+                guard let self else { return }
+                AskPanel.shared.show(id, url: url, line: self.line)
+            }
+        } else {
+            sendToChatIfChosen(id)
+        }
         guard let from else {
             Guide.shared.happened(.photoHung)
             return
@@ -1272,6 +1283,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 Capture.shared.start(mode: .record)
             }
         case .page: FullPage.shared.start()
+        case .ask: Capture.shared.start(mode: .ask)
         }
     }
 
@@ -1607,6 +1619,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             Self.show(Shortcut.current(.capture), on: captureItem)
             menu.addItem(captureItem)
+            // A screenshot, then a question about it for an AI chat.
+            let askItem = Self.item(L("Capture and Ask AI"), MenuSymbol.ask) {
+                Capture.shared.start(after: 0.2, mode: .ask)
+            }
+            Self.show(Shortcut.current(.ask), on: askItem)
+            menu.addItem(askItem)
             let timerItem = NSMenuItem(title: L("Take Screenshot with Timer"), action: nil, keyEquivalent: "")
             Self.icon(MenuSymbol.timer, on: timerItem)
             let seconds = NSMenu()

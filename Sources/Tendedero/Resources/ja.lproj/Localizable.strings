@@ -2098,3 +2098,7 @@
 "Keyboard Shortcuts" = "キーボードショートカット";
 "Play or pause" = "再生または一時停止";
 "A second back or on" = "1秒戻る／進む";
+"Capture and Ask AI" = "撮ってAIに聞く";
+"Capture and ask AI" = "撮ってAIに聞く";
+"Private details are covered before it goes. Nothing is sent until you press Return in the chat." = "送る前に個人情報は隠されます。チャットで Return を押すまで何も送信されません。";
+"Or type your own question…" = "または自分の質問を入力…";

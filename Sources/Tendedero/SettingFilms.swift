@@ -11,7 +11,7 @@ extension SettingFilm {
         case takePhotosDownOnceSent, markPhotosSentBefore, keepAHistory, iconsUnderPhotos, websitesOpenIn
         case sendEachScreenshotTo, whereItGoes, keepItOnTheLine, showTheScreenshotButton, captureButtonClick
         case captureButtonIcon, captureButtonColor, showOrHideTheLine, sendTheNewestPhoto, searchScreenshots
-        case takeAScreenshot, captureAWholePage, recordTheScreen, showItWhilePhotosHang, inChatApps
+        case takeAScreenshot, captureAndAsk, captureAWholePage, recordTheScreen, showItWhilePhotosHang, inChatApps
         case chatButtonPosition, chatButtonStyle, chatButtonIcon, chatButtonColor, chatApps, chatWebsites
         case hidePrivateDetails, detailNames, detailPatientNames, detailOtherPeople, detailAddresses
         case detailBirthDates, detailEmails, detailPhones, detailUsernames, detailFaces, detailOrganizations
@@ -917,6 +917,23 @@ enum SettingFilms {
                 .click(0.46, 0.77, at: 1.65),
                 .move(.card(1), Box(0.38, 0.79, 0.48, 0.17), FilmScene.slot(1), start: 1.95, end: 2.5, appear: 1.85,
                       angles: (0, FilmScene.tilt(1))),
+            ])
+        case .captureAndAsk:
+            // ⌃⌥A and a drag take part of the page; it hangs, and its covered copy goes on into the AI chat with a
+            // question under it, waiting there for Return.
+            return SettingFilm("questionmark.bubble", FilmScene.line(cards: 1) + [
+                .show(.window(.browser), Box(0.32, 0.64, 0.5, 0.5)),
+                .show(.window(.chat), Box(0.7, 0.68, 0.46, 0.48)),
+                .show(.key("⌃"), Box(0.41, 0.6, 0.07, 0.11), from: 0.1, to: 0.6),
+                .show(.key("⌥"), Box(0.5, 0.6, 0.07, 0.11), from: 0.2, to: 0.6),
+                .show(.key("A"), Box(0.59, 0.6, 0.07, 0.11), from: 0.3, to: 0.6),
+                .move(.selection, Box(0.15, 0.555, 0.02, 0.03), Box(0.26, 0.66, 0.24, 0.24), start: 0.85, end: 1.25,
+                      appear: 0.85, leave: 1.4),
+                .move(.card(1), Box(0.26, 0.66, 0.24, 0.24), FilmScene.slot(1), start: 1.45, end: 1.95, appear: 1.35,
+                      angles: (0, FilmScene.tilt(1))),
+                .move(.card(1, covered: true), FilmScene.slot(1), Box(0.6, 0.7, 0.1, 0.12), start: 2.05, end: 2.5,
+                      appear: 2.0, angles: (FilmScene.tilt(1), 0)),
+                .show(.bubble(mine: true), Box(0.76, 0.84, 0.22, 0.08), from: 2.5),
             ])
         case .captureAWholePage:
             // ⌃⌥P: the page in front scrolls itself from top to bottom, and the whole page comes out of it as one

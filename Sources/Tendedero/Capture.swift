@@ -23,6 +23,8 @@ final class Capture {
 
     /// Called with each screenshot once it is saved.
     var onCapture: (URL) -> Void = { _ in }
+    /// A screenshot taken to ask an AI chat about (`AskPanel`).
+    var onAsk: (URL) -> Void = { _ in }
 
     private var overlays: [CaptureOverlay] = []
     /// Between the shortcut and the still screens showing up.
@@ -38,19 +40,23 @@ final class Capture {
         case timer(Int)
         /// A screen recording, until it is stopped.
         case record
+        /// A screenshot of the still screens, then a question about it for an
+        /// AI chat.
+        case ask
 
         var title: String {
             switch self {
             case .screenshot: L("Take Screenshot")
             case .timer: L("Take Screenshot with Timer")
             case .record: L("Record Screen")
+            case .ask: L("Capture and Ask AI")
             }
         }
 
         var hint: String {
             if SmartSelection.isOn {
                 switch self {
-                case .screenshot:
+                case .screenshot, .ask:
                     return L("Click what is outlined or drag over an area. Scroll for a bigger or smaller part. Return takes the whole screen, Escape cancels.")
                 case .timer:
                     return L("Choose what to take: click what is outlined, drag over an area, or press Return for the whole screen. Scroll for a bigger or smaller part. It is taken when the countdown ends.")
@@ -59,7 +65,7 @@ final class Capture {
                 }
             }
             return switch self {
-            case .screenshot: L("Drag over an area or click a window. Return takes the whole screen, Escape cancels.")
+            case .screenshot, .ask: L("Drag over an area or click a window. Return takes the whole screen, Escape cancels.")
             case .timer: L("Choose what to take: drag over an area, click a window, or press Return for the whole screen. It is taken when the countdown ends.")
             case .record: L("Drag over an area or click a window to record it. Return records the whole screen, Escape cancels.")
             }
@@ -215,7 +221,8 @@ final class Capture {
         overlays = []
         NSCursor.arrow.set()
         if case let .area(rect, screen, _) = choice { rememberArea(rect, on: screen) }
-        if mode != .screenshot, let region = Self.region(of: choice) {
+        let asking = mode == .ask
+        if mode != .screenshot, !asking, let region = Self.region(of: choice) {
             if case let .timer(seconds) = mode {
                 takeLater(region, after: seconds)
             } else {
@@ -227,14 +234,14 @@ final class Capture {
         case .cancel:
             return
         case let .screen(screen, image):
-            save(image, from: screen.frame)
+            save(image, from: screen.frame, asking: asking)
         case let .area(rect, screen, image):
             let sx = CGFloat(image.width) / screen.frame.width
             let sy = CGFloat(image.height) / screen.frame.height
             let pixels = CGRect(x: (rect.minX - screen.frame.minX) * sx, y: (screen.frame.maxY - rect.maxY) * sy,
                                 width: rect.width * sx, height: rect.height * sy).integral
             guard let cropped = image.cropping(to: pixels) else { return }
-            save(cropped, from: rect)
+            save(cropped, from: rect, asking: asking)
         case let .window(target):
             Task { @MainActor in
                 let filter = SCContentFilter(desktopIndependentWindow: target.window)
@@ -247,7 +254,7 @@ final class Capture {
                 config.ignoreShadowsSingleWindow = true
                 do {
                     let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
-                    self.save(image, from: target.frame)
+                    self.save(image, from: target.frame, asking: asking)
                 } catch {
                     log.error("Could not capture a window: \(error.localizedDescription, privacy: .public)")
                 }
@@ -407,7 +414,7 @@ final class Capture {
 
     /// Written off the main thread, then tagged the way macOS tags its own
     /// screenshots, so the line treats it as one and knows where it flew from.
-    private func save(_ image: CGImage, from rect: CGRect) {
+    private func save(_ image: CGImage, from rect: CGRect, asking: Bool = false) {
         let fm = FileManager.default
         var url = Inbox.folder.appendingPathComponent("Snapfly \(Self.stamp()).png")
         var n = 2
@@ -427,7 +434,7 @@ final class Capture {
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
                     if saved {
-                        self.onCapture(destination)
+                        if asking { self.onAsk(destination) } else { self.onCapture(destination) }
                     } else {
                         log.error("Could not save a screenshot to \(destination.path, privacy: .private)")
                         Notice.show(L("Could not save the screenshot. Check that the disk has room and the folder is still there."))

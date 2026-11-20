@@ -39,8 +39,9 @@ final class HotKey {
 
 /// A global shortcut: one that shows and hides the line, ⌃⌥T unless
 /// changed, one that sends the newest photo, ⌃⌥V, one that searches, ⌃⌥F,
-/// one that takes a screenshot, ⌃⌥S, and one that starts and stops a screen
-/// recording, ⌃⌥R. Each can be none.
+/// one that takes a screenshot, ⌃⌥S, one that starts and stops a screen
+/// recording, ⌃⌥R, one that captures a whole page, ⌃⌥P, and one that takes
+/// a screenshot to ask an AI chat about, ⌃⌥A. Each can be none.
 struct Shortcut: Equatable {
     var keyCode: Int
     var modifiers: NSEvent.ModifierFlags
@@ -60,6 +61,8 @@ struct Shortcut: Equatable {
         case record = 5
         /// Captures the whole page in the window in front.
         case page = 6
+        /// Takes a screenshot to ask an AI chat about.
+        case ask = 7
 
         var standard: Shortcut {
             switch self {
@@ -69,6 +72,7 @@ struct Shortcut: Equatable {
             case .capture: Shortcut(keyCode: kVK_ANSI_S, modifiers: [.control, .option], key: "s")
             case .record: Shortcut(keyCode: kVK_ANSI_R, modifiers: [.control, .option], key: "r")
             case .page: Shortcut(keyCode: kVK_ANSI_P, modifiers: [.control, .option], key: "p")
+            case .ask: Shortcut(keyCode: kVK_ANSI_A, modifiers: [.control, .option], key: "a")
             }
         }
 
@@ -80,6 +84,7 @@ struct Shortcut: Equatable {
             case .capture: "captureShortcut"
             case .record: "recordShortcut"
             case .page: "pageShortcut"
+            case .ask: "askShortcut"
             }
         }
     }
