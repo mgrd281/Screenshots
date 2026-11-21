@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "يُفتح تسجيلك الجديد في الاستوديو بعد أن تغلق هذا.";
 "Could not save the video." = "تعذّر حفظ الفيديو.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "اسحب التكبير على الشريط الزمني لنقله، أو اسحب طرفيه لإطالته أو تقصيره.";
-"Drag the frame on the picture to choose what it looks at." = "اسحب الإطار على الصورة لتختار ما ينظر إليه.";
 "Draw" = "الرسم";
 "Edit in Studio…" = "التحرير في الاستوديو…";
 "From where the video is, for three seconds." = "من موضع الفيديو، لثلاث ثوانٍ.";
 "How close" = "مدى القرب";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "يظهر لثلاث ثوانٍ من موضع الفيديو. اسحبه على الشريط الزمني لتغيير وقته.";
 "Looks at" = "ينظر إلى";
-"Made from your clicks and typing" = "مصنوع من نقراتك وكتابتك";
 "One Place" = "مكان واحد";
 "Open Studio after recording" = "فتح الاستوديو بعد التسجيل";
 "Play" = "تشغيل";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "تكبير الشريط الزمني";
 "Words on the video" = "كلمات على الفيديو";
 "Zoom" = "التكبير";
-"Zoom in on clicks and typing" = "التكبير عند النقر والكتابة";
 "Zooms: %d" = "التكبيرات: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "في هذا التسجيل مؤشر Mac نفسه. التسجيلات التي تُصنع والمؤشر الناعم مفعّل، في الإعدادات › عام، تحصل على مؤشر Snapfly.";
 "Smooth pointer" = "المؤشر الناعم";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "يرسم Snapfly مؤشراً أكبر ينساب بنعومة بدل مؤشر Mac، في الاستوديو وفي التسجيل.";
+"Zoom in automatically" = "التقريب تلقائياً";
+"When" = "متى";
+"All the time" = "دائماً";
+"On clicks" = "عند النقر";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "قريب طوال الوقت ويتابع المؤشر، ويبتعد قليلاً حين يعبر المؤشر الشاشة.";
+"Close on each run of clicks and typing." = "قريب عند كل مجموعة من النقرات والكتابة.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "اسحب الإطار على الصورة لتختار ما ينظر إليه، أو اسحب إحدى زواياه للاقتراب أو الابتعاد.";
+"Shape" = "الشكل";
+"As on the Mac" = "كما في Mac";
+"White arrow" = "سهم أبيض";
+"Dot" = "نقطة";
+"Made automatically. Change it as you like." = "صُنع تلقائياً. غيّره كما تشاء.";

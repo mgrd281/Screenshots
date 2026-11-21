@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "이 녹화를 닫으면 새 녹화가 스튜디오에서 열립니다.";
 "Could not save the video." = "비디오를 저장할 수 없습니다.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "타임라인에서 확대를 드래그해 옮기거나, 양 끝을 드래그해 길이를 바꾸세요.";
-"Drag the frame on the picture to choose what it looks at." = "그림 위의 틀을 드래그해 보이는 곳을 고르세요.";
 "Draw" = "그리기";
 "Edit in Studio…" = "스튜디오에서 편집…";
 "From where the video is, for three seconds." = "비디오 현재 위치부터 3초 동안.";
 "How close" = "확대 정도";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "비디오 현재 위치부터 3초 동안 보입니다. 타임라인에서 드래그해 시점을 바꾸세요.";
 "Looks at" = "보는 곳";
-"Made from your clicks and typing" = "클릭과 입력으로 만들어짐";
 "One Place" = "한 곳";
 "Open Studio after recording" = "녹화 후 스튜디오 열기";
 "Play" = "재생";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "타임라인 확대";
 "Words on the video" = "비디오 위의 글";
 "Zoom" = "확대";
-"Zoom in on clicks and typing" = "클릭과 입력 시 확대";
 "Zooms: %d" = "확대: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "이 녹화에는 Mac 자체 포인터가 들어 있습니다. 설정 › 일반에서 부드러운 포인터를 켜고 녹화하면 Snapfly의 포인터가 들어갑니다.";
 "Smooth pointer" = "부드러운 포인터";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly가 Mac의 포인터 대신 더 크고 부드럽게 움직이는 포인터를 그립니다. Studio와 녹화 모두에서요.";
+"Zoom in automatically" = "자동으로 확대";
+"When" = "시점";
+"All the time" = "항상";
+"On clicks" = "클릭할 때";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "포인터를 따라가며 내내 가깝게 보여 줍니다. 포인터가 화면을 가로지르는 동안은 조금 물러납니다.";
+"Close on each run of clicks and typing." = "클릭과 입력이 이어질 때마다 가깝게 보여 줍니다.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "그림 위의 틀을 드래그해 보이는 곳을 고르거나, 모서리를 드래그해 더 가깝게 또는 멀게 하세요.";
+"Shape" = "모양";
+"As on the Mac" = "Mac과 같이";
+"White arrow" = "흰색 화살표";
+"Dot" = "점";
+"Made automatically. Change it as you like." = "자동으로 만들어짐. 원하는 대로 바꾸세요.";

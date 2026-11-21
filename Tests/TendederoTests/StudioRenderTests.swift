@@ -209,6 +209,25 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertGreaterThan(StudioSample.pixel(plain, x: x, y: y).r, 200)
     }
 
+    func testThePointerCanBeADot() async throws {
+        let source = folder.appendingPathComponent("white-dot.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 1, draw: StudioSample.white)
+        var events = StudioEvents(width: 320, height: 180)
+        events.pointer = [StudioEvents.Point(t: 0, x: 0.5, y: 0.5)]
+        events.drawsPointer = true
+        var project = StudioProject()
+        project.showsClicks = false
+        project.pointer.shape = .dot
+        let shown = folder.appendingPathComponent("dot.mov")
+        try await StudioExport.run(source, look: StudioLook(project: project, events: events, duration: 1,
+                                                            pixels: CGSize(width: 320, height: 180), drawsPointer: true),
+                                   to: shown, stop: StudioExport.Stop()) { _ in }
+        let frame = try await StudioSample.frame(of: shown, at: 0.5)
+        // Grey where the hand was; white where an arrow's body would be.
+        XCTAssertLessThan(StudioSample.pixel(frame, x: 0.5, y: 0.5).r, 215)
+        XCTAssertGreaterThan(StudioSample.pixel(frame, x: (160.0 + 2.5 * 1.6) / 320, y: (90.0 - 8 * 1.6) / 180).r, 200)
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)

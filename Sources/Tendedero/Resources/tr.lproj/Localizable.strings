@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "Yeni kaydın, bunu kapattığında Studio’da açılır.";
 "Could not save the video." = "Video kaydedilemedi.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Taşımak için zaman çizelgesinde bir yakınlaştırmayı sürükle, uzatmak ya da kısaltmak için uçlarını sürükle.";
-"Drag the frame on the picture to choose what it looks at." = "Nereye bakacağını seçmek için resimdeki çerçeveyi sürükle.";
 "Draw" = "Çiz";
 "Edit in Studio…" = "Studio’da Düzenle…";
 "From where the video is, for three seconds." = "Videonun olduğu yerden, üç saniye boyunca.";
 "How close" = "Ne kadar yakın";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Videonun olduğu yerden üç saniye görünür. Zamanını değiştirmek için zaman çizelgesinde sürükle.";
 "Looks at" = "Bakar";
-"Made from your clicks and typing" = "Tıklamalarından ve yazdıklarından yapıldı";
 "One Place" = "Tek Yer";
 "Open Studio after recording" = "Kayıttan sonra Studio’yu aç";
 "Play" = "Oynat";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "Zaman Çizelgesi Yakınlaştırma";
 "Words on the video" = "Videodaki sözcükler";
 "Zoom" = "Yakınlaştırma";
-"Zoom in on clicks and typing" = "Tıklamalarda ve yazarken yakınlaştır";
 "Zooms: %d" = "Yakınlaştırmalar: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "Bu kayıtta Mac’in kendi imleci var. Ayarlar › Genel’de Yumuşak imleç açıkken yapılan kayıtlara Snapfly’ın imleci gelir.";
 "Smooth pointer" = "Yumuşak imleç";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly, Mac’in imleci yerine daha büyük ve süzülen bir imleç çizer; Studio’da ve kaydın kendisinde.";
+"Zoom in automatically" = "Otomatik yakınlaştır";
+"When" = "Ne zaman";
+"All the time" = "Her zaman";
+"On clicks" = "Tıklamalarda";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "İmleci izleyerek baştan sona yakından. İmleç ekranı geçerken biraz geri çekilir.";
+"Close on each run of clicks and typing." = "Her tıklama ve yazma dizisinde yakından.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "Nereye bakacağını seçmek için resimdeki çerçeveyi, yaklaşmak ya da uzaklaşmak için bir köşesini sürükle.";
+"Shape" = "Şekil";
+"As on the Mac" = "Mac’teki gibi";
+"White arrow" = "Beyaz ok";
+"Dot" = "Nokta";
+"Made automatically. Change it as you like." = "Otomatik yapıldı. İstediğin gibi değiştir.";

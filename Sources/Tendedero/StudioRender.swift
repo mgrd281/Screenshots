@@ -193,20 +193,42 @@ enum StudioDraw {
         context.setAlpha(CGFloat(shown))
         context.setShadow(offset: CGSize(width: 0, height: -1.2 * k), blur: 3 * k, color: CGColor(gray: 0, alpha: 0.3))
         context.interpolationQuality = .high
-        if let index = pointer.events.look(at: t), let image = pointer.images[index] {
-            let cursor = pointer.events.cursors[index]
-            let box = CGRect(x: tip.x - CGFloat(cursor.hotX) * k, y: tip.y - CGFloat(cursor.height - cursor.hotY) * k,
-                             width: CGFloat(cursor.width) * k, height: CGFloat(cursor.height) * k)
-            context.draw(image, in: box)
-        } else {
+        switch pointer.style.shape {
+        case .mac:
+            if let index = pointer.events.look(at: t), let image = pointer.images[index] {
+                let cursor = pointer.events.cursors[index]
+                let box = CGRect(x: tip.x - CGFloat(cursor.hotX) * k, y: tip.y - CGFloat(cursor.height - cursor.hotY) * k,
+                                 width: CGFloat(cursor.width) * k, height: CGFloat(cursor.height) * k)
+                context.draw(image, in: box)
+            } else {
+                drawArrow(tip: tip, k: k, in: context)
+            }
+        case .arrow:
             drawArrow(tip: tip, k: k, in: context)
+        case .white:
+            drawArrow(tip: tip, k: k, light: true, in: context)
+        case .dot:
+            drawDot(at: tip, k: k, in: context)
         }
         context.restoreGState()
     }
 
-    /// The Mac's arrow, drawn, for a recording whose pointer's look was not
-    /// seen: black with a white edge, its tip on the point.
-    private static func drawArrow(tip: CGPoint, k: CGFloat, in context: CGContext) {
+    /// A soft round dot about where the hand is, dark enough to show on
+    /// light pages and edged in white for dark ones.
+    private static func drawDot(at center: CGPoint, k: CGFloat, in context: CGContext) {
+        let across = 14 * k
+        let disc = CGRect(x: center.x - across / 2, y: center.y - across / 2, width: across, height: across)
+        context.setFillColor(CGColor(gray: 0.1, alpha: 0.38))
+        context.fillEllipse(in: disc)
+        context.setShadow(offset: .zero, blur: 0, color: nil)
+        context.setStrokeColor(CGColor(gray: 1, alpha: 0.95))
+        context.setLineWidth(max(1, 1.2 * k))
+        context.strokeEllipse(in: disc.insetBy(dx: 0.6 * k, dy: 0.6 * k))
+    }
+
+    /// The Mac's arrow, drawn: black with a white edge, or, `light`, white
+    /// with a black one, its tip on the point.
+    private static func drawArrow(tip: CGPoint, k: CGFloat, light: Bool = false, in context: CGContext) {
         // In points from the tip, down and to the right.
         let outline: [(CGFloat, CGFloat)] = [(0, 0), (0, 17), (4, 13.2), (6.8, 19.5), (9.6, 18.4), (6.9, 12.2), (12, 12.2)]
         let path = CGMutablePath()
@@ -216,8 +238,8 @@ enum StudioDraw {
         }
         path.closeSubpath()
         context.addPath(path)
-        context.setFillColor(CGColor(gray: 0, alpha: 1))
-        context.setStrokeColor(CGColor(gray: 1, alpha: 1))
+        context.setFillColor(CGColor(gray: light ? 1 : 0, alpha: 1))
+        context.setStrokeColor(CGColor(gray: light ? 0 : 1, alpha: 1))
         context.setLineWidth(1.4 * k)
         context.setLineJoin(.round)
         context.drawPath(using: .fillStroke)

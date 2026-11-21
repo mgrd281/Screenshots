@@ -275,10 +275,13 @@ keeps both tracks, and a note says so.
 
 Once a recording hangs, it opens in Studio, or later with Edit › Edit in
 Studio… in its menu. It plays as it will be saved: the camera comes closer
-where you clicked and typed, follows the pointer there, keeping it near the
-middle as a product video does, and goes back out after. Nothing to set up:
-the zooms are made from what you did while recording. Follows the pointer,
-under Zoom, chooses Closely or Loosely, which moves only when the pointer
+soon after the start and follows the pointer all the way, keeping it near
+the middle as a product video does, pulls back while the pointer crosses
+the screen, and goes back out at the end. Nothing to set up: the zooms are
+made from where the pointer went while recording. When, under Zoom,
+chooses All the time or On clicks, which comes closer only where you
+clicked and typed; work kept from before stays on clicks. Follows the
+pointer chooses Closely or Loosely, which moves only when the pointer
 nears the edge. A ring spreads at each click, so viewers see where it
 went; Each click, under Draw, makes it a soft circle instead.
 
@@ -291,10 +294,11 @@ them all.
 Under the picture is the timeline: pictures along the recording with its
 sound, the zooms, and what you drew. Drag a zoom to move it, or its ends to
 make it longer or shorter; choose one to set how close it comes, and whether
-it follows the pointer or looks at one place, which you drag on the picture.
-Add Zoom puts one where the video is. How close, in the inspector, changes
-every zoom made for you at once, and turning Zoom in on clicks and typing off
-takes them away and keeps yours.
+it follows the pointer or looks at one place, which you drag on the picture;
+drag a corner of that frame to come closer or go further. Add Zoom puts one
+where the video is, in place of the automatic one there. How close, in the
+inspector, changes every zoom made for you at once, and turning Zoom in
+automatically off takes them away and keeps yours.
 
 Pause where something should be pointed out and draw on the picture, with
 the same arrow, box, circle, numbered steps and words as Draw on Photo, in
@@ -316,9 +320,11 @@ is, until you turn it off), recordings are made without the Mac's own
 pointer, and Snapfly draws one: larger, gliding instead of jittering, in
 the look it had at each moment (arrow, I-beam, hand), pressed in at each
 click, and growing as the camera comes closer, as product videos show it.
-In Studio, Pointer on the Draw page sets its size, whether it glides and
-whether it hides while still. The recording on the line gets the same
-pointer drawn in a few moments after it hangs, so it can be sent as it is.
+In Studio, Pointer on the Draw page sets its shape (as on the Mac, an
+arrow, a white arrow or a dot), its size, whether it glides and whether it
+hides while still, and the next recordings start from it. The recording on
+the line gets the same pointer drawn in a few moments after it hangs, so
+it can be sent as it is.
 
 Cut and Speed works on the part where the video stands: Split Here (S)
 splits it there, Cut Out (X) leaves a part out of the video, and Speed

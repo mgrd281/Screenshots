@@ -3,7 +3,8 @@ import Foundation
 
 // Studio's own pointer, for recordings made without the Mac's (Smooth
 // pointer, Settings › General): larger, gliding rather than jittering, in
-// the look the pointer had at each moment (arrow, I-beam, hand), pressed
+// the look the pointer had at each moment (arrow, I-beam, hand) or in one
+// shape all through (an arrow, black or white, or a dot), pressed
 // in at each click, and, if chosen, fading away while it keeps still. This
 // file is the part that needs no screen; StudioDraw draws it.
 
@@ -19,9 +20,23 @@ struct StudioCursor: Codable, Equatable, Sendable {
     var height: Double
 }
 
+/// What Studio's pointer looks like.
+enum StudioPointerShape: String, Codable, CaseIterable, Sendable {
+    /// As the Mac drew it at each moment: an arrow, an I-beam over words, a
+    /// hand over links.
+    case mac
+    /// Always an arrow, black with a white edge.
+    case arrow
+    /// Always an arrow, white with a black edge, as on dark pages.
+    case white
+    /// A soft round dot, as a finger shows in a phone's video.
+    case dot
+}
+
 /// How Studio's pointer looks in a recording's video, kept with its work.
 struct StudioPointerStyle: Codable, Equatable, Sendable {
     var shows = true
+    var shape = StudioPointerShape.mac
     /// How large, against the Mac's own pointer.
     var size = 1.6
     /// Glides as a hand moves, without the jitter of every small move.
@@ -37,6 +52,7 @@ struct StudioPointerStyle: Codable, Equatable, Sendable {
     init(from decoder: Decoder) throws {
         let kept = try decoder.container(keyedBy: CodingKeys.self)
         shows = (try? kept.decodeIfPresent(Bool.self, forKey: .shows)) ?? true
+        shape = (try? kept.decodeIfPresent(StudioPointerShape.self, forKey: .shape)) ?? .mac
         size = (try? kept.decodeIfPresent(Double.self, forKey: .size)) ?? 1.6
         smooth = (try? kept.decodeIfPresent(Bool.self, forKey: .smooth)) ?? true
         hidesWhenStill = (try? kept.decodeIfPresent(Bool.self, forKey: .hidesWhenStill)) ?? false

@@ -1805,14 +1805,12 @@
 "Your new recording opens in Studio once you close this one." = "Your new recording opens in Studio once you close this one.";
 "Could not save the video." = "Could not save the video.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter.";
-"Drag the frame on the picture to choose what it looks at." = "Drag the frame on the picture to choose what it looks at.";
 "Draw" = "Draw";
 "Edit in Studio…" = "Edit in Studio…";
 "From where the video is, for three seconds." = "From where the video is, for three seconds.";
 "How close" = "How close";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "It shows for three seconds from where the video is. Drag it on the timeline to change when.";
 "Looks at" = "Looks at";
-"Made from your clicks and typing" = "Made from your clicks and typing";
 "One Place" = "One Place";
 "Open Studio after recording" = "Open Studio after recording";
 "Play" = "Play";
@@ -1828,7 +1826,6 @@
 "Timeline Zoom" = "Timeline Zoom";
 "Words on the video" = "Words on the video";
 "Zoom" = "Zoom";
-"Zoom in on clicks and typing" = "Zoom in on clicks and typing";
 "Zooms: %d" = "Zooms: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2126,3 +2123,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s.";
 "Smooth pointer" = "Smooth pointer";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording.";
+"Zoom in automatically" = "Zoom in automatically";
+"When" = "When";
+"All the time" = "All the time";
+"On clicks" = "On clicks";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "Close all through, following the pointer. It pulls back while the pointer crosses the screen.";
+"Close on each run of clicks and typing." = "Close on each run of clicks and typing.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further.";
+"Shape" = "Shape";
+"As on the Mac" = "As on the Mac";
+"White arrow" = "White arrow";
+"Dot" = "Dot";
+"Made automatically. Change it as you like." = "Made automatically. Change it as you like.";

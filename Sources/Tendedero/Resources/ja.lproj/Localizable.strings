@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "これを閉じると、新しい収録がスタジオで開きます。";
 "Could not save the video." = "ビデオを保存できませんでした。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "タイムラインでズームをドラッグすると移動し、端をドラッグすると長さを変えられます。";
-"Drag the frame on the picture to choose what it looks at." = "画像上の枠をドラッグして、映す場所を選びます。";
 "Draw" = "描く";
 "Edit in Studio…" = "スタジオで編集…";
 "From where the video is, for three seconds." = "ビデオの現在位置から3秒間。";
 "How close" = "ズームの強さ";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "ビデオの現在位置から3秒間表示されます。タイムラインでドラッグするとタイミングを変えられます。";
 "Looks at" = "映す対象";
-"Made from your clicks and typing" = "クリックと入力から作成";
 "One Place" = "1か所";
 "Open Studio after recording" = "収録後にスタジオを開く";
 "Play" = "再生";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "タイムラインのズーム";
 "Words on the video" = "ビデオ上の言葉";
 "Zoom" = "ズーム";
-"Zoom in on clicks and typing" = "クリックと入力でズーム";
 "Zooms: %d" = "ズーム: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "この収録には Mac のポインタがそのまま入っています。設定 › 一般 で「なめらかなポインタ」をオンにして収録すると Snapfly のポインタになります。";
 "Smooth pointer" = "なめらかなポインタ";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Mac のポインタの代わりに、Snapfly が大きくなめらかに動くポインタを描きます。Studio でも収録でも。";
+"Zoom in automatically" = "自動でズーム";
+"When" = "タイミング";
+"All the time" = "常に";
+"On clicks" = "クリック時";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "ポインタを追いながらずっと寄ります。ポインタが画面を横切るあいだは少し引きます。";
+"Close on each run of clicks and typing." = "クリックや入力のたびに寄ります。";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "画像上の枠をドラッグして映す場所を、角をドラッグして寄り具合を選びます。";
+"Shape" = "形";
+"As on the Mac" = "Macと同じ";
+"White arrow" = "白い矢印";
+"Dot" = "ドット";
+"Made automatically. Change it as you like." = "自動で作成。自由に変更できます。";

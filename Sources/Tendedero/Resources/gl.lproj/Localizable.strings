@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "A túa nova gravación ábrese en Studio cando peches esta.";
 "Could not save the video." = "Non se puido gardar o vídeo.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Arrastra un zoom na liña de tempo para movelo, ou os seus extremos para alongalo ou acurtalo.";
-"Drag the frame on the picture to choose what it looks at." = "Arrastra o marco sobre a imaxe para escoller a onde mira.";
 "Draw" = "Debuxar";
 "Edit in Studio…" = "Editar en Studio…";
 "From where the video is, for three seconds." = "Desde onde está o vídeo, durante tres segundos.";
 "How close" = "Canto achegar";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Aparece durante tres segundos desde onde está o vídeo. Arrástrao na liña de tempo para cambiar cando.";
 "Looks at" = "Mira a";
-"Made from your clicks and typing" = "Feito cos teus clics e o que escribiches";
 "One Place" = "Un lugar";
 "Open Studio after recording" = "Abrir Studio despois de gravar";
 "Play" = "Reproducir";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "Zoom da liña de tempo";
 "Words on the video" = "Palabras no vídeo";
 "Zoom" = "Zoom";
-"Zoom in on clicks and typing" = "Achegar ao facer clic e escribir";
 "Zooms: %d" = "Zooms: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "Esta gravación ten o punteiro do propio Mac. As gravacións feitas co Punteiro suave activado, en Axustes › Xeral, levan o de Snapfly.";
 "Smooth pointer" = "Punteiro suave";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly debuxa un punteiro máis grande que esvara, no canto do do Mac, en Studio e na gravación.";
+"Zoom in automatically" = "Achegar automaticamente";
+"When" = "Cando";
+"All the time" = "Sempre";
+"On clicks" = "Ao facer clic";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "Preto todo o tempo, seguindo o punteiro. Afástase mentres o punteiro cruza a pantalla.";
+"Close on each run of clicks and typing." = "Preto en cada serie de clics e escritura.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "Arrastra o marco sobre a imaxe para escoller a onde mira, ou unha esquina para achegar ou afastar.";
+"Shape" = "Forma";
+"As on the Mac" = "Como no Mac";
+"White arrow" = "Frecha branca";
+"Dot" = "Punto";
+"Made automatically. Change it as you like." = "Feito automaticamente. Cámbiao como queiras.";

@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "关闭当前录制后，新录制会在 Studio 中打开。";
 "Could not save the video." = "无法存储视频。";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "在时间线上拖移缩放可移动它，拖移两端可调整长短。";
-"Drag the frame on the picture to choose what it looks at." = "拖移画面上的框，选择镜头看向哪里。";
 "Draw" = "绘制";
 "Edit in Studio…" = "在 Studio 中编辑…";
 "From where the video is, for three seconds." = "从视频当前位置开始，持续三秒。";
 "How close" = "放大程度";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "从视频当前位置开始显示三秒。在时间线上拖移可更改时间。";
 "Looks at" = "看向";
-"Made from your clicks and typing" = "根据你的点按和输入生成";
 "One Place" = "一个位置";
 "Open Studio after recording" = "录制后打开 Studio";
 "Play" = "播放";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "时间线缩放";
 "Words on the video" = "视频上的文字";
 "Zoom" = "缩放";
-"Zoom in on clicks and typing" = "点按和输入时放大";
 "Zooms: %d" = "缩放：%d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "此录制内容中是 Mac 自己的指针。在“设置 › 通用”中打开“平滑指针”后录制的内容会使用 Snapfly 的指针。";
 "Smooth pointer" = "平滑指针";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly 绘制一个更大、平滑移动的指针来代替 Mac 的指针，在 Studio 和录制内容中都是如此。";
+"Zoom in automatically" = "自动放大";
+"When" = "何时";
+"All the time" = "始终";
+"On clicks" = "点按时";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "全程放大并跟随指针。指针划过屏幕时稍稍拉远。";
+"Close on each run of clicks and typing." = "每次连续点按和输入时放大。";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "拖移画面上的框，选择镜头看向哪里；拖移角落可拉近或拉远。";
+"Shape" = "形状";
+"As on the Mac" = "与 Mac 相同";
+"White arrow" = "白色箭头";
+"Dot" = "圆点";
+"Made automatically. Change it as you like." = "自动生成。可随意更改。";
