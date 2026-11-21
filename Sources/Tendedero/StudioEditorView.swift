@@ -209,9 +209,18 @@ struct StudioEditorView: View {
 
     private var zooms: some View {
         Section {
-            Toggle(L("Zoom in on clicks and typing"), isOn: Binding(get: { model.project.autoZoom },
-                                                                     set: { model.setAutoZoom($0) }))
+            Toggle(L("Zoom in automatically"), isOn: Binding(get: { model.project.autoZoom },
+                                                              set: { model.setAutoZoom($0) }))
                 .disabled(model.events == nil)
+            Picker(L("When"), selection: Binding(get: { model.project.zoomWhen }, set: { model.setZoomWhen($0) })) {
+                Text(L("All the time")).tag(StudioZoomWhen.always)
+                Text(L("On clicks")).tag(StudioZoomWhen.clicks)
+            }
+            .pickerStyle(.segmented)
+            .disabled(model.events == nil || !model.project.autoZoom)
+            .help(model.project.zoomWhen == .always
+                  ? L("Close all through, following the pointer. It pulls back while the pointer crosses the screen.")
+                  : L("Close on each run of clicks and typing."))
             LabeledContent(L("How close")) {
                 HStack(spacing: 8) {
                     Slider(value: Binding(get: { model.autoScale }, set: { model.setAutoScale($0) }),
@@ -293,7 +302,7 @@ struct StudioEditorView: View {
                     .monospacedDigit()
             }
         } footer: {
-            Text(L("Drag the frame on the picture to choose what it looks at."))
+            Text(L("Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further."))
                 .foregroundStyle(.secondary)
         }
     }
@@ -444,6 +453,14 @@ struct StudioEditorView: View {
         return Section {
             Toggle(L("Show the pointer"), isOn: Binding(get: { style.shows },
                                                         set: { on in model.setPointer { $0.shows = on } }))
+            Picker(L("Shape"), selection: Binding(get: { model.project.pointer.shape },
+                                                  set: { shape in model.setPointer { $0.shape = shape } })) {
+                Text(L("As on the Mac")).tag(StudioPointerShape.mac)
+                Text(L("Arrow")).tag(StudioPointerShape.arrow)
+                Text(L("White arrow")).tag(StudioPointerShape.white)
+                Text(L("Dot")).tag(StudioPointerShape.dot)
+            }
+            .disabled(!style.shows)
             LabeledContent(L("Size")) {
                 HStack(spacing: 8) {
                     Slider(value: Binding(get: { model.project.pointer.size },
@@ -854,6 +871,9 @@ private struct StudioCanvas: View {
         case reshaping(Drawing.Mark, handle: Int)
         /// The part a chosen zoom looks at, dragged.
         case aiming(CGRect, from: CGPoint)
+        /// A chosen zoom's frame dragged by a corner, the opposite one kept,
+        /// or, for a zoom that follows the pointer, its middle.
+        case sizing(UUID, fixed: CGPoint, around: Bool)
         case idle
     }
 
@@ -903,7 +923,12 @@ private struct StudioCanvas: View {
                                     .onChanged { drag($0, in: size) }
                                     .onEnded { ended($0, in: size) }
                             )
-                            .onHover { inside in pointer(inside ? cursorShape : nil) }
+                            .onContinuousHover { phase in
+                                switch phase {
+                                case let .active(location): pointer(hoverCursor(at: location, in: size))
+                                case .ended: pointer(nil)
+                                }
+                            }
                     }
                     .padding(.leading, framing.video.minX * k)
                     .padding(.top, (framing.canvas.height - framing.video.maxY) * k)
@@ -926,6 +951,16 @@ private struct StudioCanvas: View {
             if cursor != nil { pointer(cursorShape) }
         }
         .onDisappear { pointer(nil) }
+    }
+
+    /// The pointer over the picture: a crosshair over a zoom frame's
+    /// corner, to size it; else as `cursorShape`.
+    private func hoverCursor(at location: CGPoint, in size: CGSize) -> NSCursor {
+        guard size.width > 0, size.height > 0, let zoom = model.selectedZoom,
+              corner(of: model.area(of: zoom), near: recorded(location, in: size), in: size) != nil else {
+            return cursorShape
+        }
+        return .crosshair
     }
 
     private var cursorShape: NSCursor {
@@ -1017,6 +1052,13 @@ private struct StudioCanvas: View {
             let x = min(1 - area.width / 2, max(area.width / 2, area.midX + point.x - from.x))
             let y = min(1 - area.height / 2, max(area.height / 2, area.midY + point.y - from.y))
             model.update(zoom: zoom.id) { $0.focus = .point(x: Double(x), y: Double(y)) }
+        case let .sizing(id, fixed, around):
+            let frame = around ? StudioTimeline.framed(around: fixed, to: point)
+                : StudioTimeline.framed(keeping: fixed, to: point)
+            model.update(zoom: id) { zoom in
+                zoom.scale = (100 / Double(frame.width)).rounded() / 100
+                if case .point = zoom.focus { zoom.focus = .point(x: Double(frame.midX), y: Double(frame.midY)) }
+            }
         case .idle:
             break
         }
@@ -1031,6 +1073,15 @@ private struct StudioCanvas: View {
         if let zoom = model.selectedZoom {
             var area = model.area(of: zoom)
             model.begin()
+            // A corner pressed: the frame grows or shrinks, coming closer or going further.
+            if let pressed = corner(of: area, near: point, in: size) {
+                if case .pointer = zoom.focus {
+                    return .sizing(zoom.id, fixed: CGPoint(x: area.midX, y: area.midY), around: true)
+                }
+                let fixed = CGPoint(x: pressed.x == area.minX ? area.maxX : area.minX,
+                                    y: pressed.y == area.minY ? area.maxY : area.minY)
+                return .sizing(zoom.id, fixed: fixed, around: false)
+            }
             if !area.contains(point) {
                 // A press outside the frame brings it there.
                 let x = min(1 - area.width / 2, max(area.width / 2, point.x))
@@ -1086,7 +1137,7 @@ private struct StudioCanvas: View {
             let big = mark.kind == .arrow ? hypot(b.x - a.x, b.y - a.y) >= 8 : abs(b.x - a.x) >= 4 && abs(b.y - a.y) >= 4
             if !big { model.remove(id) }
             model.end()
-        case .moving, .reshaping, .aiming:
+        case .moving, .reshaping, .aiming, .sizing:
             model.end()
         case .idle, nil:
             break
@@ -1096,6 +1147,19 @@ private struct StudioCanvas: View {
     private func near(_ a: CGPoint, _ b: CGPoint, _ reach: CGFloat) -> Bool {
         hypot(a.x - b.x, a.y - b.y) <= reach
     }
+
+    /// The corner of a zoom's frame a place on the recording is by, as the
+    /// view shows them, within reach of the corner's marks.
+    private func corner(of area: CGRect, near point: CGPoint, in size: CGSize) -> CGPoint? {
+        let corners = [CGPoint(x: area.minX, y: area.minY), CGPoint(x: area.maxX, y: area.minY),
+                       CGPoint(x: area.minX, y: area.maxY), CGPoint(x: area.maxX, y: area.maxY)]
+        return corners.first { place in
+            hypot((place.x - point.x) * size.width, (place.y - point.y) * size.height) <= Self.cornerReach
+        }
+    }
+
+    /// How far from a frame's corner a press still takes it, in points.
+    private static let cornerReach: CGFloat = 14
 }
 
 /// The video itself, seen through the camera, and over it the marks, the
@@ -1560,7 +1624,7 @@ private struct StudioTimelineView: View {
         // Worked out apart, so the view below stays quick to compile.
         let scale: String = StudioEditorView.times(zoom.scale)
         let icon: String = zoom.automatic ? "sparkle.magnifyingglass" : "plus.magnifyingglass"
-        let tip: String = zoom.automatic ? L("Made from your clicks and typing") : L("Zoom")
+        let tip: String = zoom.automatic ? L("Made automatically. Change it as you like.") : L("Zoom")
         let span: String = StudioTimeline.text(zoom.start) + " – " + StudioTimeline.text(zoom.end)
         let value: String = span + ", " + scale
         let traits: AccessibilityTraits = chosen ? [.isButton, .isSelected] : .isButton

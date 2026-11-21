@@ -1803,14 +1803,12 @@
 "Your new recording opens in Studio once you close this one." = "Ton nouvel enregistrement s’ouvre dans Studio dès que tu fermes celui-ci.";
 "Could not save the video." = "Impossible d’enregistrer la vidéo.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Fais glisser un zoom sur la timeline pour le déplacer, ou ses bords pour l’allonger ou le raccourcir.";
-"Drag the frame on the picture to choose what it looks at." = "Fais glisser le cadre sur l’image pour choisir ce qu’il regarde.";
 "Draw" = "Dessiner";
 "Edit in Studio…" = "Modifier dans Studio…";
 "From where the video is, for three seconds." = "À partir de l’endroit où en est la vidéo, pendant trois secondes.";
 "How close" = "Proximité";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Il s’affiche pendant trois secondes à partir de l’endroit où en est la vidéo. Fais-le glisser sur la timeline pour changer le moment.";
 "Looks at" = "Regarde";
-"Made from your clicks and typing" = "Créé à partir de tes clics et de ta saisie";
 "One Place" = "Un endroit";
 "Open Studio after recording" = "Ouvrir Studio après l’enregistrement";
 "Play" = "Lire";
@@ -1826,7 +1824,6 @@
 "Timeline Zoom" = "Zoom de la timeline";
 "Words on the video" = "Mots sur la vidéo";
 "Zoom" = "Zoom";
-"Zoom in on clicks and typing" = "Zoomer sur les clics et la saisie";
 "Zooms: %d" = "Zooms : %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2124,3 +2121,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "Cet enregistrement contient le pointeur du Mac. Les enregistrements faits avec Pointeur fluide activé, dans Réglages › Général, ont celui de Snapfly.";
 "Smooth pointer" = "Pointeur fluide";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly dessine un pointeur plus grand qui glisse, à la place de celui du Mac, dans Studio et dans l’enregistrement.";
+"Zoom in automatically" = "Zoomer automatiquement";
+"When" = "Quand";
+"All the time" = "Tout le temps";
+"On clicks" = "Aux clics";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "Rapproché tout du long, en suivant le pointeur. La caméra recule quand le pointeur traverse l’écran.";
+"Close on each run of clicks and typing." = "Rapproché à chaque série de clics et de saisie.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "Fais glisser le cadre sur l’image pour choisir ce qu’il regarde, ou un coin pour rapprocher ou éloigner.";
+"Shape" = "Forme";
+"As on the Mac" = "Comme sur le Mac";
+"White arrow" = "Flèche blanche";
+"Dot" = "Point";
+"Made automatically. Change it as you like." = "Créé automatiquement. Modifie-le comme tu veux.";

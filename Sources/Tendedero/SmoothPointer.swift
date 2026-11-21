@@ -6,9 +6,9 @@ import AVFoundation
 /// with where it went and the looks it had noted (`StudioCapture`), and
 /// Snapfly draws its own: larger, gliding instead of jittering, pressed in
 /// at each click (`StudioPointerStyle`). Studio draws it live on the
-/// recording as it was made, as large as chosen there; and the recording on
-/// the line gets the same pointer drawn in, in the background, so it can be
-/// sent as it is, without Studio.
+/// recording as it was made, as large and in the shape chosen there; and the
+/// recording on the line gets the pointer as last set drawn in, in the
+/// background, so it can be sent as it is, without Studio.
 @MainActor
 enum SmoothPointer {
     private static let key = "smoothPointer"
@@ -25,7 +25,9 @@ enum SmoothPointer {
     /// for Studio, thirty frames a second, at its own size and with its sound
     /// as it was. Changed, moved or taken down meanwhile, it is left as it is.
     static func addPointer(to url: URL) {
-        guard let clean = StudioStore.cleanSource(for: url), let events = StudioStore.events(for: url),
+        // As last set in Studio; hidden there, the recording stays without one.
+        let style = StudioModel.lastPointer
+        guard style.shows, let clean = StudioStore.cleanSource(for: url), let events = StudioStore.events(for: url),
               events.drawsPointer else { return }
         let before = version(of: url)
         let target = url.deletingLastPathComponent()
@@ -41,6 +43,7 @@ enum SmoothPointer {
                 var project = StudioProject()
                 project.autoZoom = false
                 project.showsClicks = false
+                project.pointer = style
                 let look = StudioLook(project: project, events: events, duration: duration, pixels: natural,
                                       drawsPointer: true)
                 try await StudioExport.run(clean, look: look, rate: 30, to: target, stop: StudioExport.Stop()) { _ in }

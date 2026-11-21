@@ -1805,14 +1805,12 @@
 "Your new recording opens in Studio once you close this one." = "आपकी नई रिकॉर्डिंग इसे बंद करते ही स्टूडियो में खुलेगी।";
 "Could not save the video." = "वीडियो सहेजा नहीं जा सका।";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "ज़ूम को खिसकाने के लिए टाइमलाइन पर खींचें, या उसे लंबा या छोटा करने के लिए उसके सिरे खींचें।";
-"Drag the frame on the picture to choose what it looks at." = "यह चुनने के लिए कि वह कहाँ देखे, तस्वीर पर फ़्रेम खींचें।";
 "Draw" = "बनाएँ";
 "Edit in Studio…" = "स्टूडियो में संपादित करें…";
 "From where the video is, for three seconds." = "वीडियो जहाँ है वहाँ से, तीन सेकंड के लिए।";
 "How close" = "कितना पास";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "यह वीडियो जहाँ है वहाँ से तीन सेकंड तक दिखता है। समय बदलने के लिए इसे टाइमलाइन पर खींचें।";
 "Looks at" = "देखता है";
-"Made from your clicks and typing" = "आपके क्लिक और टाइपिंग से बना";
 "One Place" = "एक जगह";
 "Open Studio after recording" = "रिकॉर्डिंग के बाद स्टूडियो खोलें";
 "Play" = "चलाएँ";
@@ -1828,7 +1826,6 @@
 "Timeline Zoom" = "टाइमलाइन ज़ूम";
 "Words on the video" = "वीडियो पर शब्द";
 "Zoom" = "ज़ूम";
-"Zoom in on clicks and typing" = "क्लिक और टाइपिंग पर ज़ूम करें";
 "Zooms: %d" = "ज़ूम: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2126,3 +2123,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "इस रिकॉर्डिंग में Mac का अपना पॉइंटर है। सेटिंग्स › सामान्य में स्मूद पॉइंटर चालू रहते बनी रिकॉर्डिंग में Snapfly का पॉइंटर आता है।";
 "Smooth pointer" = "स्मूद पॉइंटर";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly Mac के पॉइंटर की जगह एक बड़ा, सहज सरकता पॉइंटर बनाता है, Studio में और रिकॉर्डिंग में।";
+"Zoom in automatically" = "अपने आप ज़ूम करें";
+"When" = "कब";
+"All the time" = "हर समय";
+"On clicks" = "क्लिक पर";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "पूरे समय पास से, पॉइंटर का पीछा करते हुए। जब पॉइंटर स्क्रीन पार करता है, तो थोड़ा पीछे हटता है।";
+"Close on each run of clicks and typing." = "क्लिक और टाइपिंग के हर दौर पर पास से।";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "यह चुनने के लिए कि वह कहाँ देखे, तस्वीर पर फ़्रेम खींचें, या पास या दूर जाने के लिए उसका कोना खींचें।";
+"Shape" = "आकृति";
+"As on the Mac" = "Mac जैसा";
+"White arrow" = "सफ़ेद तीर";
+"Dot" = "बिंदु";
+"Made automatically. Change it as you like." = "अपने आप बना। जैसे चाहें बदलें।";

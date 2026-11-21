@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Studio comes closer all the time and follows the pointer, as a product
+  video does, even without a click; it pulls back while the pointer
+  crosses the screen. When, under Zoom, switches back to On clicks.
+- Drag a corner of a zoom's frame on the picture to come closer or go
+  further. Add Zoom works inside an automatic zoom too.
+- Studio's pointer comes in four shapes: as on the Mac, an arrow, a white
+  arrow or a dot. New recordings start from the shape and size last set.
+
 - Smooth pointer (Settings › General, on): screen recordings get Snapfly's
   own pointer, larger and gliding, in the look it had (arrow, I-beam,
   hand), pressed in at each click. Studio sets its size; the recording on

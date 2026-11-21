@@ -24,6 +24,9 @@ struct StudioProject: Codable, Equatable, Sendable {
     var autoZoom = true
     /// How close the automatic zooms come; nil for what suits the area.
     var autoScale: Double?
+    /// When they come: all the time, following the pointer, or on clicks
+    /// and typing, as work kept before this choice was made.
+    var zoomWhen = StudioZoomWhen.always
     /// A ring where each click landed.
     var showsClicks = true
     /// How each click shows: a ring that spreads, or a soft circle.
@@ -50,6 +53,7 @@ struct StudioProject: Codable, Equatable, Sendable {
         marks = try kept.decodeIfPresent([Mark].self, forKey: .marks) ?? []
         autoZoom = try kept.decodeIfPresent(Bool.self, forKey: .autoZoom) ?? true
         autoScale = try kept.decodeIfPresent(Double.self, forKey: .autoScale)
+        zoomWhen = (try? kept.decodeIfPresent(StudioZoomWhen.self, forKey: .zoomWhen)) ?? .clicks
         showsClicks = try kept.decodeIfPresent(Bool.self, forKey: .showsClicks) ?? true
         clickStyle = (try? kept.decodeIfPresent(StudioClickStyle.self, forKey: .clickStyle)) ?? .ring
         follow = (try? kept.decodeIfPresent(StudioCamera.Follow.self, forKey: .follow)) ?? .closely
@@ -64,10 +68,13 @@ struct StudioProject: Codable, Equatable, Sendable {
         StudioTimeline.numbers(of: marks.filter { $0.mark.kind == .step }.map { (id: $0.id, start: $0.start) })
     }
 
-    /// A first project for a recording: zoomed in on what was done.
-    static func first(events: StudioEvents?, duration: Double) -> StudioProject {
+    /// A first project for a recording: close all the time, following the
+    /// pointer, with Studio's pointer as it was last set.
+    static func first(events: StudioEvents?, duration: Double, pointer: StudioPointerStyle = StudioPointerStyle())
+        -> StudioProject {
         var project = StudioProject()
-        if let events { project.zooms = StudioAutoZoom.zooms(for: events, duration: duration) }
+        project.pointer = pointer
+        if let events { project.zooms = StudioAutoZoom.zooms(for: events, duration: duration, when: project.zoomWhen) }
         return project
     }
 

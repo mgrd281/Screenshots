@@ -1410,7 +1410,10 @@ apps.
     recording as the camera shows it then. With a zoom chosen and the video
     still, the whole recording shows, dimmed outside the part the zoom
     looks at (black 45%), with a white edge (1.5 pt) and 18 pt white
-    corners (3 pt, rounded) to drag; the pointer is the open hand.
+    corners (3 pt, rounded). Dragged inside, the frame moves (the open
+    hand); dragged by a corner, within 14 pt of it (the crosshair), it
+    grows or shrinks with the opposite corner kept, or about its middle
+    for a zoom that follows the pointer, setting how close it comes.
   - Under it, a 44 pt row: Play and Pause (Space), 15 pt semibold in a
     30 × 28 pt target; the time, "0:12 / 1:30", 12 pt medium `.secondary`
     with monospaced digits; and on the trailing edge the timeline's zoom, a
@@ -1421,7 +1424,7 @@ apps.
     recording's pictures, rounded 6, with its sound's loudness as white bars
     over a dark fade at their foot; the zooms; the marks, in up to three
     rows where they overlap. Blocks (`studio-block`) move by their middle
-    and stretch by their ends (8 pt each); a zoom made from clicks shows
+    and stretch by their ends (8 pt each); a zoom made automatically shows
     `sparkle.magnifyingglass`, one changed by hand `plus.magnifyingglass`,
     with its closeness ("2.0×", its number as the Mac's region writes it,
     "2,0×" in German). A click on the ruler or pictures moves the
@@ -1434,8 +1437,10 @@ apps.
     keyboard button beside the timeline's zoom (`keyboard`, `.secondary`)
     lists every key in a popover, each in a keycap (6 pt, `.primary` at
     8%). Edit holds Zoom, with
-    Zoom in on clicks and typing, How close (a small slider and "2.0×"),
-    and the number of zooms with Add Zoom (Z); a chosen zoom's How close,
+    Zoom in automatically, When (All the time, On clicks, segmented), How
+    close (a small slider and "2.0×"), Follows the pointer, and the number
+    of zooms with Add Zoom (Z), which inside a zoom made automatically
+    takes its place there; a chosen zoom's How close,
     Looks at (The Pointer, One Place, segmented) and Delete; Cut and Speed,
     for the part the video stands in: Split Here (S, `square.split.2x1`),
     Cut Out (X, `scissors`; Put Back, `arrow.uturn.backward`, on a part cut
@@ -1463,17 +1468,21 @@ apps.
     where it went (thirty times a second) and the looks it had (ten times a
     second, each kept once: arrow, I-beam, hand). Studio plays the
     recording as made and draws the pointer by the code that draws the
-    marks: the look it had then, 1.6 times the Mac's by default (1 to 3,
-    Size), growing as the camera comes closer, gliding on a 0.14 s spring
+    marks: the look it had then (Shape, As on the Mac), or always an arrow
+    (black with a white edge, or white with a black one) or a dot (14 of
+    its points across, black 38% with a white edge), 1.6 times the Mac's
+    by default (1 to 3, Size), growing as the camera comes closer, gliding
+    on a 0.14 s spring
     (Smooth movement), with a shadow (black 30%, blur 3 and down 1.2 of
     its points), pressed to 82% at a click (in over 30% of 0.22 s, out
     over the rest), and, with Hide while still, fading over 0.3 s after
     1.5 s still. The Pointer section, on the Draw page under Show clicks,
-    holds Show the pointer, Size, Smooth movement and Hide while still,
-    dimmed with a note on a recording that has the Mac's own pointer. The
-    recording on the line gets the same pointer drawn in, in the
-    background, at thirty frames a second, and its picture on the line
-    comes anew; changed or moved meanwhile, it is left as it is.
+    holds Show the pointer, Shape (a menu), Size, Smooth movement and Hide
+    while still, dimmed with a note on a recording that has the Mac's own
+    pointer. The pointer as last set is the one the next recordings start
+    with. The recording on the line gets it drawn in, in the background, at
+    thirty frames a second, and its picture on the line comes anew; changed
+    or moved meanwhile, it is left as it is.
   - **Blur** is a box dragged over what should not be seen: for as long
     as it shows, the recording under it is blurred (a Gaussian blur of
     1.5% of the recording's unit, at least 10 px), fading in and out as

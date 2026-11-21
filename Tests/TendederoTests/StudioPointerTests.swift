@@ -62,6 +62,22 @@ final class StudioPointerTests: XCTestCase {
         XCTAssertNil(events.look(at: 1))
         let project = try JSONDecoder().decode(StudioProject.self, from: Data(#"{"zooms":[]}"#.utf8))
         XCTAssertEqual(project.pointer, StudioPointerStyle())
+        // A style kept before shapes, as the Mac drew it.
+        let style = try JSONDecoder().decode(StudioPointerStyle.self, from: Data(#"{"shows":true,"size":2.2}"#.utf8))
+        XCTAssertEqual(style.shape, .mac)
+        XCTAssertEqual(style.size, 2.2)
+    }
+
+    func testItsShapeIsKeptWithTheWork() throws {
+        var project = StudioProject()
+        project.pointer.shape = .dot
+        project.pointer.size = 2.4
+        let read = try JSONDecoder().decode(StudioProject.self, from: JSONEncoder().encode(project))
+        XCTAssertEqual(read.pointer.shape, .dot)
+        XCTAssertEqual(read.pointer.size, 2.4)
+        // A new recording's work starts from the pointer last set.
+        let first = StudioProject.first(events: nil, duration: 5, pointer: project.pointer)
+        XCTAssertEqual(first.pointer, project.pointer)
     }
 
     func testStudioDrawsItOnlyOnARecordingMadeWithoutTheMacsPointer() {

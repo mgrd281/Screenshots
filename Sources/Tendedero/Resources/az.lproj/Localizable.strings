@@ -1805,14 +1805,12 @@
 "Your new recording opens in Studio once you close this one." = "Yeni yazın bunu bağladıqdan sonra Studioda açılır.";
 "Could not save the video." = "Videonu saxlamaq mümkün olmadı.";
 "Drag a zoom on the timeline to move it, or its ends to make it longer or shorter." = "Yaxınlaşdırmanı köçürmək üçün zaman xəttində sürüşdür, uzatmaq və ya qısaltmaq üçün kənarlarını sürüşdür.";
-"Drag the frame on the picture to choose what it looks at." = "Nəyə baxacağını seçmək üçün şəkildəki çərçivəni sürüşdür.";
 "Draw" = "Çək";
 "Edit in Studio…" = "Studioda redaktə et…";
 "From where the video is, for three seconds." = "Videonun olduğu yerdən, üç saniyə.";
 "How close" = "Nə qədər yaxın";
 "It shows for three seconds from where the video is. Drag it on the timeline to change when." = "Videonun olduğu yerdən üç saniyə görünür. Vaxtını dəyişmək üçün zaman xəttində sürüşdür.";
 "Looks at" = "Baxır";
-"Made from your clicks and typing" = "Kliklərin və yazmağından yaradılıb";
 "One Place" = "Bir yer";
 "Open Studio after recording" = "Yazıdan sonra Studionu aç";
 "Play" = "Oynat";
@@ -1828,7 +1826,6 @@
 "Timeline Zoom" = "Zaman xəttini böyüt";
 "Words on the video" = "Videodakı sözlər";
 "Zoom" = "Yaxınlaşdırma";
-"Zoom in on clicks and typing" = "Kliklərdə və yazanda yaxınlaşdır";
 "Zooms: %d" = "Yaxınlaşdırmalar: %d";
 
 /* Scan: photographed documents, names and AI chats */
@@ -2126,3 +2123,15 @@
 "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "Bu yazıda Mac-in öz göstəricisi var. Ayarlar › Ümumi bölməsində Hamar göstərici aktiv olanda çəkilən yazılar Snapfly-ın göstəricisini alır.";
 "Smooth pointer" = "Hamar göstərici";
 "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly Mac-in göstəricisi əvəzinə daha böyük, hamar sürüşən göstərici çəkir, Studio-da və yazının özündə.";
+"Zoom in automatically" = "Avtomatik yaxınlaşdır";
+"When" = "Nə vaxt";
+"All the time" = "Həmişə";
+"On clicks" = "Kliklərdə";
+"Close all through, following the pointer. It pulls back while the pointer crosses the screen." = "Bütün vaxt yaxından, göstəricini izləyərək. Göstərici ekranı keçəndə bir az geri çəkilir.";
+"Close on each run of clicks and typing." = "Hər klik və yazma seriyasında yaxından.";
+"Drag the frame on the picture to choose what it looks at, or a corner to come closer or go further." = "Nəyə baxacağını seçmək üçün şəkildəki çərçivəni, yaxınlaşmaq və ya uzaqlaşmaq üçün isə onun küncünü sürüşdür.";
+"Shape" = "Forma";
+"As on the Mac" = "Mac-dakı kimi";
+"White arrow" = "Ağ ox";
+"Dot" = "Nöqtə";
+"Made automatically. Change it as you like." = "Avtomatik yaradılıb. İstədiyin kimi dəyiş.";

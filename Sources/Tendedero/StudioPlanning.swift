@@ -168,9 +168,19 @@ struct StudioZoom: Codable, Equatable, Identifiable, Sendable {
     func contains(_ t: Double) -> Bool { t >= start && t < end }
 }
 
+/// When Studio zooms in by itself.
+enum StudioZoomWhen: String, Codable, CaseIterable, Sendable {
+    /// Close all through, following the pointer, as a product video is
+    /// filmed; it pulls back while the hand makes a long, quick move.
+    case always
+    /// On each run of clicks and typing.
+    case clicks
+}
+
 /// Zooms made from what was done while recording: each run of clicks and
 /// typing gets one, starting a little before the first, so the camera has
-/// arrived when it happens, and lingering a little after the last.
+/// arrived when it happens, and lingering a little after the last. Or, all
+/// the time, one following the pointer from start to end.
 enum StudioAutoZoom {
     /// The zoom starts this long before the first click of a run.
     static let lead = 0.8
@@ -208,10 +218,21 @@ enum StudioAutoZoom {
         return found.sorted { $0.t < $1.t }
     }
 
-    static func zooms(for events: StudioEvents, duration: Double, scale: Double? = nil) -> [StudioZoom] {
+    /// How close to come: the one chosen, or what suits the area.
+    private static func closeness(_ scale: Double?, for events: StudioEvents) -> Double {
+        min(StudioZoom.scales.upperBound,
+            max(StudioZoom.scales.lowerBound, scale ?? defaultScale(width: events.width, height: events.height)))
+    }
+
+    static func zooms(for events: StudioEvents, duration: Double, scale: Double? = nil,
+                      when: StudioZoomWhen = .clicks) -> [StudioZoom] {
         guard duration > 0 else { return [] }
-        let base = min(StudioZoom.scales.upperBound,
-                       max(StudioZoom.scales.lowerBound, scale ?? defaultScale(width: events.width, height: events.height)))
+        // Without the pointer seen, there is nothing to follow but the clicks.
+        if when == .always {
+            let made = following(events, duration: duration, scale: scale)
+            if !made.isEmpty { return made }
+        }
+        let base = closeness(scale, for: events)
         var runs: [[(t: Double, point: CGPoint)]] = []
         for item in activity(in: events) where item.t <= duration {
             if let last = runs.last?.last, item.t - last.t <= gap {
@@ -245,14 +266,98 @@ enum StudioAutoZoom {
         return zooms
     }
 
-    /// The zooms made again from the clicks and typing: the ones changed by
-    /// hand stay, and a new one that would overlap them is left out.
-    static func remade(_ zooms: [StudioZoom], events: StudioEvents, duration: Double, scale: Double?) -> [StudioZoom] {
+    /// The zooms made again: the ones changed by hand stay. A new one on
+    /// clicks that would overlap them is left out; one following all the
+    /// time makes room for them.
+    static func remade(_ zooms: [StudioZoom], events: StudioEvents, duration: Double, scale: Double?,
+                       when: StudioZoomWhen = .clicks) -> [StudioZoom] {
         let kept = zooms.filter { !$0.automatic }
-        let made = Self.zooms(for: events, duration: duration, scale: scale).filter { new in
-            !kept.contains { $0.start < new.end && new.start < $0.end }
+        let made = Self.zooms(for: events, duration: duration, scale: scale, when: when)
+        let left: [StudioZoom]
+        if when == .always {
+            left = made.flatMap { around(kept, $0) }
+        } else {
+            left = made.filter { new in !kept.contains { $0.start < new.end && new.start < $0.end } }
         }
-        return (kept + made).sorted { $0.start < $1.start }
+        return (kept + left).sorted { $0.start < $1.start }
+    }
+
+    /// What is left of a zoom around the ones kept, each piece long enough.
+    static func around(_ kept: [StudioZoom], _ zoom: StudioZoom) -> [StudioZoom] {
+        var pieces = [zoom]
+        for other in kept {
+            pieces = pieces.flatMap { piece -> [StudioZoom] in
+                guard other.start < piece.end, piece.start < other.end else { return [piece] }
+                var left: [StudioZoom] = []
+                if other.start - piece.start >= shortest {
+                    var before = piece
+                    before.id = UUID()
+                    before.end = other.start
+                    left.append(before)
+                }
+                if piece.end - other.end >= shortest {
+                    var after = piece
+                    after.id = UUID()
+                    after.start = other.end
+                    left.append(after)
+                }
+                return left
+            }
+        }
+        return pieces
+    }
+
+    // MARK: All the time
+
+    /// It comes in this long after the start, so the whole is seen first,
+    /// and goes out this long before the end.
+    static let opening = 0.8
+    static let closing = 1.0
+    /// A move is long and quick when the pointer crosses more than the view
+    /// within this long.
+    static let quick = 0.6
+    /// The least time it stays back for one, so the pulling back shows.
+    static let back = 1.4
+
+    /// Close all through, following the pointer: in after the start, out
+    /// before the end, and back while the hand crosses more than the view
+    /// in a moment, or is off the area, then in again where it settles.
+    static func following(_ events: StudioEvents, duration: Double, scale: Double? = nil) -> [StudioZoom] {
+        guard duration > 0, !events.pointer.isEmpty else { return [] }
+        let base = (closeness(scale, for: events) * 100).rounded() / 100
+        let start = min(opening, duration * 0.1)
+        let end = duration - min(closing, duration * 0.1)
+        guard end - start >= shortest else { return [] }
+        // The times to stay back, looked for ten times a second.
+        let side = 1 / base
+        var away: [(start: Double, end: Double)] = []
+        var step = 0
+        while true {
+            let t = start + Double(step) * 0.1
+            guard t < end else { break }
+            step += 1
+            guard let here = events.pointer(at: t), let later = events.pointer(at: t + quick) else { continue }
+            let off = !StudioEvents.isInside(Double(here.x), Double(here.y))
+            let far = max(abs(Double(later.x - here.x)), abs(Double(later.y - here.y))) > side
+            guard off || far else { continue }
+            let from = max(start, t - 0.15)
+            let to = min(end, max(t + quick + 0.3, from + back))
+            if let last = away.last, from <= last.end {
+                away[away.count - 1].end = max(last.end, to)
+            } else {
+                away.append((from, to))
+            }
+        }
+        // Close between them, where there is room.
+        var zooms: [StudioZoom] = []
+        var from = start
+        for gap in away + [(start: end, end: end)] {
+            if gap.start - from >= shortest {
+                zooms.append(StudioZoom(start: from, end: gap.start, scale: base, automatic: true))
+            }
+            from = max(from, gap.end)
+        }
+        return zooms
     }
 }
 
@@ -472,6 +577,32 @@ enum StudioTimeline {
     }
 
     /// The room a zoom has between its neighbours, within the recording.
+    /// A zoom's frame dragged by a corner, the opposite one kept where it
+    /// was: as large as the drag reaches, at the recording's proportions,
+    /// between the closest and the furthest a zoom comes, on the recording.
+    static func framed(keeping fixed: CGPoint, to point: CGPoint) -> CGRect {
+        let side = frameSide(max(abs(point.x - fixed.x), abs(point.y - fixed.y)))
+        let x = point.x >= fixed.x ? fixed.x : fixed.x - side
+        let y = point.y >= fixed.y ? fixed.y : fixed.y - side
+        return kept(CGRect(x: x, y: y, width: side, height: side))
+    }
+
+    /// The same for a zoom that follows the pointer: it grows or shrinks
+    /// about its middle.
+    static func framed(around center: CGPoint, to point: CGPoint) -> CGRect {
+        let side = frameSide(2 * max(abs(point.x - center.x), abs(point.y - center.y)))
+        return kept(CGRect(x: center.x - side / 2, y: center.y - side / 2, width: side, height: side))
+    }
+
+    private static func frameSide(_ side: CGFloat) -> CGFloat {
+        min(1 / CGFloat(StudioZoom.scales.lowerBound), max(1 / CGFloat(StudioZoom.scales.upperBound), side))
+    }
+
+    private static func kept(_ frame: CGRect) -> CGRect {
+        CGRect(x: min(1 - frame.width, max(0, frame.minX)), y: min(1 - frame.height, max(0, frame.minY)),
+               width: frame.width, height: frame.height)
+    }
+
     static func room(for id: UUID, among zooms: [StudioZoom], duration: Double) -> (low: Double, high: Double) {
         guard let zoom = zooms.first(where: { $0.id == id }) else { return (0, duration) }
         let others = zooms.filter { $0.id != id }

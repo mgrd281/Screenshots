@@ -64,7 +64,8 @@ final class StudioEditor: NSObject, NSWindowDelegate {
                 return
             }
             let events = StudioStore.events(for: url)
-            let project = StudioStore.project(for: url) ?? .first(events: events, duration: duration)
+            let project = StudioStore.project(for: url)
+                ?? .first(events: events, duration: duration, pointer: StudioModel.lastPointer)
             show(StudioModel(url: url, source: StudioStore.cleanSource(for: url), duration: duration, pixels: natural,
                              events: events, project: project))
         }
@@ -535,14 +536,14 @@ final class StudioModel: ObservableObject {
 
     // MARK: Zooms
 
-    /// Zooming in on the clicks and typing, on or off: on, they are made
-    /// again; off, the ones made so go and the ones made by hand stay.
+    /// Zooming in by itself, on or off: on, its zooms are made again; off,
+    /// the ones it made go and the ones made by hand stay.
     func setAutoZoom(_ on: Bool) {
         change { project in
             project.autoZoom = on
             if on, let events {
                 project.zooms = StudioAutoZoom.remade(project.zooms, events: events, duration: duration,
-                                                      scale: project.autoScale)
+                                                      scale: project.autoScale, when: project.zoomWhen)
             } else {
                 project.zooms.removeAll { $0.automatic }
             }
@@ -562,24 +563,45 @@ final class StudioModel: ObservableObject {
         changing()
         project.autoScale = (scale * 10).rounded() / 10
         guard project.autoZoom, let events else { return }
-        project.zooms = StudioAutoZoom.remade(project.zooms, events: events, duration: duration, scale: project.autoScale)
+        project.zooms = StudioAutoZoom.remade(project.zooms, events: events, duration: duration, scale: project.autoScale,
+                                              when: project.zoomWhen)
         dropStaleSelection()
     }
 
-    /// A zoom from where the video stands, chosen.
+    /// Zooming in all the time, following the pointer, or on clicks and
+    /// typing: its zooms are made again, the ones made by hand kept.
+    func setZoomWhen(_ when: StudioZoomWhen) {
+        guard when != project.zoomWhen else { return }
+        change { project in
+            project.zoomWhen = when
+            guard project.autoZoom, let events else { return }
+            project.zooms = StudioAutoZoom.remade(project.zooms, events: events, duration: duration,
+                                                  scale: project.autoScale, when: when)
+        }
+        dropStaleSelection()
+    }
+
+    /// A zoom from where the video stands, chosen. Within one made
+    /// automatically, it takes its place there, and the rest stays.
     func addZoom() {
         pause()
-        guard let zoom = StudioTimeline.added(at: time, scale: autoScale, among: project.zooms, duration: duration) else {
+        let t = time
+        let made = project.zooms.filter { $0.automatic && $0.contains(t) }
+        let others = project.zooms.filter { zoom in !made.contains { $0.id == zoom.id } }
+        guard let zoom = StudioTimeline.added(at: t, scale: autoScale, among: others, duration: duration) else {
             NSSound.beep()
             return
         }
-        change { $0.zooms = ($0.zooms + [zoom]).sorted { $0.start < $1.start } }
+        change { project in
+            let rest = made.flatMap { StudioAutoZoom.around([zoom], $0) }
+            project.zooms = (others + rest + [zoom]).sorted { $0.start < $1.start }
+        }
         choose(.zoom(zoom.id))
     }
 
     var canAddZoom: Bool {
         let t = now
-        return !project.zooms.contains { $0.contains(t) } && t < duration - StudioZoom.shortest / 2
+        return !project.zooms.contains { !$0.automatic && $0.contains(t) } && t < duration - StudioZoom.shortest / 2
     }
 
     /// Changes a zoom, which is the owner's from then on.
@@ -735,11 +757,25 @@ final class StudioModel: ObservableObject {
     }
 
     /// A change to Studio's pointer: one step for Undo, or, `going`, part of
-    /// one that goes on, like a slider being moved, ended by `end`.
+    /// one that goes on, like a slider being moved, ended by `end`. The
+    /// recordings made next start from it.
     func setPointer(going: Bool = false, _ make: (inout StudioPointerStyle) -> Void) {
         if going { changing() } else { begin() }
         make(&project.pointer)
         if !going { end() }
+        Self.lastPointer = project.pointer
+    }
+
+    private static let pointerKey = "studioPointer"
+
+    /// Studio's pointer as last set, the one a new recording starts with,
+    /// in Studio and drawn into it on the line.
+    static var lastPointer: StudioPointerStyle {
+        get {
+            UserDefaults.standard.data(forKey: pointerKey)
+                .flatMap { try? JSONDecoder().decode(StudioPointerStyle.self, from: $0) } ?? StudioPointerStyle()
+        }
+        set { UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: pointerKey) }
     }
 
     // MARK: Background and saving

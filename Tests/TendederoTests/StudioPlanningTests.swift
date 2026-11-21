@@ -113,6 +113,105 @@ final class StudioPlanningTests: XCTestCase {
         XCTAssertTrue(remade[1].automatic)
     }
 
+    // MARK: Close all the time
+
+    func testAllTheTimeItIsCloseFromSoonAfterTheStartToNearTheEnd() {
+        // A hand moving slowly about the middle.
+        let seen = events(pointer: [(0, 0.4, 0.5), (5, 0.5, 0.55), (10, 0.45, 0.5), (20, 0.5, 0.5)])
+        let zooms = StudioAutoZoom.zooms(for: seen, duration: 20, when: .always)
+        XCTAssertEqual(zooms.count, 1)
+        XCTAssertEqual(zooms[0].start, StudioAutoZoom.opening, accuracy: 0.0001)
+        XCTAssertEqual(zooms[0].end, 20 - StudioAutoZoom.closing, accuracy: 0.0001)
+        XCTAssertEqual(zooms[0].scale, 2.0)
+        XCTAssertEqual(zooms[0].focus, .pointer)
+        XCTAssertTrue(zooms[0].automatic)
+        // On clicks, the same hand without a click is never zoomed in on.
+        XCTAssertTrue(StudioAutoZoom.zooms(for: seen, duration: 20, when: .clicks).isEmpty)
+    }
+
+    func testALongQuickMovePullsBackThenComesCloseAgain() {
+        // Still on the left, then across to the right in a third of a second.
+        let seen = events(pointer: [(0, 0.2, 0.5), (8, 0.2, 0.5), (8.3, 0.9, 0.5), (20, 0.9, 0.5)])
+        let zooms = StudioAutoZoom.zooms(for: seen, duration: 20, when: .always)
+        XCTAssertEqual(zooms.count, 2)
+        XCTAssertLessThan(zooms[0].end, 8)
+        XCTAssertGreaterThan(zooms[1].start, 8.3)
+        XCTAssertGreaterThanOrEqual(zooms[1].start - zooms[0].end, StudioAutoZoom.back)
+        // A short move is followed close, without pulling back.
+        let short = events(pointer: [(0, 0.4, 0.5), (8, 0.4, 0.5), (8.3, 0.6, 0.5), (20, 0.6, 0.5)])
+        XCTAssertEqual(StudioAutoZoom.zooms(for: short, duration: 20, when: .always).count, 1)
+    }
+
+    func testOffTheAreaItPullsBack() {
+        let seen = events(pointer: [(0, 0.5, 0.5), (6, 0.5, 0.5), (6.1, 1.5, 0.5), (10, 1.5, 0.5), (10.1, 0.5, 0.5),
+                                    (20, 0.5, 0.5)])
+        let zooms = StudioAutoZoom.zooms(for: seen, duration: 20, when: .always)
+        XCTAssertEqual(zooms.count, 2)
+        XCTAssertLessThan(zooms[0].end, 6.1)
+        XCTAssertGreaterThan(zooms[1].start, 10)
+    }
+
+    func testWithoutThePointerSeenItZoomsOnClicksInstead() {
+        let zooms = StudioAutoZoom.zooms(for: events(clicks: [(3, 0.3, 0.6)]), duration: 20, when: .always)
+        XCTAssertEqual(zooms.count, 1)
+        XCTAssertEqual(zooms[0].start, 3 - StudioAutoZoom.lead, accuracy: 0.0001)
+        XCTAssertTrue(StudioAutoZoom.zooms(for: events(pointer: [(0, 0.5, 0.5)]), duration: 1.5, when: .always).isEmpty)
+    }
+
+    func testMadeAgainAllTheTimeItMakesRoomForAZoomMadeByHand() {
+        let seen = events(pointer: [(0, 0.5, 0.5), (20, 0.5, 0.5)])
+        let mine = StudioZoom(start: 8, end: 11, scale: 3, focus: .point(x: 0.3, y: 0.3))
+        let remade = StudioAutoZoom.remade([mine], events: seen, duration: 20, scale: nil, when: .always)
+        XCTAssertEqual(remade.count, 3)
+        XCTAssertEqual(remade[1], mine)
+        XCTAssertEqual(remade[0].end, 8, accuracy: 0.0001)
+        XCTAssertEqual(remade[2].start, 11, accuracy: 0.0001)
+        XCTAssertTrue(remade[0].automatic && remade[2].automatic)
+        XCTAssertNotEqual(remade[0].id, remade[2].id)
+    }
+
+    func testNewWorkIsCloseAllTheTimeAndWorkKeptBeforeStaysOnClicks() throws {
+        XCTAssertEqual(StudioProject().zoomWhen, .always)
+        let old = try JSONDecoder().decode(StudioProject.self, from: Data(#"{"zooms":[]}"#.utf8))
+        XCTAssertEqual(old.zoomWhen, .clicks)
+        var changed = StudioProject()
+        changed.zoomWhen = .clicks
+        let read = try JSONDecoder().decode(StudioProject.self, from: JSONEncoder().encode(changed))
+        XCTAssertEqual(read.zoomWhen, .clicks)
+        let first = StudioProject.first(events: events(pointer: [(0, 0.5, 0.5), (10, 0.6, 0.5)]), duration: 10)
+        XCTAssertEqual(first.zooms.count, 1)
+        XCTAssertEqual(first.zooms[0].start, StudioAutoZoom.opening, accuracy: 0.0001)
+    }
+
+    // MARK: The zoom's frame
+
+    func testDraggingAFramesCornerKeepsTheOppositeOne() {
+        let frame = StudioTimeline.framed(keeping: CGPoint(x: 0.2, y: 0.2), to: CGPoint(x: 0.6, y: 0.5))
+        XCTAssertEqual(frame.minX, 0.2, accuracy: 0.0001)
+        XCTAssertEqual(frame.minY, 0.2, accuracy: 0.0001)
+        // As far as the drag reaches, at the recording's proportions.
+        XCTAssertEqual(frame.width, 0.4, accuracy: 0.0001)
+        XCTAssertEqual(frame.height, 0.4, accuracy: 0.0001)
+        // Dragged the other way, it grows to the left and down.
+        let left = StudioTimeline.framed(keeping: CGPoint(x: 0.7, y: 0.7), to: CGPoint(x: 0.4, y: 0.5))
+        XCTAssertEqual(left.maxX, 0.7, accuracy: 0.0001)
+        XCTAssertEqual(left.maxY, 0.7, accuracy: 0.0001)
+    }
+
+    func testAFrameStaysBetweenTheClosestAndTheFurthestAndOnTheRecording() {
+        let tiny = StudioTimeline.framed(keeping: CGPoint(x: 0.5, y: 0.5), to: CGPoint(x: 0.51, y: 0.51))
+        XCTAssertEqual(tiny.width, 1 / CGFloat(StudioZoom.scales.upperBound), accuracy: 0.0001)
+        let huge = StudioTimeline.framed(keeping: CGPoint(x: 0.9, y: 0.9), to: CGPoint(x: -0.5, y: -0.5))
+        XCTAssertEqual(huge.width, 1 / CGFloat(StudioZoom.scales.lowerBound), accuracy: 0.0001)
+        XCTAssertGreaterThanOrEqual(huge.minX, 0)
+        XCTAssertGreaterThanOrEqual(huge.minY, 0)
+        // One that follows the pointer grows about its middle.
+        let around = StudioTimeline.framed(around: CGPoint(x: 0.5, y: 0.5), to: CGPoint(x: 0.7, y: 0.6))
+        XCTAssertEqual(around.width, 0.4, accuracy: 0.0001)
+        XCTAssertEqual(around.midX, 0.5, accuracy: 0.0001)
+        XCTAssertEqual(around.midY, 0.5, accuracy: 0.0001)
+    }
+
     // MARK: The camera
 
     func testWithoutZoomsTheWholeRecordingShows() {
