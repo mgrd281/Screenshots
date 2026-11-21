@@ -5,7 +5,8 @@ extension SettingFilm {
     /// turns on, chooses or does something, in the order Settings shows them.
     enum ID: String, CaseIterable {
         case takeScreenshotsWithSnapfly, alsoFromTheScreenshotApp, handlesScreenshots, hangsCopiedImages
-        case smartSelection, stampsTime, whichScreenshots, sound, openStudioAfterRecording, sounds, openAtLogin
+        case smartSelection, stampsTime, whichScreenshots, sound, openStudioAfterRecording, smoothPointer, sounds
+        case openAtLogin
         case watchAnotherFolder, screenshotsFolder, lineStyle, whenThePointerRestsInTheMenuBar
         case whenSomethingNewHangs, overFullScreenApps, notDuringACall, lineSize, keepOnLine, countOnTheMenuBarIcon
         case takePhotosDownOnceSent, markPhotosSentBefore, keepAHistory, iconsUnderPhotos, websitesOpenIn
@@ -205,6 +206,24 @@ enum SettingFilms {
                     .init(1.55, Box(0.5, 0.91, 0.05, 0.08)),
                     .init(1.75, Box(0.5, 0.91, 0.05, 0.08), opacity: 0),
                 ]),
+            ])
+        case .smoothPointer:
+            // The Mac's small pointer twitches its way across a page; then Snapfly's, larger, glides the same
+            // way and presses in where it clicks.
+            return SettingFilm("cursorarrow.motionlines", [FilmScene.desktop,
+                .show(.window(.browser), Box(0.5, 0.6, 0.72, 0.62)),
+                Part(kind: .cursor, keys: [
+                    .init(0, Box(0.22, 0.75, 0.04, 0.064)), .init(0.15, Box(0.27, 0.7, 0.04, 0.064)),
+                    .init(0.3, Box(0.3, 0.74, 0.04, 0.064)), .init(0.45, Box(0.36, 0.66, 0.04, 0.064)),
+                    .init(0.6, Box(0.4, 0.7, 0.04, 0.064)), .init(0.75, Box(0.46, 0.62, 0.04, 0.064)),
+                    .init(0.9, Box(0.46, 0.62, 0.04, 0.064), opacity: 0),
+                ]),
+                Part(kind: .cursor, keys: [
+                    .init(1.0, Box(0.22, 0.75, 0.08, 0.128), opacity: 0), .init(1.15, Box(0.22, 0.75, 0.08, 0.128)),
+                    .init(1.9, Box(0.6, 0.55, 0.08, 0.128)), .init(2.05, Box(0.6, 0.55, 0.066, 0.106)),
+                    .init(2.25, Box(0.6, 0.55, 0.08, 0.128)), .init(2.7, Box(0.6, 0.55, 0.08, 0.128)),
+                ]),
+                .click(0.6, 0.55, at: 2.05),
             ])
         case .openStudioAfterRecording:
             // A click on stop hangs the recording, and Studio opens from it: a click

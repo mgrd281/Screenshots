@@ -2116,3 +2116,11 @@
 "Each click" = "각 클릭";
 "Ring" = "링";
 "A soft circle where each click landed, pressed in and let go." = "클릭한 곳에 부드러운 원이 눌렸다가 풀립니다.";
+"Pointer" = "포인터";
+"Show the pointer" = "포인터 보기";
+"Smooth movement" = "부드러운 움직임";
+"Hide while still" = "멈춰 있으면 숨기기";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "Snapfly가 포인터를 그립니다. 더 크고 부드럽게 움직이며, 클릭할 때마다 눌리고, 카메라가 다가가면 커집니다.";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "이 녹화에는 Mac 자체 포인터가 들어 있습니다. 설정 › 일반에서 부드러운 포인터를 켜고 녹화하면 Snapfly의 포인터가 들어갑니다.";
+"Smooth pointer" = "부드러운 포인터";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly가 Mac의 포인터 대신 더 크고 부드럽게 움직이는 포인터를 그립니다. Studio와 녹화 모두에서요.";

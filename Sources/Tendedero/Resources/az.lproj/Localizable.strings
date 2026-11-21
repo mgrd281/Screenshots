@@ -2118,3 +2118,11 @@
 "Each click" = "Hər klik";
 "Ring" = "Halqa";
 "A soft circle where each click landed, pressed in and let go." = "Hər klikin düşdüyü yerdə yumşaq dairə: basılır və buraxılır.";
+"Pointer" = "Göstərici";
+"Show the pointer" = "Göstəricini göstər";
+"Smooth movement" = "Hamar hərəkət";
+"Hide while still" = "Dayananda gizlət";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "Göstəricini Snapfly çəkir: daha böyük, hamar sürüşən, hər klikdə basılan, kamera yaxınlaşdıqca böyüyən.";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "Bu yazıda Mac-in öz göstəricisi var. Ayarlar › Ümumi bölməsində Hamar göstərici aktiv olanda çəkilən yazılar Snapfly-ın göstəricisini alır.";
+"Smooth pointer" = "Hamar göstərici";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly Mac-in göstəricisi əvəzinə daha böyük, hamar sürüşən göstərici çəkir, Studio-da və yazının özündə.";

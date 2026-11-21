@@ -74,6 +74,11 @@ final class Preferences: ObservableObject {
         set { change { Studio.opensAfterRecording = newValue } }
     }
 
+    var smoothPointer: Bool {
+        get { SmoothPointer.isOn }
+        set { change { SmoothPointer.isOn = newValue } }
+    }
+
     var opensAtLogin: Bool {
         get { SMAppService.mainApp.status == .enabled }
         set { change { if newValue != opensAtLogin { AppDelegate.toggleLaunchAtLogin() } } }
@@ -1175,6 +1180,10 @@ private struct GeneralPane: View {
                 }
                 Toggle(isOn: $prefs.opensStudio) {
                     SettingText(.openStudioAfterRecording, L("Open Studio after recording"))
+                }
+                Toggle(isOn: $prefs.smoothPointer) {
+                    SettingText(.smoothPointer, L("Smooth pointer"),
+                                L("Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording."))
                 }
             } header: {
                 Text(L("Screen recordings"))

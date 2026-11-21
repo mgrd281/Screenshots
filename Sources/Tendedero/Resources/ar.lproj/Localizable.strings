@@ -2116,3 +2116,11 @@
 "Each click" = "كل نقرة";
 "Ring" = "حلقة";
 "A soft circle where each click landed, pressed in and let go." = "دائرة ناعمة حيث وقعت كل نقرة، تنضغط ثم تُفلت.";
+"Pointer" = "المؤشر";
+"Show the pointer" = "أظهر المؤشر";
+"Smooth movement" = "حركة ناعمة";
+"Hide while still" = "أخفِه حين يتوقف";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "يرسم Snapfly المؤشر: أكبر، ينساب بنعومة، وينضغط عند كل نقرة، ويكبر مع اقتراب الكاميرا.";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "في هذا التسجيل مؤشر Mac نفسه. التسجيلات التي تُصنع والمؤشر الناعم مفعّل، في الإعدادات › عام، تحصل على مؤشر Snapfly.";
+"Smooth pointer" = "المؤشر الناعم";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "يرسم Snapfly مؤشراً أكبر ينساب بنعومة بدل مؤشر Mac، في الاستوديو وفي التسجيل.";

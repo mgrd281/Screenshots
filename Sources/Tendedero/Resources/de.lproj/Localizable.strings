@@ -2116,3 +2116,11 @@
 "Each click" = "Jeder Klick";
 "Ring" = "Ring";
 "A soft circle where each click landed, pressed in and let go." = "Ein weicher Kreis, wo jeder Klick landet: eingedrückt und losgelassen.";
+"Pointer" = "Zeiger";
+"Show the pointer" = "Zeiger zeigen";
+"Smooth movement" = "Weiche Bewegung";
+"Hide while still" = "Ausblenden, wenn er stillsteht";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "Snapfly zeichnet den Zeiger: größer, gleitend, bei jedem Klick eingedrückt, und er wächst mit, wenn die Kamera näher kommt.";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "In dieser Aufnahme ist der eigene Zeiger des Macs. Aufnahmen mit „Weicher Zeiger“ unter Einstellungen › Allgemein bekommen den von Snapfly.";
+"Smooth pointer" = "Weicher Zeiger";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly zeichnet statt des Mac-Zeigers einen größeren, der gleitet – in Studio und in der Aufnahme.";

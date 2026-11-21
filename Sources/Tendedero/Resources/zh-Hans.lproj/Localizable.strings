@@ -2116,3 +2116,11 @@
 "Each click" = "每次点按";
 "Ring" = "圆环";
 "A soft circle where each click landed, pressed in and let go." = "每次点按处出现柔和的圆，按下后松开。";
+"Pointer" = "指针";
+"Show the pointer" = "显示指针";
+"Smooth movement" = "平滑移动";
+"Hide while still" = "静止时隐藏";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "指针由 Snapfly 绘制：更大、平滑移动、每次点按时按下，并随镜头拉近而变大。";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "此录制内容中是 Mac 自己的指针。在“设置 › 通用”中打开“平滑指针”后录制的内容会使用 Snapfly 的指针。";
+"Smooth pointer" = "平滑指针";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly 绘制一个更大、平滑移动的指针来代替 Mac 的指针，在 Studio 和录制内容中都是如此。";

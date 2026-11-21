@@ -2118,3 +2118,11 @@
 "Each click" = "Each click";
 "Ring" = "Ring";
 "A soft circle where each click landed, pressed in and let go." = "A soft circle where each click landed, pressed in and let go.";
+"Pointer" = "Pointer";
+"Show the pointer" = "Show the pointer";
+"Smooth movement" = "Smooth movement";
+"Hide while still" = "Hide while still";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer.";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s.";
+"Smooth pointer" = "Smooth pointer";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording.";

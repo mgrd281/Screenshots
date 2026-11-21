@@ -65,7 +65,8 @@ final class StudioEditor: NSObject, NSWindowDelegate {
             }
             let events = StudioStore.events(for: url)
             let project = StudioStore.project(for: url) ?? .first(events: events, duration: duration)
-            show(StudioModel(url: url, duration: duration, pixels: natural, events: events, project: project))
+            show(StudioModel(url: url, source: StudioStore.cleanSource(for: url), duration: duration, pixels: natural,
+                             events: events, project: project))
         }
     }
 
@@ -158,7 +159,7 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         model.exporting = 0
         let look = model.look
         let backdrop = model.project.backdrop
-        let source = model.url
+        let source = model.source
         Task { @MainActor in
             do {
                 defer { if gif { try? FileManager.default.removeItem(at: movie) } }
@@ -245,13 +246,20 @@ final class StudioModel: ObservableObject {
     /// What was done while recording; nil for one made before Studio.
     let events: StudioEvents?
     let player: AVPlayer
+    /// What is played and saved from: the recording itself, or, for one
+    /// made with Smooth pointer, as it was made, without any pointer.
+    let source: URL
+    /// Studio draws its own pointer on it.
+    let drawsPointer: Bool
 
     @Published var project: StudioProject {
         didSet {
             guard project != oldValue else { return }
             // The camera is worked out again only when the zooms change.
             let camera = project.zooms == oldValue.zooms && project.follow == oldValue.follow ? look.camera : nil
-            look = StudioLook(project: project, events: events, duration: duration, pixels: pixels, camera: camera)
+            let pointer = project.pointer == oldValue.pointer ? look.pointer : nil
+            look = StudioLook(project: project, events: events, duration: duration, pixels: pixels, camera: camera,
+                              drawsPointer: drawsPointer, pointer: pointer)
             blurs.look = look
             if Self.blurred(project) != Self.blurred(oldValue) { refreshBlurs() }
         }
@@ -303,16 +311,21 @@ final class StudioModel: ObservableObject {
     static let tools: [DrawTool] = [.select, .arrow, .box, .circle, .step, .text, .blur]
     private static let toolKey = "studioTool"
 
-    init(url: URL, duration: Double, pixels: CGSize, events: StudioEvents?, project: StudioProject) {
+    /// - Parameter source: the recording as made, without the Mac's pointer,
+    ///   which Studio plays and draws its own pointer on; nil to play `url`.
+    init(url: URL, source: URL? = nil, duration: Double, pixels: CGSize, events: StudioEvents?, project: StudioProject) {
         self.url = url
+        self.source = source ?? url
+        drawsPointer = source != nil && events?.drawsPointer == true
         self.duration = duration
         self.pixels = pixels
         self.events = events
         self.project = project
         keptWork = project
-        look = StudioLook(project: project, events: events, duration: duration, pixels: pixels)
+        look = StudioLook(project: project, events: events, duration: duration, pixels: pixels,
+                          drawsPointer: source != nil && events?.drawsPointer == true)
         output = Self.lastOutput
-        player = AVPlayer(playerItem: AVPlayerItem(url: url))
+        player = AVPlayer(playerItem: AVPlayerItem(url: source ?? url))
         player.actionAtItemEnd = .pause
         let defaults = UserDefaults.standard
         let kept = defaults.string(forKey: Self.toolKey).flatMap(DrawTool.init(rawValue:))
@@ -334,7 +347,7 @@ final class StudioModel: ObservableObject {
         pacer = player.addPeriodicTimeObserver(forInterval: CMTime(value: 1, timescale: 60), queue: .main) { [weak self] time in
             MainActor.assumeIsolated { self?.pace(at: time.seconds) }
         }
-        let url = url
+        let url = source
         Task { [weak self] in
             let strip = await StudioMedia.strip(of: url, count: 24, height: 40)
             self?.strip = strip
@@ -721,6 +734,14 @@ final class StudioModel: ObservableObject {
         change { $0.follow = follow }
     }
 
+    /// A change to Studio's pointer: one step for Undo, or, `going`, part of
+    /// one that goes on, like a slider being moved, ended by `end`.
+    func setPointer(going: Bool = false, _ make: (inout StudioPointerStyle) -> Void) {
+        if going { changing() } else { begin() }
+        make(&project.pointer)
+        if !going { end() }
+    }
+
     // MARK: Background and saving
 
     private static let backdropKey = "studioBackdrop"
@@ -816,7 +837,7 @@ final class StudioModel: ObservableObject {
         guard !listening, let language else { return }
         pause()
         listening = true
-        let url = url
+        let url = source
         Task { @MainActor [weak self] in
             do {
                 let captions = try await StudioListener.captions(for: url, in: language)

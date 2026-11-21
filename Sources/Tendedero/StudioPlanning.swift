@@ -34,6 +34,29 @@ struct StudioEvents: Codable, Equatable, Sendable {
     var clicks: [Click] = []
     /// When a key went down, in time order.
     var keys: [Double] = []
+    /// Recorded without the Mac's own pointer: Studio draws one, smooth,
+    /// in the looks the pointer had (`StudioPointer`).
+    var drawsPointer = false
+    /// The pointer's looks seen while recording, and from when each showed.
+    var cursors: [StudioCursor] = []
+    var looks: [Look] = []
+
+    /// From a moment on, the pointer looked like `cursors[index]`.
+    struct Look: Codable, Equatable, Sendable {
+        var t: Double
+        var index: Int
+    }
+
+    /// The look the pointer had at a time, by its place in `cursors`.
+    func look(at t: Double) -> Int? {
+        guard !looks.isEmpty else { return cursors.isEmpty ? nil : 0 }
+        var found = looks[0].index
+        for look in looks {
+            if look.t > t { break }
+            found = look.index
+        }
+        return cursors.indices.contains(found) ? found : nil
+    }
 
     /// Where the pointer was at a time, between the two places it was seen
     /// at around then; nil before anything was seen.
@@ -67,12 +90,50 @@ struct StudioEvents: Codable, Equatable, Sendable {
             return t >= 0 && t <= duration ? Click(t: t, x: click.x, y: click.y, right: click.right) : nil
         }
         trimmed.keys = keys.map { $0 - offset }.filter { $0 >= 0 && $0 <= duration }
+        // The look the pointer had as the kept part begins, then the later ones.
+        let first = look(at: offset)
+        trimmed.looks = looks.compactMap { look in
+            let t = look.t - offset
+            return t > 0 && t <= duration ? Look(t: t, index: look.index) : nil
+        }
+        if let first { trimmed.looks.insert(Look(t: 0, index: first), at: 0) }
         return trimmed
     }
 
     /// Whether a place is on the recorded area, give or take a little.
     static func isInside(_ x: Double, _ y: Double) -> Bool {
         (-0.02...1.02).contains(x) && (-0.02...1.02).contains(y)
+    }
+}
+
+// Read field by field, in an extension so the memberwise initializer stays:
+// events kept before the pointer's looks were noted still open.
+extension StudioEvents {
+    private enum Keys: String, CodingKey {
+        case width, height, pointer, clicks, keys, drawsPointer, cursors, looks
+    }
+
+    init(from decoder: Decoder) throws {
+        let kept = try decoder.container(keyedBy: Keys.self)
+        self.init(width: try kept.decode(Double.self, forKey: .width), height: try kept.decode(Double.self, forKey: .height))
+        pointer = try kept.decodeIfPresent([Point].self, forKey: .pointer) ?? []
+        clicks = try kept.decodeIfPresent([Click].self, forKey: .clicks) ?? []
+        keys = try kept.decodeIfPresent([Double].self, forKey: .keys) ?? []
+        drawsPointer = (try? kept.decodeIfPresent(Bool.self, forKey: .drawsPointer)) ?? false
+        cursors = (try? kept.decodeIfPresent([StudioCursor].self, forKey: .cursors)) ?? []
+        looks = (try? kept.decodeIfPresent([Look].self, forKey: .looks)) ?? []
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var kept = encoder.container(keyedBy: Keys.self)
+        try kept.encode(width, forKey: .width)
+        try kept.encode(height, forKey: .height)
+        try kept.encode(pointer, forKey: .pointer)
+        try kept.encode(clicks, forKey: .clicks)
+        try kept.encode(keys, forKey: .keys)
+        try kept.encode(drawsPointer, forKey: .drawsPointer)
+        try kept.encode(cursors, forKey: .cursors)
+        try kept.encode(looks, forKey: .looks)
     }
 }
 

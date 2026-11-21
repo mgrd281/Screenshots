@@ -2116,3 +2116,11 @@
 "Each click" = "クリックの表示";
 "Ring" = "リング";
 "A soft circle where each click landed, pressed in and let go." = "クリックした場所にやわらかな円。押されて離れます。";
+"Pointer" = "ポインタ";
+"Show the pointer" = "ポインタを表示";
+"Smooth movement" = "なめらかな動き";
+"Hide while still" = "止まっている間は隠す";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "ポインタは Snapfly が描きます。大きく、なめらかに動き、クリックごとに押し込まれ、カメラが寄ると大きくなります。";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "この収録には Mac のポインタがそのまま入っています。設定 › 一般 で「なめらかなポインタ」をオンにして収録すると Snapfly のポインタになります。";
+"Smooth pointer" = "なめらかなポインタ";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Mac のポインタの代わりに、Snapfly が大きくなめらかに動くポインタを描きます。Studio でも収録でも。";

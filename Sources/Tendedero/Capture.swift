@@ -357,10 +357,12 @@ final class Capture {
     /// controls left out, and where it is in AppKit screen coordinates. Nil
     /// when its screen or window has gone. A video is kept within 4K, which
     /// every Mac can encode and every chat can play.
-    static func setup(_ region: Region, in content: SCShareableContent, forVideo: Bool)
+    /// - Parameter showsPointer: a video shows the Mac's pointer, unless
+    ///   Smooth pointer has Studio draw its own.
+    static func setup(_ region: Region, in content: SCShareableContent, forVideo: Bool, showsPointer: Bool = true)
         -> (filter: SCContentFilter, config: SCStreamConfiguration, frame: CGRect)? {
         let config = SCStreamConfiguration()
-        config.showsCursor = forVideo
+        config.showsCursor = forVideo && showsPointer
         config.captureResolution = .best
         let filter: SCContentFilter
         let frame: CGRect

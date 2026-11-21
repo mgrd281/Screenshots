@@ -2116,3 +2116,11 @@
 "Each click" = "Cada clic";
 "Ring" = "Anillo";
 "A soft circle where each click landed, pressed in and let go." = "Un círculo suave donde cae cada clic, que se pulsa y se suelta.";
+"Pointer" = "Puntero";
+"Show the pointer" = "Mostrar el puntero";
+"Smooth movement" = "Movimiento suave";
+"Hide while still" = "Ocultar si está quieto";
+"Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer." = "Snapfly dibuja el puntero: más grande, deslizándose, pulsado en cada clic y creciendo cuando la cámara se acerca.";
+"This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s." = "Esta grabación tiene el puntero del propio Mac. Las grabaciones hechas con Puntero suave activado, en Ajustes › General, llevan el de Snapfly.";
+"Smooth pointer" = "Puntero suave";
+"Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording." = "Snapfly dibuja un puntero más grande que se desliza, en lugar del del Mac, en Studio y en la grabación.";
