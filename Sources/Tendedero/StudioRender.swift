@@ -1,6 +1,7 @@
 import AppKit
 import AVFoundation
 import CoreImage
+import ImageIO
 
 /// Everything Studio puts on a recording, fixed for a look at the preview or
 /// for one export: the camera's path, the marks and when they show, and
@@ -10,6 +11,7 @@ struct StudioLook: Sendable {
     let marks: [StudioProject.Mark]
     let numbers: [UUID: Int]
     let clicks: [StudioEvents.Click]
+    let clickStyle: StudioClickStyle
     /// The recording's own pixels, which the marks' sizes are measured in.
     let pixels: CGSize
     /// The recording's parts from its start to its end, some cut out or
@@ -17,11 +19,21 @@ struct StudioLook: Sendable {
     let parts: [StudioPart]
     /// What is said, line by line.
     let captions: [StudioCaption]
+    /// Studio's own pointer, for a recording made without the Mac's; nil
+    /// when the recording has its own, or it is turned off.
+    let pointer: StudioPointerLook?
 
-    /// - Parameter camera: the camera worked out before for the same zooms,
-    ///   so a change to the marks alone doesn't work it out again.
-    init(project: StudioProject, events: StudioEvents?, duration: Double, pixels: CGSize, camera: StudioCamera? = nil) {
-        self.camera = camera ?? StudioCamera(zooms: project.zooms, events: events, duration: duration)
+    /// - Parameters:
+    ///   - camera: the camera worked out before for the same zooms, so a
+    ///     change to the marks alone doesn't work it out again.
+    ///   - drawsPointer: the recording played is one made without the Mac's
+    ///     pointer, so Studio draws its own.
+    ///   - pointer: Studio's pointer worked out before for the same style.
+    init(project: StudioProject, events: StudioEvents?, duration: Double, pixels: CGSize, camera: StudioCamera? = nil,
+         drawsPointer: Bool = false, pointer: StudioPointerLook? = nil) {
+        self.camera = camera ?? StudioCamera(zooms: project.zooms, events: events, duration: duration,
+                                             follow: project.follow)
+        clickStyle = project.clickStyle
         marks = project.marks.sorted { $0.start < $1.start }
         numbers = project.numbers
         clicks = project.showsClicks ? (events?.clicks ?? []).filter { StudioEvents.isInside($0.x, $0.y) } : []
@@ -29,6 +41,12 @@ struct StudioLook: Sendable {
         parts = StudioCuts.parts(project.parts, duration: duration)
         captions = project.captions.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .sorted { $0.start < $1.start }
+        if drawsPointer, project.pointer.shows, let events, events.drawsPointer, !events.pointer.isEmpty {
+            self.pointer = pointer ?? StudioPointerLook(style: project.pointer, events: events, duration: duration,
+                                                        pixelsWide: Double(pixels.width))
+        } else {
+            self.pointer = nil
+        }
     }
 
     /// The unit the marks are measured in, for the recording shown `size`
@@ -43,6 +61,28 @@ struct StudioLook: Sendable {
         marks.contains { t >= $0.start && t < $0.end }
             || clicks.contains { t >= $0.t && t < $0.t + StudioFade.ripple }
             || captions.contains { $0.contains(t) }
+            || pointer != nil
+    }
+}
+
+/// Studio's own pointer, worked out once for a look: its style, its path,
+/// and each of its looks' pictures, decoded.
+struct StudioPointerLook: @unchecked Sendable {
+    let style: StudioPointerStyle
+    let path: StudioPointerPath
+    let events: StudioEvents
+    let images: [CGImage?]
+    /// The recording's pixels for each of the screen's points.
+    let pixelScale: CGFloat
+
+    init(style: StudioPointerStyle, events: StudioEvents, duration: Double, pixelsWide: Double? = nil) {
+        self.style = style
+        self.events = events
+        path = StudioPointerPath(events: events, duration: duration, smooth: style.smooth)
+        images = events.cursors.map { cursor in
+            CGImageSourceCreateWithData(cursor.image as CFData, nil).flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) }
+        }
+        pixelScale = CGFloat((pixelsWide ?? events.width) / max(events.width, 1))
     }
 }
 
@@ -60,7 +100,10 @@ enum StudioDraw {
         for click in look.clicks {
             guard let ring = StudioFade.ripple(at: t, click: click.t) else { continue }
             let at = Drawing.point(place(CGPoint(x: click.x, y: click.y)), in: size)
-            drawRing(at: at, size: ring.size, opacity: ring.opacity, unit: unit, in: context)
+            switch look.clickStyle {
+            case .ring: drawRing(at: at, size: ring.size, opacity: ring.opacity, unit: unit, in: context)
+            case .circle: drawPress(at: at, after: t - click.t, unit: unit, in: context)
+            }
         }
         for item in look.marks {
             guard let presence = StudioFade.presence(at: t, start: item.start, end: item.end, still: still) else { continue }
@@ -83,6 +126,9 @@ enum StudioDraw {
             }
             Drawing.draw([mark], in: context, size: size, unit: unit, numbered: look.numbers)
             context.restoreGState()
+        }
+        if let pointer = look.pointer {
+            drawPointer(pointer, at: t, rect: rect, pixels: look.pixels, in: context, size: size)
         }
         if let caption = look.captions.first(where: { $0.contains(t) }),
            let presence = StudioFade.presence(at: t, start: caption.start, end: caption.end, still: still) {
@@ -128,6 +174,72 @@ enum StudioDraw {
         context.translateBy(x: center.x, y: center.y)
         context.scaleBy(x: scale, y: scale)
         context.translateBy(x: -center.x, y: -center.y)
+    }
+
+    /// Studio's pointer at a time: the look it had then, its tip on where the
+    /// hand was, as large as chosen against the Mac's own and as the camera
+    /// comes closer, with a soft shadow, pressed in at a click.
+    static func drawPointer(_ pointer: StudioPointerLook, at t: Double, rect: CGRect, pixels: CGSize,
+                            in context: CGContext, size: CGSize) {
+        guard let at = pointer.path.point(at: t), StudioEvents.isInside(Double(at.x), Double(at.y)) else { return }
+        let shown = StudioPointerPath.presence(at: t, events: pointer.events, hides: pointer.style.hidesWhenStill)
+        guard shown > 0, pixels.width > 0, rect.width > 0 else { return }
+        // The view's points for each of the cursor's.
+        let zoom = size.width / (pixels.width * rect.width)
+        let k = pointer.pixelScale * CGFloat(pointer.style.size) * zoom
+            * CGFloat(StudioPointerPath.scale(at: t, clicks: pointer.events.clicks))
+        let tip = Drawing.point(StudioCamera.shown(at, through: rect), in: size)
+        context.saveGState()
+        context.setAlpha(CGFloat(shown))
+        context.setShadow(offset: CGSize(width: 0, height: -1.2 * k), blur: 3 * k, color: CGColor(gray: 0, alpha: 0.3))
+        context.interpolationQuality = .high
+        if let index = pointer.events.look(at: t), let image = pointer.images[index] {
+            let cursor = pointer.events.cursors[index]
+            let box = CGRect(x: tip.x - CGFloat(cursor.hotX) * k, y: tip.y - CGFloat(cursor.height - cursor.hotY) * k,
+                             width: CGFloat(cursor.width) * k, height: CGFloat(cursor.height) * k)
+            context.draw(image, in: box)
+        } else {
+            drawArrow(tip: tip, k: k, in: context)
+        }
+        context.restoreGState()
+    }
+
+    /// The Mac's arrow, drawn, for a recording whose pointer's look was not
+    /// seen: black with a white edge, its tip on the point.
+    private static func drawArrow(tip: CGPoint, k: CGFloat, in context: CGContext) {
+        // In points from the tip, down and to the right.
+        let outline: [(CGFloat, CGFloat)] = [(0, 0), (0, 17), (4, 13.2), (6.8, 19.5), (9.6, 18.4), (6.9, 12.2), (12, 12.2)]
+        let path = CGMutablePath()
+        for (i, point) in outline.enumerated() {
+            let p = CGPoint(x: tip.x + point.0 * k, y: tip.y - point.1 * k)
+            if i == 0 { path.move(to: p) } else { path.addLine(to: p) }
+        }
+        path.closeSubpath()
+        context.addPath(path)
+        context.setFillColor(CGColor(gray: 0, alpha: 1))
+        context.setStrokeColor(CGColor(gray: 1, alpha: 1))
+        context.setLineWidth(1.4 * k)
+        context.setLineJoin(.round)
+        context.drawPath(using: .fillStroke)
+    }
+
+    /// A click as a soft grey circle round where it landed: in at once, a
+    /// little smaller while pressed, then let go and gone, grey enough to
+    /// show on light pages and dark.
+    private static func drawPress(at center: CGPoint, after elapsed: Double, unit: CGFloat, in context: CGContext) {
+        let p = min(1, max(0, elapsed / StudioFade.ripple))
+        // Pressed in for the first fifth, back out, then fading.
+        let size = p < 0.2 ? 1 - 0.15 * (p / 0.2) : 0.85 + 0.15 * StudioFade.easeOut((p - 0.2) / 0.8)
+        let shown = CGFloat(p < 0.5 ? 1 : 1 - StudioFade.easeOut((p - 0.5) / 0.5))
+        let across = unit * 0.05 * CGFloat(size)
+        let disc = CGRect(x: center.x - across / 2, y: center.y - across / 2, width: across, height: across)
+        context.saveGState()
+        context.setFillColor(CGColor(gray: 0.45, alpha: 0.3 * shown))
+        context.fillEllipse(in: disc)
+        context.setStrokeColor(CGColor(gray: 1, alpha: 0.75 * shown))
+        context.setLineWidth(max(1, unit * 0.0018))
+        context.strokeEllipse(in: disc.insetBy(dx: 0.5, dy: 0.5))
+        context.restoreGState()
     }
 
     /// A click's ring: white, with a soft dark edge, so it shows on light
@@ -350,9 +462,10 @@ enum StudioExport {
     /// file beside it so the folder watcher ignores it until it is done: a
     /// QuickTime movie, or an MP4 for `.mp4`, in H.264, which every player
     /// and website takes.
+    /// - Parameter rate: frames a second; thirty for a recording's own copy.
     static func run(_ source: URL, look: StudioLook, backdrop: Backdrop? = nil,
-                    quality: StudioOutput.Quality = .original, to target: URL, stop: Stop,
-                    progress: @escaping @Sendable (Double) -> Void) async throws {
+                    quality: StudioOutput.Quality = .original, rate: Int32 = StudioExport.rate, to target: URL,
+                    stop: Stop, progress: @escaping @Sendable (Double) -> Void) async throws {
         let asset = AVURLAsset(url: source)
         let duration = try await asset.load(.duration).seconds
         guard duration > 0, let track = try await asset.loadTracks(withMediaType: .video).first else {
@@ -377,7 +490,7 @@ enum StudioExport {
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
                         try write(asset: asset, track: track, framing: framing, mp4: mp4, sounds: sounds, hints: hints,
-                                  edited: edited, duration: duration, look: look, to: temp, stop: stop,
+                                  edited: edited, duration: duration, look: look, rate: rate, to: temp, stop: stop,
                                   progress: progress)
                         done.resume()
                     } catch {
@@ -447,7 +560,8 @@ enum StudioExport {
     // inputs' own queues, so they are never used from two places at once.
     private static func write(asset: AVAsset, track: AVAssetTrack, framing: StudioFraming, mp4: Bool, sounds: [AVAssetTrack],
                               hints: [CMFormatDescription?], edited: EditedSound?, duration: Double, look: StudioLook,
-                              to temp: URL, stop: Stop, progress: @escaping @Sendable (Double) -> Void) throws {
+                              rate: Int32, to temp: URL, stop: Stop,
+                              progress: @escaping @Sendable (Double) -> Void) throws {
         // How long the video is, with parts cut out or faster.
         let parts = look.parts
         let cut = StudioCuts.edits(parts)

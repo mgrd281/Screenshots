@@ -30,6 +30,8 @@ final class Recording {
     private var recorder: Recorder?
     /// What is done while recording, for Studio.
     private var studio: StudioCapture?
+    /// Recorded without the Mac's pointer, which Snapfly draws (Smooth pointer).
+    private var pointerHidden = false
     private var file: URL?
     private var frame = CGRect.zero
     private var started = Date()
@@ -46,7 +48,8 @@ final class Recording {
         Task { @MainActor in
             do {
                 let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                guard let setup = Capture.setup(region, in: content, forVideo: true) else {
+                let hidden = SmoothPointer.isOn
+                guard let setup = Capture.setup(region, in: content, forVideo: true, showsPointer: !hidden) else {
                     throw RecorderError.nothingToRecord
                 }
                 try FileManager.default.createDirectory(at: Inbox.folder, withIntermediateDirectories: true)
@@ -61,9 +64,10 @@ final class Recording {
                 self.recorder = recorder
                 self.file = file
                 self.frame = setup.frame
-                let studio = StudioCapture(frame: setup.frame)
+                let studio = StudioCapture(frame: setup.frame, notesLooks: hidden)
                 studio.start()
                 self.studio = studio
+                self.pointerHidden = hidden
                 showControls(for: region, frame: setup.frame)
             } catch {
                 log.error("Could not record the screen: \(error.localizedDescription, privacy: .public)")
@@ -81,6 +85,8 @@ final class Recording {
         let studio = studio
         self.studio = nil
         studio?.stop()
+        let pointerHidden = pointerHidden
+        self.pointerHidden = false
         hideControls()
         let frame = frame
         saving = Task { @MainActor in
@@ -108,11 +114,19 @@ final class Recording {
                 Notice.show(L("Could not save the recording."), on: nil)
                 return
             }
-            // What was done, timed from the first picture, for Studio.
+            // What was done, timed from the first picture, for Studio; made
+            // without the Mac's pointer, the recording is kept as it was made
+            // for Studio to draw its own on, and the one on the line gets the
+            // same pointer once it is drawn in.
+            var drawsPointer = false
             if let studio, let first = recorder.firstPicture {
-                StudioStore.setEvents(studio.events(since: first), for: url)
+                var events = studio.events(since: first)
+                if pointerHidden, !events.pointer.isEmpty { events.drawsPointer = StudioStore.keepClean(url) }
+                drawsPointer = events.drawsPointer
+                StudioStore.setEvents(events, for: url)
             }
             onFinish(url)
+            if drawsPointer { SmoothPointer.addPointer(to: url) }
             if Studio.opensAfterRecording {
                 // Once it has flown to the line.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
@@ -173,6 +187,13 @@ final class Recording {
             guard looked.insert(folder.standardizedFileURL.path).inserted else { continue }
             for file in (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? [] {
                 let name = file.lastPathComponent
+                if name.hasPrefix(".pointer-") || name.hasPrefix(".studio-") {
+                    // Snapfly's pointer being drawn into a recording, or a
+                    // Studio video being saved, cut short: the recording
+                    // itself is still there.
+                    try? fm.removeItem(at: file)
+                    continue
+                }
                 if name.hasPrefix(".mix-") {
                     // The recording it was being mixed from is still there.
                     try? fm.removeItem(at: file)

@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import CoreMedia
 import CryptoKit
 
@@ -25,6 +26,12 @@ struct StudioProject: Codable, Equatable, Sendable {
     var autoScale: Double?
     /// A ring where each click landed.
     var showsClicks = true
+    /// How each click shows: a ring that spreads, or a soft circle.
+    var clickStyle = StudioClickStyle.ring
+    /// How closely the camera keeps up with the pointer while zoomed in.
+    var follow = StudioCamera.Follow.closely
+    /// Studio's own pointer, for a recording made without the Mac's.
+    var pointer = StudioPointerStyle()
     /// The recording set on a colour, with room round it, rounded corners
     /// and a shadow, in the shape a post wants; nil for the recording alone.
     var backdrop: Backdrop?
@@ -44,6 +51,9 @@ struct StudioProject: Codable, Equatable, Sendable {
         autoZoom = try kept.decodeIfPresent(Bool.self, forKey: .autoZoom) ?? true
         autoScale = try kept.decodeIfPresent(Double.self, forKey: .autoScale)
         showsClicks = try kept.decodeIfPresent(Bool.self, forKey: .showsClicks) ?? true
+        clickStyle = (try? kept.decodeIfPresent(StudioClickStyle.self, forKey: .clickStyle)) ?? .ring
+        follow = (try? kept.decodeIfPresent(StudioCamera.Follow.self, forKey: .follow)) ?? .closely
+        pointer = (try? kept.decodeIfPresent(StudioPointerStyle.self, forKey: .pointer)) ?? StudioPointerStyle()
         backdrop = try? kept.decodeIfPresent(Backdrop.self, forKey: .backdrop)
         parts = (try? kept.decodeIfPresent([StudioPart].self, forKey: .parts)) ?? []
         captions = (try? kept.decodeIfPresent([StudioCaption].self, forKey: .captions)) ?? []
@@ -84,6 +94,15 @@ struct StudioProject: Codable, Equatable, Sendable {
     }
 }
 
+/// How a click shows in Studio's video.
+enum StudioClickStyle: String, Codable, CaseIterable, Sendable {
+    /// White, with a soft dark edge, spreading out.
+    case ring
+    /// A soft grey circle round where it landed, pressed in and let go, as
+    /// product videos show a click.
+    case circle
+}
+
 /// Where Studio keeps what it knows about each recording, under its path,
 /// in Snapfly's own folder (inside the sandbox for the App Store edition):
 /// what was done while recording and the work done on it since. Nothing of
@@ -119,10 +138,45 @@ enum StudioStore {
         write(project, to: file(url, "project"))
     }
 
+    /// Where a recording made with Smooth pointer is kept as it was made,
+    /// without any pointer, for Studio to draw its own on.
+    static func cleanURL(for url: URL) -> URL {
+        folder.appendingPathComponent("\(key(url)).clean").appendingPathExtension(url.pathExtension.isEmpty ? "mov" : url.pathExtension)
+    }
+
+    /// That recording, while it is kept.
+    static func cleanSource(for url: URL) -> URL? {
+        let clean = cleanURL(for: url)
+        return FileManager.default.fileExists(atPath: clean.path) ? clean : nil
+    }
+
+    /// Keeps a recording just made without any pointer, for Studio: a copy,
+    /// which on the Mac's own disk takes no room until either changes.
+    @discardableResult
+    static func keepClean(_ url: URL) -> Bool {
+        let fm = FileManager.default
+        let clean = cleanURL(for: url)
+        do {
+            try fm.createDirectory(at: folder, withIntermediateDirectories: true)
+            try? fm.removeItem(at: clean)
+            try fm.copyItem(at: url, to: clean)
+            try? fm.setAttributes([.posixPermissions: 0o600], ofItemAtPath: clean.path)
+            return true
+        } catch {
+            log.error("Could not keep a recording for Studio: \(error.localizedDescription, privacy: .public)")
+            return false
+        }
+    }
+
     /// A recording moved, as Workspace moves files: what Studio knows goes
     /// with it.
     static func move(from old: URL, to new: URL) {
         let fm = FileManager.default
+        if let clean = cleanSource(for: old) {
+            let to = cleanURL(for: new)
+            try? fm.removeItem(at: to)
+            try? fm.moveItem(at: clean, to: to)
+        }
         for kind in ["events", "project"] {
             let from = file(old, kind), to = file(new, kind)
             guard fm.fileExists(atPath: from.path) else { continue }
@@ -134,11 +188,39 @@ enum StudioStore {
     /// A recording trimmed in place: its events and project move to the
     /// new start.
     static func trimmed(_ url: URL, from offset: Double, keeping duration: Double) {
+        if let clean = cleanSource(for: url) { trimClean(clean, from: offset, keeping: duration) }
         if let events = events(for: url) {
             setEvents(events.trimmed(from: offset, keeping: duration), for: url)
         }
         if let project = project(for: url) {
             setProject(project.trimmed(from: offset, keeping: duration), for: url)
+        }
+    }
+
+    /// The recording as it was made, trimmed as the one on the line was, so
+    /// Studio's pointer and picture stay together; without it, should that
+    /// fail, Studio plays the one on the line.
+    private static func trimClean(_ clean: URL, from offset: Double, keeping duration: Double) {
+        let asset = AVURLAsset(url: clean)
+        guard let export = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetPassthrough) else {
+            try? FileManager.default.removeItem(at: clean)
+            return
+        }
+        // Under the recording's own name, so tidying up leaves it alone.
+        let key = clean.lastPathComponent.components(separatedBy: ".").first ?? "clean"
+        let temp = clean.deletingLastPathComponent()
+            .appendingPathComponent("\(key).trimming-\(UUID().uuidString)").appendingPathExtension(clean.pathExtension)
+        export.outputURL = temp
+        export.outputFileType = clean.pathExtension.lowercased() == "mp4" ? .mp4 : .mov
+        export.timeRange = CMTimeRange(start: CMTime(seconds: offset, preferredTimescale: 600),
+                                       duration: CMTime(seconds: duration, preferredTimescale: 600))
+        Task {
+            await export.export()
+            let fm = FileManager.default
+            if export.status != .completed || (try? fm.replaceItemAt(clean, withItemAt: temp)) == nil {
+                try? fm.removeItem(at: temp)
+                try? fm.removeItem(at: clean)
+            }
         }
     }
 
@@ -198,9 +280,18 @@ final class StudioCapture {
     private var timer: Timer?
     private var monitors: [Any] = []
     private var last: CGPoint?
+    /// The pointer's looks, noted for a recording made without the Mac's
+    /// pointer, so Studio draws the one that showed: about ten times a
+    /// second, each look kept once.
+    private let notesLooks: Bool
+    private var cursors: [StudioCursor] = []
+    private var known: [String: Int] = [:]
+    private var looks: [(t: Double, index: Int)] = []
+    private var ticks = 0
 
-    init(frame: CGRect) {
+    init(frame: CGRect, notesLooks: Bool = false) {
         self.frame = frame
+        self.notesLooks = notesLooks
     }
 
     /// The host clock the screen's frames are timed by.
@@ -238,10 +329,35 @@ final class StudioCapture {
     }
 
     private func sample() {
+        if notesLooks, ticks % 3 == 0 { noteLook() }
+        ticks += 1
         let point = NSEvent.mouseLocation
         guard point != last else { return }
         last = point
         pointer.append((Self.now, point))
+    }
+
+    /// The look the pointer has now, kept once, and when it changed.
+    private func noteLook() {
+        guard let cursor = NSCursor.currentSystem, let tiff = cursor.image.tiffRepresentation else { return }
+        let hot = cursor.hotSpot, size = cursor.image.size
+        let key = SHA256.hash(data: tiff).map { String(format: "%02x", $0) }.joined()
+            + "|\(hot.x),\(hot.y),\(size.width),\(size.height)"
+        let index: Int
+        if let seen = known[key] {
+            index = seen
+        } else {
+            // The sharpest picture there is, as it is drawn larger.
+            var rect = CGRect(origin: .zero, size: CGSize(width: size.width * 2, height: size.height * 2))
+            guard size.width > 0, size.height > 0,
+                  let image = cursor.image.cgImage(forProposedRect: &rect, context: nil, hints: nil),
+                  let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else { return }
+            index = cursors.count
+            cursors.append(StudioCursor(image: png, hotX: Double(hot.x), hotY: Double(hot.y),
+                                        width: Double(size.width), height: Double(size.height)))
+            known[key] = index
+        }
+        if looks.last?.index != index { looks.append((Self.now, index)) }
     }
 
     private func clicked(at point: CGPoint, right: Bool) {
@@ -269,6 +385,11 @@ final class StudioCapture {
             StudioEvents.Click(t: $0.t - start, x: x($0.point), y: y($0.point), right: $0.right)
         }
         events.keys = keys.filter { $0 >= start }.map { $0 - start }
+        if notesLooks {
+            events.cursors = cursors
+            if let before = looks.last(where: { $0.t <= start }) { events.looks.append(StudioEvents.Look(t: 0, index: before.index)) }
+            events.looks += looks.filter { $0.t > start }.map { StudioEvents.Look(t: $0.t - start, index: $0.index) }
+        }
         return events
     }
 }

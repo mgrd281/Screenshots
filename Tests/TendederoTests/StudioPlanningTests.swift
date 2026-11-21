@@ -169,6 +169,32 @@ final class StudioPlanningTests: XCTestCase {
         XCTAssertTrue(camera.rect(at: 9).contains(CGPoint(x: 0.8, y: 0.5)))
     }
 
+    func testFollowingCloselyKeepsThePointerNearTheMiddle() {
+        // A slow move across, as a hand going from one button to the next.
+        let seen = events(pointer: [(0, 0.3, 0.5), (2, 0.3, 0.5), (6, 0.6, 0.5), (10, 0.6, 0.5)])
+        let zoom = StudioZoom(start: 0, end: 10, scale: 2, focus: .pointer)
+        let close = StudioCamera(zooms: [zoom], events: seen, duration: 10, follow: .closely)
+        let loose = StudioCamera(zooms: [zoom], events: seen, duration: 10, follow: .loosely)
+        // Midway through the move the close camera is right by the pointer.
+        let pointer = 0.3 + 0.3 * (4.0 - 2) / 4
+        XCTAssertLessThan(abs(Double(close.rect(at: 4).midX) - pointer), 0.06)
+        XCTAssertLessThan(abs(Double(close.rect(at: 4).midX) - pointer), abs(Double(loose.rect(at: 4).midX) - pointer))
+        // Settled, it is on the pointer.
+        XCTAssertEqual(Double(close.rect(at: 9.5).midX), 0.6, accuracy: 0.03)
+    }
+
+    func testOlderWorkFollowsCloselyAndShowsRings() throws {
+        let project = try JSONDecoder().decode(StudioProject.self, from: Data(#"{"zooms":[]}"#.utf8))
+        XCTAssertEqual(project.follow, .closely)
+        XCTAssertEqual(project.clickStyle, .ring)
+        var changed = StudioProject()
+        changed.follow = .loosely
+        changed.clickStyle = .circle
+        let read = try JSONDecoder().decode(StudioProject.self, from: JSONEncoder().encode(changed))
+        XCTAssertEqual(read.follow, .loosely)
+        XCTAssertEqual(read.clickStyle, .circle)
+    }
+
     func testPlacesMapBetweenTheRecordingAndTheView() {
         let rect = CGRect(x: 0.25, y: 0.5, width: 0.5, height: 0.5)
         let shown = StudioCamera.shown(CGPoint(x: 0.5, y: 0.75), through: rect)

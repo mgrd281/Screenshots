@@ -275,10 +275,12 @@ keeps both tracks, and a note says so.
 
 Once a recording hangs, it opens in Studio, or later with Edit › Edit in
 Studio… in its menu. It plays as it will be saved: the camera comes closer
-where you clicked and typed, follows the pointer there as a camera operator
-would, moving only when it nears the edge, and goes back out after. Nothing
-to set up: the zooms are made from what you did while recording. A ring
-spreads at each click, so viewers see where it went.
+where you clicked and typed, follows the pointer there, keeping it near the
+middle as a product video does, and goes back out after. Nothing to set up:
+the zooms are made from what you did while recording. Follows the pointer,
+under Zoom, chooses Closely or Loosely, which moves only when the pointer
+nears the edge. A ring spreads at each click, so viewers see where it
+went; Each click, under Draw, makes it a soft circle instead.
 
 The inspector beside it has five pages, as tabs across its top: Edit
 (zooms, cut and speed), Draw, Captions, Appearance (size and background)
@@ -308,6 +310,15 @@ language, then Make Captions: the recording's sound is heard on your Mac
 alone, with macOS's own speech recognition, and nothing is sent. Each line
 shows while it is said; stop on one to correct its words. macOS asks once
 before Snapfly may use speech recognition.
+
+With Smooth pointer on, in Settings › General under Screen recordings (it
+is, until you turn it off), recordings are made without the Mac's own
+pointer, and Snapfly draws one: larger, gliding instead of jittering, in
+the look it had at each moment (arrow, I-beam, hand), pressed in at each
+click, and growing as the camera comes closer, as product videos show it.
+In Studio, Pointer on the Draw page sets its size, whether it glides and
+whether it hides while still. The recording on the line gets the same
+pointer drawn in a few moments after it hangs, so it can be sent as it is.
 
 Cut and Speed works on the part where the video stands: Split Here (S)
 splits it there, Cut Out (X) leaves a part out of the video, and Speed
@@ -2031,6 +2042,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ScreenText.swift` | Copy Text from Screen: the words in a part of the screen, read on the Mac and copied in reading order |
 | `AskPanel.swift` | Capture and Ask AI: the card that asks what to ask about a new screenshot, and in which AI chat |
 | `StudioCaptions.swift` | Studio's captions: what is said in a recording heard on the Mac, made into short timed lines |
+| `StudioPointer.swift`, `SmoothPointer.swift` | Snapfly's own pointer for recordings made without the Mac's: its looks, its smooth path, its style, and drawing it into the recording on the line |
 | `StudioCuts.swift` | Studio's parts: splitting the recording, cutting parts out and speeding them up, how long the video is and which moment of the recording shows when |
 | `StudioFraming.swift` | Where the recording sits in Studio's video on a background, in a post's shape and at the size chosen, and how Save Video writes it (MOV, MP4 or GIF) |
 | `StudioRender.swift` | Draws a recording through Studio's camera with its marks and clicks on its background, writes the video, and reads the timeline's pictures and sound |

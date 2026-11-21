@@ -236,7 +236,8 @@ or turn on syncing with your iPhone (below).
   the recording only, saved on your Mac like it, and goes nowhere else.
 - **Studio notes how you moved, not what you typed.** While the screen is
   recorded, Snapfly notes where the pointer went, where it clicked and when a
-  key went down, so Studio can zoom in there. Which key is never noted. It is
+  key went down, so Studio can zoom in there, and, with Smooth pointer on,
+  the pointer's looks (arrow, I-beam, hand), so it can draw them. Which key is never noted. It is
   kept on your Mac with the recording's Studio work, and goes once the
   recording has left the line and the history. Nothing of it is sent
   anywhere.

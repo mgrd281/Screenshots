@@ -118,6 +118,7 @@ struct StudioEditorView: View {
                     style
                     if let item = model.selectedMark { chosen(item) }
                     clicks
+                    pointer
                 case .captions:
                     captioning
                 case .look:
@@ -225,6 +226,16 @@ struct StudioEditorView: View {
                 }
             }
             .disabled(model.events == nil || !model.project.autoZoom)
+            Picker(L("Follows the pointer"), selection: Binding(get: { model.project.follow },
+                                                               set: { model.setFollow($0) })) {
+                Text(L("Closely")).tag(StudioCamera.Follow.closely)
+                Text(L("Loosely")).tag(StudioCamera.Follow.loosely)
+            }
+            .pickerStyle(.segmented)
+            .disabled(model.events == nil)
+            .help(model.project.follow == .closely
+                  ? L("The pointer stays near the middle while zoomed in, as in a product video.")
+                  : L("The camera stays still until the pointer nears the edge."))
             LabeledContent {
                 Button(L("Add Zoom")) { model.addZoom() }
                     .disabled(!model.canAddZoom)
@@ -410,10 +421,59 @@ struct StudioEditorView: View {
         Section {
             Toggle(L("Show clicks"), isOn: Binding(get: { model.project.showsClicks }, set: { model.setShowsClicks($0) }))
                 .disabled(model.events == nil)
+            Picker(L("Each click"), selection: Binding(get: { model.project.clickStyle },
+                                                       set: { model.setClickStyle($0) })) {
+                Text(L("Ring")).tag(StudioClickStyle.ring)
+                Text(L("Circle")).tag(StudioClickStyle.circle)
+            }
+            .pickerStyle(.segmented)
+            .disabled(model.events == nil || !model.project.showsClicks)
         } footer: {
-            Text(L("A ring where each click landed."))
+            Text(model.project.clickStyle == .ring ? L("A ring where each click landed.")
+                 : L("A soft circle where each click landed, pressed in and let go."))
                 .foregroundStyle(.secondary)
         }
+    }
+
+    // MARK: Studio's pointer
+
+    /// Studio's own pointer, for a recording made with Smooth pointer: shown
+    /// or not, how large, gliding, and hiding while still.
+    private var pointer: some View {
+        let style = model.project.pointer
+        return Section {
+            Toggle(L("Show the pointer"), isOn: Binding(get: { style.shows },
+                                                        set: { on in model.setPointer { $0.shows = on } }))
+            LabeledContent(L("Size")) {
+                HStack(spacing: 8) {
+                    Slider(value: Binding(get: { model.project.pointer.size },
+                                          set: { size in model.setPointer(going: true) { $0.size = (size * 10).rounded() / 10 } }),
+                           in: StudioPointerStyle.sizes, onEditingChanged: { editing in
+                               if !editing { model.end() }
+                           })
+                        .controlSize(.small)
+                    Text(Self.times(style.size))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                        .frame(width: 34, alignment: .trailing)
+                }
+            }
+            .disabled(!style.shows)
+            Toggle(L("Smooth movement"), isOn: Binding(get: { style.smooth },
+                                                       set: { on in model.setPointer { $0.smooth = on } }))
+                .disabled(!style.shows)
+            Toggle(L("Hide while still"), isOn: Binding(get: { style.hidesWhenStill },
+                                                        set: { on in model.setPointer { $0.hidesWhenStill = on } }))
+                .disabled(!style.shows)
+        } header: {
+            Text(L("Pointer"))
+        } footer: {
+            Text(model.drawsPointer
+                 ? L("Snapfly draws the pointer: larger, gliding, pressed in at each click, as the camera comes closer.")
+                 : L("This recording has the Mac’s own pointer in it. Recordings made with Smooth pointer on, in Settings › General, get Snapfly’s."))
+                .foregroundStyle(.secondary)
+        }
+        .disabled(!model.drawsPointer)
     }
 
     // MARK: Captions

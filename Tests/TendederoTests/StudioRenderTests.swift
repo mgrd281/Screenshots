@@ -185,6 +185,30 @@ final class StudioRenderTests: XCTestCase {
         XCTAssertTrue(StudioSample.pixel(said, x: 0.5, y: 0.6).isGreen)
     }
 
+    func testSnapflysPointerIsDrawnWhereTheHandWas() async throws {
+        let source = folder.appendingPathComponent("white.mov")
+        try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 1, draw: StudioSample.white)
+        var events = StudioEvents(width: 320, height: 180)
+        events.pointer = [StudioEvents.Point(t: 0, x: 0.5, y: 0.5)]
+        events.drawsPointer = true
+        let pixels = CGSize(width: 320, height: 180)
+        // Inside the arrow drawn, its tip on the middle: down and to the right.
+        let x = (160.0 + 2.5 * 1.6) / 320, y = (90.0 - 8 * 1.6) / 180
+        var project = StudioProject()
+        project.showsClicks = false
+        let shown = folder.appendingPathComponent("pointer.mov")
+        try await StudioExport.run(source, look: StudioLook(project: project, events: events, duration: 1, pixels: pixels,
+                                                            drawsPointer: true), to: shown, stop: StudioExport.Stop()) { _ in }
+        let frame = try await StudioSample.frame(of: shown, at: 0.5)
+        XCTAssertTrue(StudioSample.pixel(frame, x: x, y: y).isDark)
+        project.pointer.shows = false
+        let hidden = folder.appendingPathComponent("hidden.mov")
+        try await StudioExport.run(source, look: StudioLook(project: project, events: events, duration: 1, pixels: pixels,
+                                                            drawsPointer: true), to: hidden, stop: StudioExport.Stop()) { _ in }
+        let plain = try await StudioSample.frame(of: hidden, at: 0.5)
+        XCTAssertGreaterThan(StudioSample.pixel(plain, x: x, y: y).r, 200)
+    }
+
     func testStoppingLeavesNoVideo() async throws {
         let source = folder.appendingPathComponent("quarters.mov")
         try StudioSample.writeMovie(to: source, width: 320, height: 180, seconds: 2, draw: StudioSample.quarters)
@@ -500,6 +524,12 @@ private enum StudioSample {
                 written += count
             }
         }
+    }
+
+    /// All white, as an empty page.
+    static func white(_ context: CGContext, _ size: CGSize, _ t: Double) {
+        context.setFillColor(CGColor(gray: 1, alpha: 1))
+        context.fill(CGRect(origin: .zero, size: size))
     }
 
     /// Black and white stripes, four pixels wide, as small print is.

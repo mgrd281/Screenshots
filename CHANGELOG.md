@@ -6,6 +6,13 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Smooth pointer (Settings › General, on): screen recordings get Snapfly's
+  own pointer, larger and gliding, in the look it had (arrow, I-beam,
+  hand), pressed in at each click. Studio sets its size; the recording on
+  the line gets it too.
+- Studio's camera follows the pointer closely while zoomed in, keeping it
+  near the middle as a product video does (Loosely keeps the calm way),
+  and a click can show as a soft circle instead of a ring.
 - ChatGPT, Claude and the other AI chats shown in Settings stand beside the
   line's tag, left of search: a click sends every screenshot on the line, or
   the ones picked, straight into that chat.
