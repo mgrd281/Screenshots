@@ -2110,3 +2110,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "कॉपी करने के लिए शब्दों पर खींचें, या किसी विंडो पर क्लिक करें। Return पूरी स्क्रीन पढ़ता है, Escape रद्द करता है।";
 "No text found here." = "यहाँ कोई टेक्स्ट नहीं मिला।";
 "Copied: %@" = "कॉपी हुआ: %@";
+"Follows the pointer" = "पॉइंटर का पीछा करता है";
+"Closely" = "पास से";
+"Loosely" = "आराम से";
+"The pointer stays near the middle while zoomed in, as in a product video." = "ज़ूम करते समय पॉइंटर बीच के पास रहता है, जैसे किसी प्रोडक्ट वीडियो में।";
+"The camera stays still until the pointer nears the edge." = "जब तक पॉइंटर किनारे के पास न आए, कैमरा स्थिर रहता है।";
+"Each click" = "हर क्लिक";
+"Ring" = "छल्ला";
+"A soft circle where each click landed, pressed in and let go." = "हर क्लिक की जगह एक नरम घेरा, दबता है और छूटता है।";

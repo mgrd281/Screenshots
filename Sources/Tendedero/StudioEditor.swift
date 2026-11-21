@@ -250,7 +250,7 @@ final class StudioModel: ObservableObject {
         didSet {
             guard project != oldValue else { return }
             // The camera is worked out again only when the zooms change.
-            let camera = project.zooms == oldValue.zooms ? look.camera : nil
+            let camera = project.zooms == oldValue.zooms && project.follow == oldValue.follow ? look.camera : nil
             look = StudioLook(project: project, events: events, duration: duration, pixels: pixels, camera: camera)
             blurs.look = look
             if Self.blurred(project) != Self.blurred(oldValue) { refreshBlurs() }
@@ -711,6 +711,14 @@ final class StudioModel: ObservableObject {
 
     func setShowsClicks(_ on: Bool) {
         change { $0.showsClicks = on }
+    }
+
+    func setClickStyle(_ style: StudioClickStyle) {
+        change { $0.clickStyle = style }
+    }
+
+    func setFollow(_ follow: StudioCamera.Follow) {
+        change { $0.follow = follow }
     }
 
     // MARK: Background and saving

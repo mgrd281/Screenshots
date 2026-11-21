@@ -2110,3 +2110,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels.";
 "No text found here." = "No text found here.";
 "Copied: %@" = "Copied: %@";
+"Follows the pointer" = "Follows the pointer";
+"Closely" = "Closely";
+"Loosely" = "Loosely";
+"The pointer stays near the middle while zoomed in, as in a product video." = "The pointer stays near the middle while zoomed in, as in a product video.";
+"The camera stays still until the pointer nears the edge." = "The camera stays still until the pointer nears the edge.";
+"Each click" = "Each click";
+"Ring" = "Ring";
+"A soft circle where each click landed, pressed in and let go." = "A soft circle where each click landed, pressed in and let go.";

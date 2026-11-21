@@ -2108,3 +2108,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "복사할 글자 위로 드래그하거나 윈도우를 클릭하세요. Return은 화면 전체를 읽고, Escape는 취소합니다.";
 "No text found here." = "여기에서 텍스트를 찾지 못했습니다.";
 "Copied: %@" = "복사함: %@";
+"Follows the pointer" = "포인터 따라가기";
+"Closely" = "가깝게";
+"Loosely" = "느슨하게";
+"The pointer stays near the middle while zoomed in, as in a product video." = "확대하는 동안 포인터가 가운데 근처에 머뭅니다. 제품 영상처럼요.";
+"The camera stays still until the pointer nears the edge." = "포인터가 가장자리에 다가올 때까지 카메라가 움직이지 않습니다.";
+"Each click" = "각 클릭";
+"Ring" = "링";
+"A soft circle where each click landed, pressed in and let go." = "클릭한 곳에 부드러운 원이 눌렸다가 풀립니다.";

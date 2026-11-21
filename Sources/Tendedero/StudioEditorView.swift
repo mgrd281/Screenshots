@@ -225,6 +225,16 @@ struct StudioEditorView: View {
                 }
             }
             .disabled(model.events == nil || !model.project.autoZoom)
+            Picker(L("Follows the pointer"), selection: Binding(get: { model.project.follow },
+                                                               set: { model.setFollow($0) })) {
+                Text(L("Closely")).tag(StudioCamera.Follow.closely)
+                Text(L("Loosely")).tag(StudioCamera.Follow.loosely)
+            }
+            .pickerStyle(.segmented)
+            .disabled(model.events == nil)
+            .help(model.project.follow == .closely
+                  ? L("The pointer stays near the middle while zoomed in, as in a product video.")
+                  : L("The camera stays still until the pointer nears the edge."))
             LabeledContent {
                 Button(L("Add Zoom")) { model.addZoom() }
                     .disabled(!model.canAddZoom)
@@ -410,8 +420,16 @@ struct StudioEditorView: View {
         Section {
             Toggle(L("Show clicks"), isOn: Binding(get: { model.project.showsClicks }, set: { model.setShowsClicks($0) }))
                 .disabled(model.events == nil)
+            Picker(L("Each click"), selection: Binding(get: { model.project.clickStyle },
+                                                       set: { model.setClickStyle($0) })) {
+                Text(L("Ring")).tag(StudioClickStyle.ring)
+                Text(L("Circle")).tag(StudioClickStyle.circle)
+            }
+            .pickerStyle(.segmented)
+            .disabled(model.events == nil || !model.project.showsClicks)
         } footer: {
-            Text(L("A ring where each click landed."))
+            Text(model.project.clickStyle == .ring ? L("A ring where each click landed.")
+                 : L("A soft circle where each click landed, pressed in and let go."))
                 .foregroundStyle(.secondary)
         }
     }

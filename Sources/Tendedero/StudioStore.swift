@@ -25,6 +25,10 @@ struct StudioProject: Codable, Equatable, Sendable {
     var autoScale: Double?
     /// A ring where each click landed.
     var showsClicks = true
+    /// How each click shows: a ring that spreads, or a soft circle.
+    var clickStyle = StudioClickStyle.ring
+    /// How closely the camera keeps up with the pointer while zoomed in.
+    var follow = StudioCamera.Follow.closely
     /// The recording set on a colour, with room round it, rounded corners
     /// and a shadow, in the shape a post wants; nil for the recording alone.
     var backdrop: Backdrop?
@@ -44,6 +48,8 @@ struct StudioProject: Codable, Equatable, Sendable {
         autoZoom = try kept.decodeIfPresent(Bool.self, forKey: .autoZoom) ?? true
         autoScale = try kept.decodeIfPresent(Double.self, forKey: .autoScale)
         showsClicks = try kept.decodeIfPresent(Bool.self, forKey: .showsClicks) ?? true
+        clickStyle = (try? kept.decodeIfPresent(StudioClickStyle.self, forKey: .clickStyle)) ?? .ring
+        follow = (try? kept.decodeIfPresent(StudioCamera.Follow.self, forKey: .follow)) ?? .closely
         backdrop = try? kept.decodeIfPresent(Backdrop.self, forKey: .backdrop)
         parts = (try? kept.decodeIfPresent([StudioPart].self, forKey: .parts)) ?? []
         captions = (try? kept.decodeIfPresent([StudioCaption].self, forKey: .captions)) ?? []
@@ -82,6 +88,15 @@ struct StudioProject: Codable, Equatable, Sendable {
         trimmed.captions = StudioCaptions.trimmed(captions, from: offset, keeping: duration)
         return trimmed
     }
+}
+
+/// How a click shows in Studio's video.
+enum StudioClickStyle: String, Codable, CaseIterable, Sendable {
+    /// White, with a soft dark edge, spreading out.
+    case ring
+    /// A soft grey circle round where it landed, pressed in and let go, as
+    /// product videos show a click.
+    case circle
 }
 
 /// Where Studio keeps what it knows about each recording, under its path,

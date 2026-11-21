@@ -2110,3 +2110,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "Kopyalamaq üçün sözlərin üzərindən sürüşdür və ya pəncərəyə kliklə. Return bütün ekranı oxuyur, Escape ləğv edir.";
 "No text found here." = "Burada mətn tapılmadı.";
 "Copied: %@" = "Kopyalandı: %@";
+"Follows the pointer" = "Göstəricini izləyir";
+"Closely" = "Yaxından";
+"Loosely" = "Sakitcə";
+"The pointer stays near the middle while zoomed in, as in a product video." = "Yaxınlaşdırılanda göstərici ortaya yaxın qalır, məhsul videosunda olduğu kimi.";
+"The camera stays still until the pointer nears the edge." = "Göstərici kənara yaxınlaşana qədər kamera yerində qalır.";
+"Each click" = "Hər klik";
+"Ring" = "Halqa";
+"A soft circle where each click landed, pressed in and let go." = "Hər klikin düşdüyü yerdə yumşaq dairə: basılır və buraxılır.";

@@ -10,6 +10,7 @@ struct StudioLook: Sendable {
     let marks: [StudioProject.Mark]
     let numbers: [UUID: Int]
     let clicks: [StudioEvents.Click]
+    let clickStyle: StudioClickStyle
     /// The recording's own pixels, which the marks' sizes are measured in.
     let pixels: CGSize
     /// The recording's parts from its start to its end, some cut out or
@@ -21,7 +22,9 @@ struct StudioLook: Sendable {
     /// - Parameter camera: the camera worked out before for the same zooms,
     ///   so a change to the marks alone doesn't work it out again.
     init(project: StudioProject, events: StudioEvents?, duration: Double, pixels: CGSize, camera: StudioCamera? = nil) {
-        self.camera = camera ?? StudioCamera(zooms: project.zooms, events: events, duration: duration)
+        self.camera = camera ?? StudioCamera(zooms: project.zooms, events: events, duration: duration,
+                                             follow: project.follow)
+        clickStyle = project.clickStyle
         marks = project.marks.sorted { $0.start < $1.start }
         numbers = project.numbers
         clicks = project.showsClicks ? (events?.clicks ?? []).filter { StudioEvents.isInside($0.x, $0.y) } : []
@@ -60,7 +63,10 @@ enum StudioDraw {
         for click in look.clicks {
             guard let ring = StudioFade.ripple(at: t, click: click.t) else { continue }
             let at = Drawing.point(place(CGPoint(x: click.x, y: click.y)), in: size)
-            drawRing(at: at, size: ring.size, opacity: ring.opacity, unit: unit, in: context)
+            switch look.clickStyle {
+            case .ring: drawRing(at: at, size: ring.size, opacity: ring.opacity, unit: unit, in: context)
+            case .circle: drawPress(at: at, after: t - click.t, unit: unit, in: context)
+            }
         }
         for item in look.marks {
             guard let presence = StudioFade.presence(at: t, start: item.start, end: item.end, still: still) else { continue }
@@ -128,6 +134,25 @@ enum StudioDraw {
         context.translateBy(x: center.x, y: center.y)
         context.scaleBy(x: scale, y: scale)
         context.translateBy(x: -center.x, y: -center.y)
+    }
+
+    /// A click as a soft grey circle round where it landed: in at once, a
+    /// little smaller while pressed, then let go and gone, grey enough to
+    /// show on light pages and dark.
+    private static func drawPress(at center: CGPoint, after elapsed: Double, unit: CGFloat, in context: CGContext) {
+        let p = min(1, max(0, elapsed / StudioFade.ripple))
+        // Pressed in for the first fifth, back out, then fading.
+        let size = p < 0.2 ? 1 - 0.15 * (p / 0.2) : 0.85 + 0.15 * StudioFade.easeOut((p - 0.2) / 0.8)
+        let shown = CGFloat(p < 0.5 ? 1 : 1 - StudioFade.easeOut((p - 0.5) / 0.5))
+        let across = unit * 0.05 * CGFloat(size)
+        let disc = CGRect(x: center.x - across / 2, y: center.y - across / 2, width: across, height: across)
+        context.saveGState()
+        context.setFillColor(CGColor(gray: 0.45, alpha: 0.3 * shown))
+        context.fillEllipse(in: disc)
+        context.setStrokeColor(CGColor(gray: 1, alpha: 0.75 * shown))
+        context.setLineWidth(max(1, unit * 0.0018))
+        context.strokeEllipse(in: disc.insetBy(dx: 0.5, dy: 0.5))
+        context.restoreGState()
     }
 
     /// A click's ring: white, with a soft dark edge, so it shows on light

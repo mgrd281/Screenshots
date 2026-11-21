@@ -275,10 +275,12 @@ keeps both tracks, and a note says so.
 
 Once a recording hangs, it opens in Studio, or later with Edit › Edit in
 Studio… in its menu. It plays as it will be saved: the camera comes closer
-where you clicked and typed, follows the pointer there as a camera operator
-would, moving only when it nears the edge, and goes back out after. Nothing
-to set up: the zooms are made from what you did while recording. A ring
-spreads at each click, so viewers see where it went.
+where you clicked and typed, follows the pointer there, keeping it near the
+middle as a product video does, and goes back out after. Nothing to set up:
+the zooms are made from what you did while recording. Follows the pointer,
+under Zoom, chooses Closely or Loosely, which moves only when the pointer
+nears the edge. A ring spreads at each click, so viewers see where it
+went; Each click, under Draw, makes it a soft circle instead.
 
 The inspector beside it has five pages, as tabs across its top: Edit
 (zooms, cut and speed), Draw, Captions, Appearance (size and background)

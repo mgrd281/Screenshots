@@ -2108,3 +2108,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "コピーしたい文字の上をドラッグするか、ウインドウをクリックします。Return で画面全体を読み取り、Escape でキャンセルします。";
 "No text found here." = "ここにテキストは見つかりませんでした。";
 "Copied: %@" = "コピーしました：%@";
+"Follows the pointer" = "ポインタを追う";
+"Closely" = "ぴったり";
+"Loosely" = "ゆったり";
+"The pointer stays near the middle while zoomed in, as in a product video." = "ズーム中はポインタが中央付近にとどまります。製品紹介ビデオのように。";
+"The camera stays still until the pointer nears the edge." = "ポインタが端に近づくまでカメラは動きません。";
+"Each click" = "クリックの表示";
+"Ring" = "リング";
+"A soft circle where each click landed, pressed in and let go." = "クリックした場所にやわらかな円。押されて離れます。";

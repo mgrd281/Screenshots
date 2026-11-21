@@ -1482,13 +1482,19 @@ apps.
     saved video (`StudioFraming`), which Background… gives a photo. Marks
     and click rings stay inside the recording's corners.
   - **In the video**: the camera eases in and out of each zoom on a spring
-    with no overshoot and follows the pointer only once it nears the edge
-    (`StudioCamera`). Marks are drawn in over 0.35 s on an ease-out, an
+    with no overshoot and follows the pointer (`StudioCamera`): Closely,
+    as it begins, keeps the pointer within 5% of the view's middle on a
+    0.5 s spring, as a product video films it; Loosely keeps still until
+    the pointer leaves the middle half, on a 0.75 s spring (Follows the
+    pointer, segmented, in Zoom). Marks are drawn in over 0.35 s on an ease-out, an
     arrow from its tail to its tip, a step or words growing from 0.6, a box
     or a circle from 0.92, and fade over 0.25 s before they go; their size
     stays the same as the camera comes closer, and their place stays on
     what they point at. A click ring (`studio-click-ring`) is white with a
-    dark edge, so it shows on light and dark pages. The video is sixty
+    dark edge, so it shows on light and dark pages; or, chosen under Each
+    click (Ring, Circle), a soft circle 5% of the unit across, grey 45% at
+    30% with a white edge at 75%, pressed to 85% in the first fifth of
+    0.45 s, let go, and faded over the second half. The video is sixty
     frames a second, at the recording's size or the one chosen, by the
     shorter side (2160, 1080 or 720), never over 4K and even on both sides.
 - **Convert to SVG** (`VectorEditor.swift`, `VectorCanvas.swift`) is Hide

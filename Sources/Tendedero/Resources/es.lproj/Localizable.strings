@@ -2108,3 +2108,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "Arrastra sobre las palabras que quieras copiar o haz clic en una ventana. Retorno lee toda la pantalla, Escape cancela.";
 "No text found here." = "No se encontró texto aquí.";
 "Copied: %@" = "Copiado: %@";
+"Follows the pointer" = "Sigue al puntero";
+"Closely" = "De cerca";
+"Loosely" = "Con calma";
+"The pointer stays near the middle while zoomed in, as in a product video." = "El puntero se queda cerca del centro al hacer zoom, como en un vídeo de producto.";
+"The camera stays still until the pointer nears the edge." = "La cámara se queda quieta hasta que el puntero se acerca al borde.";
+"Each click" = "Cada clic";
+"Ring" = "Anillo";
+"A soft circle where each click landed, pressed in and let go." = "Un círculo suave donde cae cada clic, que se pulsa y se suelta.";

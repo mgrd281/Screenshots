@@ -218,6 +218,32 @@ struct StudioCamera: Sendable {
     /// before the camera follows.
     static let calm = 0.5
 
+    /// How the camera keeps up with the pointer while zoomed in.
+    enum Follow: String, Codable, CaseIterable, Sendable {
+        /// Still while the pointer moves about the middle; it follows only
+        /// once the pointer nears the edge.
+        case loosely
+        /// The pointer kept near the middle all the time, as a product video
+        /// films it, on a quicker spring.
+        case closely
+
+        /// The share of the view about its middle the pointer moves in freely.
+        var calm: Double {
+            switch self {
+            case .loosely: StudioCamera.calm
+            case .closely: 0.1
+            }
+        }
+
+        /// The pan's spring response, in seconds.
+        var response: Double {
+            switch self {
+            case .loosely: StudioCamera.panResponse
+            case .closely: 0.5
+            }
+        }
+    }
+
     let frames: [Frame]
 
     /// Without zooms, the whole recording all through.
@@ -227,7 +253,7 @@ struct StudioCamera: Sendable {
         self.frames = frames.isEmpty ? [Frame(x: 0.5, y: 0.5, scale: 1)] : frames
     }
 
-    init(zooms: [StudioZoom], events: StudioEvents?, duration: Double) {
+    init(zooms: [StudioZoom], events: StudioEvents?, duration: Double, follow: Follow = .loosely) {
         let sorted = zooms.sorted { $0.start < $1.start }
         guard duration > 0, !sorted.isEmpty else {
             self.init(frames: [])
@@ -242,7 +268,7 @@ struct StudioCamera: Sendable {
         var focus = CGPoint(x: 0.5, y: 0.5)
         var current: UUID?
         let zoomSpring = 2 * Double.pi / Self.zoomResponse
-        let panSpring = 2 * Double.pi / Self.panResponse
+        let panSpring = 2 * Double.pi / follow.response
         var index = 0
         for i in 0..<count {
             let t = Double(i) * dt
@@ -262,7 +288,7 @@ struct StudioCamera: Sendable {
                         let arrive = min(zoom.start + StudioAutoZoom.lead, zoom.start + zoom.duration / 2)
                         focus = Self.inside(events?.pointer(at: arrive)) ?? focus
                     } else if let seen = Self.inside(events?.pointer(at: t + Self.lookAhead)) {
-                        let calm = half * Self.calm
+                        let calm = half * follow.calm
                         if seen.x > focus.x + calm { focus.x = seen.x - calm }
                         if seen.x < focus.x - calm { focus.x = seen.x + calm }
                         if seen.y > focus.y + calm { focus.y = seen.y - calm }

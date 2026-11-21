@@ -2108,3 +2108,11 @@
 "Drag over the words to copy, or click a window. Return reads the whole screen, Escape cancels." = "اسحب فوق الكلمات لنسخها، أو انقر نافذة. Return يقرأ الشاشة كلها، وEscape يلغي.";
 "No text found here." = "لم يُعثر على نص هنا.";
 "Copied: %@" = "نُسخ: %@";
+"Follows the pointer" = "يتابع المؤشر";
+"Closely" = "عن قرب";
+"Loosely" = "بهدوء";
+"The pointer stays near the middle while zoomed in, as in a product video." = "يبقى المؤشر قرب الوسط أثناء التقريب، كما في فيديو عرض منتج.";
+"The camera stays still until the pointer nears the edge." = "تبقى الكاميرا ثابتة حتى يقترب المؤشر من الحافة.";
+"Each click" = "كل نقرة";
+"Ring" = "حلقة";
+"A soft circle where each click landed, pressed in and let go." = "دائرة ناعمة حيث وقعت كل نقرة، تنضغط ثم تُفلت.";
