@@ -56,6 +56,9 @@ struct PageWalk<Picture> {
     /// the first look again at each view, so a page with a video playing is
     /// not waited for at every view.
     var patience: UInt64 = 12_000_000_000
+    /// How long a page that did not move is given before the scroll down is
+    /// tried once more: a feed may be loading more at its end.
+    var more: UInt64 = 2_000_000_000
     /// A page longer than this many points is cut there, like a feed that
     /// never ends.
     var maxLength = 100_000
@@ -83,6 +86,11 @@ struct PageWalk<Picture> {
 
     private var freshRows: Int { Int((Double(fresh) * scale).rounded()) }
 
+    /// A view as the walk keeps it: what it shows, its rows, and for each
+    /// row, as bits, the columns that changed by themselves while it was
+    /// taken, like a video or a button that pulses.
+    typealias View = (picture: Picture, rows: PageStitch.Rows, restless: [UInt64])
+
     /// Down the page from its top, handing out its strips on the way, then
     /// back to the top. Also how many rows the page moved in all.
     @MainActor
@@ -90,9 +98,10 @@ struct PageWalk<Picture> {
         var waited: UInt64 = 0
         // The window once it is still, or as it is once it has been given
         // long enough: a picture that loads or a card that fades in has come.
-        func look() async -> (picture: Picture, rows: PageStitch.Rows)? {
+        func look() async -> View? {
             await surface.wait(settle)
             guard var view = await surface.shot() else { return nil }
+            var restless = [UInt64](repeating: 0, count: view.rows.count)
             for round in 0..<4 {
                 // The first look again is always taken; more only while
                 // there is patience left.
@@ -101,12 +110,15 @@ struct PageWalk<Picture> {
                     waited += calm
                 }
                 await surface.wait(calm)
-                guard let again = await surface.shot() else { return view }
+                guard let again = await surface.shot() else { break }
                 let still = Self.still(view.rows, again.rows)
+                for (r, bits) in Self.restless(view.rows, again.rows).enumerated() where r < restless.count {
+                    restless[r] |= bits
+                }
                 view = again
                 if still { break }
             }
-            return view
+            return (view.picture, view.rows, restless)
         }
 
         // From the top of the page: up, until the view stops changing.
@@ -132,6 +144,9 @@ struct PageWalk<Picture> {
         var toolbar: Int?
         var bar: Int { toolbar ?? 0 }
         var end = End.bottom
+        // Whether the scroll down from this view was tried once more, after
+        // it did not move the page.
+        var tried = false
         while true {
             if surface.stopAsked() {
                 end = .stopped
@@ -151,28 +166,29 @@ struct PageWalk<Picture> {
                 break
             }
             let expected = Int(((keys ? windowHeight * 0.85 : Double(step)) * scale).rounded())
-            var found = match(current.rows, next.rows, expected: expected, keys: keys)
-            // Whether the scroll moved the page at all, as told by a view
-            // one step up.
-            var stayed = false
+            var found = match(current, next, expected: expected, keys: keys)
             if found == nil {
                 // Still loading, or moving: once more, a little later, at
                 // the same place.
                 if let again = await look() {
                     next = again
-                    found = match(current.rows, next.rows, expected: expected, keys: keys)
+                    found = match(current, next, expected: expected, keys: keys)
                 }
             }
-            if found == nil, !keys {
+            // Whether the scroll left the page where it was, with only a
+            // dot that pulses or the like changing on it: then a view above
+            // it would fit by chance, so none is looked for.
+            var stayed = found == nil && !keys && Self.sat(current, next)
+            if found == nil, !keys, !stayed {
                 // The view before may have changed since it was taken, like
                 // a picture that has loaded: the same place again, now, if
                 // what it shared with the one before it is as it was.
                 await surface.scroll(step)
                 let again = await look()
-                if let again, Self.samePlace(current.rows, again.rows, through: max(start, bar)) {
+                if let again, Self.samePlace(current.rows, again.rows, through: max(start, bar), below: bar) {
                     await surface.scroll(-step)
                     if let after = await look(),
-                       let fit = match(again.rows, after.rows, expected: expected, keys: false) {
+                       let fit = match(again, after, expected: expected, keys: false) {
                         current = again
                         next = after
                         found = fit
@@ -189,14 +205,21 @@ struct PageWalk<Picture> {
                     await surface.scroll(-step)
                 }
             }
-            if found == nil, !keys {
+            if found == nil, stayed, !tried {
+                // A feed may be loading more: the scroll down once more, a
+                // little later, from the same place.
+                tried = true
+                await surface.wait(more)
+                continue
+            }
+            if found == nil, !keys, !stayed {
                 // Half way back, so both views share more to go by.
                 await surface.scroll(step / 2)
                 let halfway = Int((Double(step - step / 2) * scale).rounded())
                 // Last, a longer move than asked, strictly: a header above
                 // the page shrank, or a script added to the scroll.
                 if let half = await look(),
-                   let fit = match(current.rows, half.rows, expected: halfway, keys: keys)
+                   let fit = match(current, half, expected: halfway, keys: keys)
                        ?? PageStitch.step(from: current.rows, to: half.rows, expected: halfway, fresh: freshRows,
                                           telling: 8) {
                     next = half
@@ -233,6 +256,7 @@ struct PageWalk<Picture> {
             step = self.step(for: Double(current.rows.count - found.top - found.bottom) / scale)
             current = next
             views += 1
+            tried = false
         }
         // The last view down to its foot.
         await surface.strip(current.picture, start..<current.rows.count)
@@ -252,32 +276,142 @@ struct PageWalk<Picture> {
     /// mostly moves a page by no more than asked, so longer moves are tried
     /// here only a little past it (the walk tries them strictly once, last);
     /// a key's move is only roughly known, and so are its fresh rows.
-    private func match(_ current: PageStitch.Rows, _ next: PageStitch.Rows, expected: Int,
-                       keys: Bool) -> PageStitch.Step? {
+    private func match(_ seen: View, _ following: View, expected: Int, keys: Bool) -> PageStitch.Step? {
+        let current = seen.rows, next = following.rows
         let fresh = keys ? 0 : freshRows
         let farthest = keys ? nil : expected + 16
         if let step = PageStitch.step(from: current, to: next, expected: expected, fresh: fresh, farthest: farthest,
                                       telling: keys ? 0 : 8) {
             return step
         }
+        // A short move, like the last one to the page's foot, may be told
+        // only by what came into view last: strictly, with those rows too,
+        // when enough of them tell where they are.
+        if !keys, fresh > 0, let step = PageStitch.step(from: current, to: next, expected: expected, fresh: 0,
+                                                        farthest: farthest, telling: 8),
+           Self.told(current, next, at: step) >= 8 {
+            return step
+        }
         // A plain stretch, like a tall band of one colour, lines up at any
         // move with nothing to tell them apart: the one the wheel was asked
-        // for, when nothing on the page goes against it.
+        // for, when nothing on the page goes against it. Not when the page
+        // sat still with something changing by itself on it, nor when what
+        // came into view last says otherwise, as when the page moved less
+        // or more than asked.
         if !keys, let plain = PageStitch.step(from: current, to: next, expected: expected, fresh: fresh,
                                               farthest: expected),
-           plain.shift == expected {
+           plain.shift == expected,
+           !Self.stillBut(current, next, restless: (seen.restless, following.restless),
+                          rows: plain.top..<max(plain.top, min(current.count, next.count) - plain.bottom)),
+           Self.freshAgree(current, next, at: plain, fresh: fresh,
+                           restless: (seen.restless, following.restless)) {
             return plain
         }
         return PageStitch.follow(from: current, to: next, expected: expected, fresh: fresh, farthest: farthest)
     }
 
+    /// Whether the page sat where it was between two views, as far as
+    /// they tell: all of it as it was but what was seen changing by itself
+    /// (`stillBut`), or nine rows in ten (`alikeInPlace`).
+    static func sat(_ a: View, _ b: View) -> Bool {
+        stillBut(a.rows, b.rows, restless: (a.restless, b.restless)) || alikeInPlace(a.rows, b.rows)
+    }
+
+    /// Nine rows in ten as they were, where each of the others shows
+    /// something in both views, as a dot that pulses does. A row that went
+    /// from plain to showing something, or back, tells that the page moved,
+    /// as two views of a page with much white between its lines may be
+    /// alike after a move.
+    static func alikeInPlace(_ a: PageStitch.Rows, _ b: PageStitch.Rows) -> Bool {
+        guard PageStitch.alike(a, b) else { return false }
+        func shows(_ row: [UInt8]) -> Bool {
+            guard let low = row.min(), let high = row.max() else { return false }
+            return Int(high) - Int(low) > 12
+        }
+        return zip(a, b).allSatisfy { x, y in PageStitch.same(x, y) || (shows(x) && shows(y)) }
+    }
+
+    /// How many rows of `current` line up with `next` at this move and
+    /// tell where they are: something shows on them, and they are not the
+    /// same as both rows beside them, as the rows of a plain button that
+    /// stays at the window's foot are, which line up at many moves.
+    static func told(_ current: PageStitch.Rows, _ next: PageStitch.Rows, at step: PageStitch.Step) -> Int {
+        let height = min(current.count, next.count)
+        let rows = (step.top + step.shift)..<max(step.top + step.shift, height - step.bottom)
+        return rows.filter { r in
+            let row = current[r]
+            guard let low = row.min(), let high = row.max(), Int(high) - Int(low) > 12,
+                  PageStitch.same(row, next[r - step.shift]) else { return false }
+            return (r > 0 && !PageStitch.same(row, current[r - 1]))
+                || (r + 1 < height && !PageStitch.same(row, current[r + 1]))
+        }.count
+    }
+
+    /// Whether two views, or these rows of them, are as they were with no
+    /// move at all, but for what was seen changing by itself (`restless`,
+    /// as `look` keeps them) and a row in fifty, like a blinking caret.
+    /// Not when most of them change by themselves: then nothing tells.
+    static func stillBut(_ a: PageStitch.Rows, _ b: PageStitch.Rows, restless: ([UInt64], [UInt64]),
+                         rows: Range<Int>? = nil) -> Bool {
+        let height = min(a.count, b.count)
+        let rows = (rows ?? 0..<height).clamped(to: 0..<height)
+        guard !rows.isEmpty else { return false }
+        func bits(_ masks: [UInt64], _ r: Int) -> UInt64 { masks.indices.contains(r) ? masks[r] : 0 }
+        let changing = rows.filter { bits(restless.0, $0) | bits(restless.1, $0) != 0 }.count
+        guard changing * 3 <= rows.count else { return false }
+        let differing = rows.filter { r in
+            guard a[r].count == b[r].count else { return true }
+            let changing = bits(restless.0, r) | bits(restless.1, r)
+            return a[r].indices.contains { c in
+                !(c < 64 && changing & (1 << UInt64(c)) != 0) && abs(Int(a[r][c]) - Int(b[r][c])) > 6
+            }
+        }.count
+        return differing <= max(2, rows.count / 50)
+    }
+
+    /// Whether the rows left out of matching at the foot of `current`, the
+    /// ones that came into view last, line up with `next` at this move too,
+    /// but for what stayed where it was, like a chat button, and what was
+    /// seen changing by itself, like a dot that pulses (`restless`, as
+    /// `look` keeps them): at a move shorter or longer than asked, a line
+    /// there would not.
+    static func freshAgree(_ current: PageStitch.Rows, _ next: PageStitch.Rows, at step: PageStitch.Step,
+                           fresh: Int, restless: ([UInt64], [UInt64]) = ([], [])) -> Bool {
+        let height = min(current.count, next.count)
+        let lower = height - step.bottom
+        let left = PageStitch.leftOut(fresh, middle: height - step.top - step.bottom, expected: step.shift)
+        let rows = min(max(step.top + step.shift, lower - left), lower)..<lower
+        func bits(_ masks: [UInt64], _ r: Int) -> UInt64 { masks.indices.contains(r) ? masks[r] : 0 }
+        return rows.allSatisfy { r in
+            let now = current[r], moved = next[r - step.shift], stayed = next[r]
+            guard now.count == moved.count, now.count == stayed.count else { return false }
+            let changing = bits(restless.0, r) | bits(restless.1, r) | bits(restless.1, r - step.shift)
+            return now.indices.allSatisfy { c in
+                (c < 64 && changing & (1 << UInt64(c)) != 0)
+                    || abs(Int(now[c]) - Int(moved[c])) <= 6 || abs(Int(now[c]) - Int(stayed[c])) <= 6
+            }
+        }
+    }
+
+    /// For each row of two views a moment apart, as bits, the columns that
+    /// changed: what changes by itself, when the page did not move.
+    static func restless(_ a: PageStitch.Rows, _ b: PageStitch.Rows) -> [UInt64] {
+        guard a.count == b.count else { return [UInt64](repeating: 0, count: a.count) }
+        return zip(a, b).map { x, y in
+            var bits: UInt64 = 0
+            for c in 0..<min(x.count, y.count, 64) where abs(Int(x[c]) - Int(y[c])) > 6 { bits |= 1 << UInt64(c) }
+            return bits
+        }
+    }
+
     /// Whether the page stayed where it was between two views, though
     /// something on it changed by itself, like a video or a slideshow:
-    /// hardly anything changed, or, under the toolbar, at least half of the
-    /// rows are as they were and many of them show something. A plain
-    /// stretch looks the same after a move, so it does not count.
+    /// hardly anything changed (`alikeInPlace`), or, under the toolbar, at
+    /// least half of the rows are as they were and many of them show
+    /// something. A plain stretch looks the same after a move, so it does
+    /// not count.
     static func unmoved(_ a: PageStitch.Rows, _ b: PageStitch.Rows, below bar: Int) -> Bool {
-        if PageStitch.alike(a, b) { return true }
+        if alikeInPlace(a, b) { return true }
         guard a.count == b.count, !a.isEmpty else { return false }
         let rows = min(max(bar, 0), a.count - 1)..<a.count
         var kept = 0, shown = 0
@@ -292,11 +426,18 @@ struct PageWalk<Picture> {
     /// `through`, the toolbar and what `view` shared with the view before
     /// it, are as they were, nine in ten of them, or a third of the window
     /// for the first view. Below that, a picture may have loaded since.
-    static func samePlace(_ view: PageStitch.Rows, _ again: PageStitch.Rows, through: Int) -> Bool {
+    /// Rows with nothing on them look alike in any place, so enough of
+    /// them under the toolbar, below `bar`, must show something.
+    static func samePlace(_ view: PageStitch.Rows, _ again: PageStitch.Rows, through: Int,
+                          below bar: Int = 0) -> Bool {
         guard view.count == again.count, !view.isEmpty else { return false }
         let rows = 0..<min(view.count, max(through, view.count / 3))
         let differing = rows.filter { !PageStitch.same(view[$0], again[$0]) }.count
-        return differing * 10 <= rows.count
+        let shown = rows.filter { r in
+            guard r >= bar, let low = view[r].min(), let high = view[r].max() else { return false }
+            return Int(high) - Int(low) > 12
+        }.count
+        return differing * 10 <= rows.count && shown >= 16
     }
 
     /// Two views a moment apart show the page still: at most one row in

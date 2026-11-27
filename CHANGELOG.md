@@ -10,7 +10,9 @@ keeps a download of each version.
   still after each scroll, so pictures that load late and cards that fade
   in are there, and something that changes by itself, a video or a column
   that sticks, no longer ends it early, nor does a tall band of one colour
-  or a header that shrinks. A chat button at the window's foot
+  or a header that shrinks, and a dot that pulses at the page's end does
+  not keep it scrolling there. A feed that loads more as it reaches its
+  end is followed. A chat button at the window's foot
   shows once, at the end. A page too long for one picture goes on in the
   next, one below the other; a note says when a page had to be cut. Press
   ⌃⌥P again or click the note to stop early.

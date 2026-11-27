@@ -345,6 +345,8 @@ enum Notice {
     private static var badge: CaptureBadge?
     private static var hide: DispatchWorkItem?
     private static var current: UUID?
+    /// The note shown last, whether it still shows or not.
+    private static var last: UUID?
 
     /// Without a screen, on the one with the pointer. Returns which note it
     /// is, so the work that showed it ends only its own.
@@ -362,6 +364,7 @@ enum Notice {
         badge?.orderOut(nil)
         let id = UUID()
         current = id
+        last = id
         let kind: CaptureBadgeModel.Kind = working ? .working(text) : (done ? .done(text) : .message(text))
         let badge = CaptureBadge(kind: kind, label: text) {
             onClick?()
@@ -398,7 +401,7 @@ enum Notice {
     }
 
     /// Notes one after the other, each for this long, while no other note
-    /// takes the place of the one before.
+    /// comes after the one before, even one already gone.
     static func show(_ texts: [String], lasting seconds: TimeInterval) {
         guard let first = texts.first else { return }
         let id = show(first, lasting: seconds)
@@ -406,15 +409,28 @@ enum Notice {
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds + 0.2) {
             MainActor.assumeIsolated {
                 // Put away by its time or by a click, with nothing since.
-                guard Notice.current == nil || Notice.current == id else { return }
+                guard Notice.last == id else { return }
                 Notice.show(Array(texts.dropFirst()), lasting: seconds)
             }
         }
     }
 
-    /// Whether a note other than this one shows now.
-    static func showsOther(than id: UUID) -> Bool {
-        current != nil && current != id
+    /// Notes one after the other, as above, once the note that shows now
+    /// has gone, so neither hides the other. They give way to a note that
+    /// comes meanwhile, like that of a capture started since.
+    static func showAfterOthers(_ texts: [String], lasting seconds: TimeInterval) {
+        show(texts, after: last, lasting: seconds)
+    }
+
+    private static func show(_ texts: [String], after since: UUID?, lasting seconds: TimeInterval) {
+        guard !texts.isEmpty, last == since else { return }
+        guard current == nil else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                MainActor.assumeIsolated { Notice.show(texts, after: since, lasting: seconds) }
+            }
+            return
+        }
+        show(texts, lasting: seconds)
     }
 
     /// Puts the note away, unless another one has taken its place.

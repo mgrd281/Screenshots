@@ -184,11 +184,6 @@ enum PageStitch {
         func alike(_ a: [UInt8], _ b: [UInt8]) -> Bool {
             moving.allSatisfy { abs(Int(a[$0]) - Int(b[$0])) <= 6 }
         }
-        // Two rows line up when at least half of what moved does: the rest
-        // may be a column that has just stopped sticking, or a button.
-        func lineUp(_ a: [UInt8], _ b: [UInt8]) -> Bool {
-            moving.reduce(0) { $0 + (abs(Int(a[$1]) - Int(b[$1])) <= 6 ? 1 : 0) } * 2 >= moving.count
-        }
         // A row tells where it is when something runs across it and it is
         // not the same as a row beside it, as the rows of a plain box are.
         func telling(_ rows: Rows) -> [Bool] {
@@ -218,8 +213,24 @@ enum PageStitch {
                 let p = top + shift + i, n = top + i
                 guard before[p] || after[n] else { continue }
                 told += 1
-                if lineUp(previous[p], next[n]) { hits += 1 }
-                for (k, c) in moving.enumerated() where abs(Int(previous[p][c]) - Int(next[n][c])) <= 6 { agree[k] += 1 }
+                // Two rows line up when at least half of what moved does: the
+                // rest may be a column that has just stopped sticking, or a
+                // button. Each row is read once, for both counts.
+                let lined = previous[p].withUnsafeBufferPointer { a in
+                    next[n].withUnsafeBufferPointer { b in
+                        agree.withUnsafeMutableBufferPointer { agree in
+                            var lined = 0
+                            for k in 0..<moving.count {
+                                let c = moving[k]
+                                let hit = abs(Int(a[c]) - Int(b[c])) <= 6 ? 1 : 0
+                                agree[k] &+= hit
+                                lined &+= hit
+                            }
+                            return lined
+                        }
+                    }
+                }
+                if lined * 2 >= moving.count { hits += 1 }
                 // Six rows in ten can no longer line up.
                 if (told - hits) * 10 > overlap * 4 { break }
             }

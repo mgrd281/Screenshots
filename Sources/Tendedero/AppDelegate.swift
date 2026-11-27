@@ -829,8 +829,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// copied, ready to send. Two minutes at most are waited for. A picture
     /// of it that left the line meanwhile, sent or let go by a full line,
     /// leaves the PDF without it, and a note says so. Then what the capture
-    /// had to say, like that the page was cut. A note that came since, like
-    /// that of another capture running now, is not hidden for these.
+    /// had to say, like that the page was cut. A note that shows then is
+    /// not hidden for these: they follow once it has gone. When the PDF
+    /// could not be made, that is said first.
     private func makePagePDF(_ urls: [URL], saying said: String?, since: Date = Date(), note: UUID? = nil) {
         let note = note ?? Notice.show(L("Making the PDF…"), working: true)
         // Every picture hung before this was first called.
@@ -851,13 +852,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             if let said { notes.append(said) }
         }
         let told = notes
-        let finish = {
-            let other = Notice.showsOther(than: note)
+        let finish = { (made: Bool) in
             Notice.end(note)
-            if !other { Notice.show(told, lasting: 6) }
+            if made || hung.isEmpty {
+                Notice.showAfterOthers(told, lasting: 6)
+            } else {
+                // No PDF: that first, then what the capture had to say.
+                Notice.showAfterOthers([L("Could not make the PDF.")] + (said.map { [$0] } ?? []), lasting: 6)
+            }
         }
         if hung.isEmpty {
-            finish()
+            finish(false)
         } else {
             line.makePDF(of: hung, then: finish)
         }

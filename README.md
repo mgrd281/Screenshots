@@ -906,8 +906,9 @@ still, so pictures that load as they come into view and cards that fade in
 are there. What changes by itself, like a picture that loaded late, a video,
 or a column that sticks beside the one that scrolls, does not end it, nor
 does a tall band of one colour or a header that shrinks as the page
-scrolls, and a chat button at the window's foot shows once, at the end, not
-at every seam. A page too long for one picture, 40,000 pixels, goes on in a second
+scrolls, and a dot that pulses at the page's end does not keep it scrolling
+there. A feed that loads more as it reaches its end is followed, and a chat
+button at the window's foot shows once, at the end, not at every seam. A page too long for one picture, 40,000 pixels, goes on in a second
 picture, and a third, one below the other. Press ⌃⌥P again, choose Stop Capturing the
 Page, or click the note to stop early and keep what was taken. If the page
 never ends, like a feed, or keeps changing so no two views fit, a note says
@@ -921,7 +922,8 @@ the page meets the next. Its private details are covered as in every PDF
 Snapfly makes. Make PDF on any picture of a whole page does the same, with
 all its pictures. If one of them left the line before the PDF was made, sent
 or let go by a full line, a note says the PDF holds only what is still on
-it.
+it. These notes wait for one already showing, and if the PDF could not be
+made, a note says so first.
 
 <br>
 

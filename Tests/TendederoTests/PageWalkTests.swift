@@ -25,6 +25,8 @@ final class PageWalkTests: XCTestCase {
         /// Rows the page moves past the scroll asked, the first time it
         /// scrolls down: a header above it that shrank.
         var jump = 0
+        /// How much farther than asked the page moves at each scroll.
+        var gain = 1.0
         var stopAfter: Int?
         var shots = 0
         /// When each row of the page first came into view.
@@ -100,7 +102,7 @@ final class PageWalkTests: XCTestCase {
                 shot: { self.shot().map { (picture: $0, rows: $0) } },
                 scroll: { points in
                     guard self.wheelWorks else { return }
-                    var rows = points * self.scale
+                    var rows = Int((Double(points * self.scale) * self.gain).rounded())
                     if rows < 0, self.jump > 0 {
                         rows -= self.jump
                         self.jump = 0
@@ -132,6 +134,13 @@ final class PageWalkTests: XCTestCase {
         /// The toolbar, then the whole page.
         var whole: PageStitch.Rows {
             (0..<toolbar).map(Page.toolbarRow) + rows
+        }
+
+        /// Only the rows with something on them, like the lines of text:
+        /// a stretch of white between them may come out a little shorter
+        /// or taller.
+        nonisolated static func shown(_ rows: PageStitch.Rows) -> PageStitch.Rows {
+            rows.filter { ($0.max() ?? 0) - ($0.min() ?? 0) > 12 }
         }
     }
 
@@ -321,6 +330,99 @@ final class PageWalkTests: XCTestCase {
     }
 
     @MainActor
+    func testABlankEndWithSomethingMovingOnItIsStillTheBottom() async {
+        // The page ends in 1300 points of white, with a small dot that
+        // keeps changing at the same place in the window.
+        for badge in [700, 1100, 1500] {
+            let page = Page(length: 10)
+            page.rows = Page.made(3000, seed: 5) + Array(repeating: [UInt8](repeating: 250, count: PageStitch.samples),
+                                                        count: 2600)
+            page.effects.append { shown, _, page in
+                for r in (page.toolbar + badge)..<(page.toolbar + badge + 24) {
+                    for c in 40..<46 { shown[r][c] = Page.noise(page.shots, r, c) }
+                }
+            }
+            let result = await page.walk()
+            XCTAssertEqual(result.end, .bottom)
+            XCTAssertLessThanOrEqual(result.moved, page.maxOffset)
+            XCTAssertLessThan(page.clock, 20_000_000_000)
+        }
+    }
+
+    @MainActor
+    func testAWideSlideshowOnAWhiteLastScreenDoesNotKeepItGoing() async {
+        // A slideshow 100 points tall across the window, where the page ends
+        // in 1300 points of white.
+        let page = Page(length: 10)
+        page.rows = Page.made(3600, seed: 3607) + Array(repeating: [UInt8](repeating: 250, count: PageStitch.samples),
+                                                       count: 2600)
+        page.effects.append { shown, _, page in
+            for r in (page.toolbar + 640)..<(page.toolbar + 840) {
+                for c in 4..<44 { shown[r][c] = Page.noise(page.shots, r, c) }
+            }
+        }
+        let result = await page.walk()
+        XCTAssertNotEqual(result.end, .long)
+        XCTAssertLessThan(page.clock, 30_000_000_000)
+    }
+
+    @MainActor
+    func testAShortLastMoveOverWhiteIsNotTakenForAWholeOne() async {
+        // A footer line below a long white stretch: the last scroll moves
+        // the page far less than asked.
+        let page = Page(length: 10)
+        let white = [UInt8](repeating: 250, count: PageStitch.samples)
+        page.rows = Page.made(3365, seed: 9) + Array(repeating: white, count: 1500)
+            + Page.made(120, seed: 11) + Array(repeating: white, count: 60)
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertTrue(page.joined == page.whole)
+    }
+
+    @MainActor
+    func testBandsOfWhiteThatMoveALittleFartherThanAskedLoseNothing() async {
+        // A landing page: short text between tall bands of white, and a
+        // page that moves 3% farther than each scroll asks.
+        let white = [UInt8](repeating: 250, count: PageStitch.samples)
+        for seed in [1, 2, 3] as [UInt64] {
+            let page = Page(length: 10)
+            page.rows = []
+            for band in 0..<12 {
+                page.rows += Array(repeating: white, count: 600) + Page.made(200, seed: seed * 100 + UInt64(band))
+            }
+            page.gain = 1.03
+            let result = await page.walk()
+            // Every line once, in its place: nothing lost, nothing twice.
+            if result.end == .bottom {
+                XCTAssertTrue(Page.shown(page.joined) == Page.shown(page.whole), "seed \(seed)")
+            }
+        }
+    }
+
+    @MainActor
+    func testAFeedThatLoadsMoreAtItsEndIsFollowed() async {
+        // 5000 rows, then a placeholder 500 points tall that shimmers until
+        // the next 4000 rows come, 1.5 s after it came into view.
+        let page = Page(length: 5000)
+        page.rows += Array(repeating: [UInt8](repeating: 230, count: PageStitch.samples), count: 1000)
+        var loaded = false
+        page.effects.append { shown, where_, page in
+            for (r, row) in where_.enumerated() where !loaded && (row ?? 0) >= 5000 {
+                for c in 4..<44 { shown[r][c] = 200 + Page.noise(page.shots, r, c) / 8 }
+            }
+            if !loaded, let since = page.seen[5000], page.clock >= since + 1_500_000_000 {
+                loaded = true
+                page.rows = Array(page.rows.prefix(5000)) + Page.made(4000, seed: 21)
+            }
+        }
+        let result = await page.walk()
+        XCTAssertTrue(loaded)
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+    }
+
+    @MainActor
     func testAPageThatNeverEndsIsCut() async {
         let page = Page(length: 60_000)
         let result = await page.walk(maxLength: 10_000)
@@ -394,6 +496,21 @@ final class PageWalkTests: XCTestCase {
         XCTAssertEqual(result.end, .stopped)
         XCTAssertEqual(page.joined, Array(page.whole.prefix(page.joined.count)))
         XCTAssertGreaterThan(page.joined.count, page.window)
+    }
+
+    func testWhatChangesByItselfDoesNotTellAMove() {
+        let rows = Page.made(400, seed: 3)
+        var other = rows
+        for r in 100..<140 { other[r] = other[r].map { $0 < 128 ? $0 + 100 : $0 - 100 } }
+        // Rows 100 to 139 were seen changing by themselves, in every column.
+        let seen = (0..<400).map { (100..<140).contains($0) ? UInt64.max : 0 }
+        let none = [UInt64](repeating: 0, count: 400)
+        XCTAssertEqual(PageWalk<Int>.restless(rows, other), seen.map { $0 & ((1 << 48) - 1) })
+        XCTAssertTrue(PageWalk<Int>.stillBut(rows, other, restless: (seen, none)))
+        XCTAssertFalse(PageWalk<Int>.stillBut(rows, other, restless: (none, none)))
+        // When most of the window changes by itself, nothing tells.
+        let most = [UInt64](repeating: .max, count: 400)
+        XCTAssertFalse(PageWalk<Int>.stillBut(rows, other, restless: (most, none)))
     }
 
     func testTwoViewsAMomentApartAreStillDespiteACaret() {

@@ -481,19 +481,18 @@ final class Line: ObservableObject {
     }
 
     /// Capture Whole Page as PDF: the pictures of the page, top first, once
-    /// they hang. `done` is called first, once the PDF hangs or could not
-    /// be made.
-    func makePDF(of urls: [URL], then done: @escaping () -> Void) {
+    /// they hang. `done` is told whether the PDF hangs, and says so itself
+    /// when it could not be made.
+    func makePDF(of urls: [URL], then done: @escaping (Bool) -> Void) {
         let photos = urls.compactMap { url in items.first { $0.url == url && !$0.falling && $0.isImage } }
         guard !photos.isEmpty else {
-            done()
-            Notice.show(L("Could not make the PDF."))
+            done(false)
             return
         }
         makePDF(of: photos, then: done)
     }
 
-    private func makePDF(of photos: [Pegged], then done: (() -> Void)? = nil) {
+    private func makePDF(of photos: [Pegged], then done: ((Bool) -> Void)? = nil) {
         guard !photos.isEmpty else { return }
         // The pages are what leaves the line: private details covered, as
         // chosen in Settings, and parts hidden by hand.
@@ -511,11 +510,11 @@ final class Line: ObservableObject {
             let pdf = Collage.pdf(pages, named: name)
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
-                    done?()
                     guard let self, let pdf, let id = self.hang(pdf) else {
-                        Notice.show(L("Could not make the PDF."))
+                        if let done { done(false) } else { Notice.show(L("Could not make the PDF.")) }
                         return
                     }
+                    done?(true)
                     self.pick(id)
                 }
             }
