@@ -517,6 +517,7 @@
 "The page kept changing as it scrolled, so the picture may stop before its end." = "Die Seite hat sich beim Scrollen immer wieder verändert, darum endet das Bild vielleicht vor ihrem Ende.";
 "The page is long, so it hangs as %d pictures, one below the other." = "Die Seite ist lang, darum hängt sie als %d Bilder untereinander.";
 "Part of the page left the line first, so the PDF holds only what is still on it." = "Ein Teil der Seite hat die Leine vorher verlassen, darum enthält das PDF nur, was noch an ihr hängt.";
+"The page's pictures left the line first, so the PDF could not be made." = "Die Bilder der Seite haben die Leine vorher verlassen, darum ließ sich das PDF nicht erstellen.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Um die Seite zu scrollen, muss Snapfly für dich Tasten drücken. Erlaube es in den Systemeinstellungen und versuch es dann noch einmal.";
 
 /* iPhone */

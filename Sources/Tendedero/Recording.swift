@@ -397,6 +397,26 @@ enum Notice {
         }
     }
 
+    /// Notes one after the other, each for this long, while no other note
+    /// takes the place of the one before.
+    static func show(_ texts: [String], lasting seconds: TimeInterval) {
+        guard let first = texts.first else { return }
+        let id = show(first, lasting: seconds)
+        guard texts.count > 1 else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds + 0.2) {
+            MainActor.assumeIsolated {
+                // Put away by its time or by a click, with nothing since.
+                guard Notice.current == nil || Notice.current == id else { return }
+                Notice.show(Array(texts.dropFirst()), lasting: seconds)
+            }
+        }
+    }
+
+    /// Whether a note other than this one shows now.
+    static func showsOther(than id: UUID) -> Bool {
+        current != nil && current != id
+    }
+
     /// Puts the note away, unless another one has taken its place.
     static func end(_ id: UUID) {
         guard current == id else { return }

@@ -9,7 +9,8 @@ keeps a download of each version.
 - Capture Whole Page goes all the way down: it waits until the page is
   still after each scroll, so pictures that load late and cards that fade
   in are there, and something that changes by itself, a video or a column
-  that sticks, no longer ends it early. A chat button at the window's foot
+  that sticks, no longer ends it early, nor does a tall band of one colour
+  or a header that shrinks. A chat button at the window's foot
   shows once, at the end. A page too long for one picture goes on in the
   next, one below the other; a note says when a page had to be cut. Press
   ⌃⌥P again or click the note to stop early.

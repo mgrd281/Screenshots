@@ -118,6 +118,31 @@ final class PageStitchTests: XCTestCase {
         XCTAssertEqual(step.shift, 130)
     }
 
+    func testASparseTableIsFollowedByItsTrueMoveNotTheOneAsked() throws {
+        // A table, most cells blank, its lines 26 rows tall every 50, beside
+        // a column that stays; at the page's end the last move falls short.
+        var state: UInt64 = 1
+        func next() -> Int {
+            state = state &* 6364136223846793005 &+ 1442695040888963407
+            return Int(state >> 33)
+        }
+        var table: PageStitch.Rows = []
+        while table.count < 4000 {
+            let cells = (0..<PageStitch.samples).map { _ in next() % 100 < 30 }
+            for _ in 0..<26 { table.append(row { c in cells[c] ? 40 + next() % 150 : 250 }) }
+            for _ in 0..<24 { table.append([UInt8](repeating: 250, count: PageStitch.samples)) }
+        }
+        let column = (0..<1680).map { r in row { c in (r * 37 + c * 11) % 200 } }
+        func window(_ offset: Int) -> PageStitch.Rows {
+            (0..<1680).map { r in Array(column[r].prefix(12)) + table[offset + r].dropFirst(12) }
+        }
+        for short in [300, 500, 900] {
+            let step = try XCTUnwrap(PageStitch.follow(from: window(2000 - short), to: window(2000),
+                                                       expected: 1092, fresh: 240, farthest: 1108))
+            XCTAssertEqual(step.shift, short)
+        }
+    }
+
     func testFollowFindsNoMoveOnAPageThatChangedByItself() {
         var other: PageStitch.Rows = []
         for i in 0..<400 { other.append(row { j in (i * 53 + j * 29 + 11) % 197 }) }

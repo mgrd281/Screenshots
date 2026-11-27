@@ -517,6 +517,7 @@
 "The page kept changing as it scrolled, so the picture may stop before its end." = "スクロール中にページが変わり続けたため、画像がページの終わりより前で止まっている可能性があります。";
 "The page is long, so it hangs as %d pictures, one below the other." = "ページが長いため、%d枚の画像に分けて上から順に吊るします。";
 "Part of the page left the line first, so the PDF holds only what is still on it." = "ページの一部が先にロープを離れたため、PDFにはロープに残っている分だけが入っています。";
+"The page's pictures left the line first, so the PDF could not be made." = "ページの画像が先にロープを離れたため、PDFを作成できませんでした。";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "ページをスクロールするには、Snapflyが代わりにキーを押す必要があります。システム設定で許可してから、もう一度お試しください。";
 
 /* iPhone */

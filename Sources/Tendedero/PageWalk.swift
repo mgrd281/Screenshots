@@ -152,6 +152,9 @@ struct PageWalk<Picture> {
             }
             let expected = Int(((keys ? windowHeight * 0.85 : Double(step)) * scale).rounded())
             var found = match(current.rows, next.rows, expected: expected, keys: keys)
+            // Whether the scroll moved the page at all, as told by a view
+            // one step up.
+            var stayed = false
             if found == nil {
                 // Still loading, or moving: once more, a little later, at
                 // the same place.
@@ -165,7 +168,8 @@ struct PageWalk<Picture> {
                 // a picture that has loaded: the same place again, now, if
                 // what it shared with the one before it is as it was.
                 await surface.scroll(step)
-                if let again = await look(), Self.samePlace(current.rows, again.rows, through: max(start, bar)) {
+                let again = await look()
+                if let again, Self.samePlace(current.rows, again.rows, through: max(start, bar)) {
                     await surface.scroll(-step)
                     if let after = await look(),
                        let fit = match(again.rows, after.rows, expected: expected, keys: false) {
@@ -174,20 +178,32 @@ struct PageWalk<Picture> {
                         found = fit
                     }
                 } else {
+                    // One step up shows the page just one step above the
+                    // view before: the scroll down did not move it, as at
+                    // its end with a video playing over much of it.
+                    if let again, PageStitch.step(from: again.rows, to: current.rows, expected: expected,
+                                                  fresh: freshRows, farthest: expected + 16,
+                                                  telling: 8)?.shift == expected {
+                        stayed = true
+                    }
                     await surface.scroll(-step)
                 }
             }
             if found == nil, !keys {
                 // Half way back, so both views share more to go by.
                 await surface.scroll(step / 2)
+                let halfway = Int((Double(step - step / 2) * scale).rounded())
+                // Last, a longer move than asked, strictly: a header above
+                // the page shrank, or a script added to the scroll.
                 if let half = await look(),
-                   let fit = match(current.rows, half.rows, expected: Int((Double(step - step / 2) * scale).rounded()),
-                                   keys: keys) {
+                   let fit = match(current.rows, half.rows, expected: halfway, keys: keys)
+                       ?? PageStitch.step(from: current.rows, to: half.rows, expected: halfway, fresh: freshRows,
+                                          telling: 8) {
                     next = half
                     found = fit
                 }
             }
-            if found == nil, Self.unmoved(current.rows, next.rows, below: bar) {
+            if found == nil, stayed || Self.unmoved(current.rows, next.rows, below: bar) {
                 // Nothing else fits, and the page stayed where it was with
                 // something moving on it by itself, like a video: its bottom.
                 found = PageStitch.Step(top: 0, bottom: 0, shift: 0)
@@ -233,8 +249,9 @@ struct PageWalk<Picture> {
 
     /// How `next` follows `current`: strictly first, as a chat is read,
     /// then leaving out what stayed put or changed by itself. The wheel
-    /// moves a page by no more than asked, so no longer move is tried for
-    /// it; a key's move is only roughly known, and so are its fresh rows.
+    /// mostly moves a page by no more than asked, so longer moves are tried
+    /// here only a little past it (the walk tries them strictly once, last);
+    /// a key's move is only roughly known, and so are its fresh rows.
     private func match(_ current: PageStitch.Rows, _ next: PageStitch.Rows, expected: Int,
                        keys: Bool) -> PageStitch.Step? {
         let fresh = keys ? 0 : freshRows
@@ -242,6 +259,14 @@ struct PageWalk<Picture> {
         if let step = PageStitch.step(from: current, to: next, expected: expected, fresh: fresh, farthest: farthest,
                                       telling: keys ? 0 : 8) {
             return step
+        }
+        // A plain stretch, like a tall band of one colour, lines up at any
+        // move with nothing to tell them apart: the one the wheel was asked
+        // for, when nothing on the page goes against it.
+        if !keys, let plain = PageStitch.step(from: current, to: next, expected: expected, fresh: fresh,
+                                              farthest: expected),
+           plain.shift == expected {
+            return plain
         }
         return PageStitch.follow(from: current, to: next, expected: expected, fresh: fresh, farthest: farthest)
     }

@@ -517,6 +517,7 @@
 "The page kept changing as it scrolled, so the picture may stop before its end." = "La page n’a cessé de changer pendant le défilement, l’image peut donc s’arrêter avant sa fin.";
 "The page is long, so it hangs as %d pictures, one below the other." = "La page est longue, elle est donc accrochée en %d images, l’une sous l’autre.";
 "Part of the page left the line first, so the PDF holds only what is still on it." = "Une partie de la page a quitté la corde avant, le PDF ne contient donc que ce qui y est encore.";
+"The page's pictures left the line first, so the PDF could not be made." = "Les images de la page ont quitté la corde avant, le PDF n’a donc pas pu être créé.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Pour faire défiler la page, Snapfly doit appuyer sur des touches pour toi. Autorise-le dans Réglages Système, puis réessaie.";
 
 /* iPhone */

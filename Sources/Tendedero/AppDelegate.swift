@@ -829,7 +829,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// copied, ready to send. Two minutes at most are waited for. A picture
     /// of it that left the line meanwhile, sent or let go by a full line,
     /// leaves the PDF without it, and a note says so. Then what the capture
-    /// had to say, like that the page was cut.
+    /// had to say, like that the page was cut. A note that came since, like
+    /// that of another capture running now, is not hidden for these.
     private func makePagePDF(_ urls: [URL], saying said: String?, since: Date = Date(), note: UUID? = nil) {
         let note = note ?? Notice.show(L("Making the PDF…"), working: true)
         // Every picture hung before this was first called.
@@ -840,15 +841,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             return
         }
-        let missing = hung.count < urls.count
-        line.makePDF(of: hung) {
-            Notice.end(note)
-            if missing, !hung.isEmpty {
-                Notice.show(L("Part of the page left the line first, so the PDF holds only what is still on it."),
-                            lasting: 6)
-            } else if let said {
-                Notice.show(said, lasting: 6)
+        var notes: [String] = []
+        if hung.isEmpty {
+            notes.append(L("The page's pictures left the line first, so the PDF could not be made."))
+        } else {
+            if hung.count < urls.count {
+                notes.append(L("Part of the page left the line first, so the PDF holds only what is still on it."))
             }
+            if let said { notes.append(said) }
+        }
+        let told = notes
+        let finish = {
+            let other = Notice.showsOther(than: note)
+            Notice.end(note)
+            if !other { Notice.show(told, lasting: 6) }
+        }
+        if hung.isEmpty {
+            finish()
+        } else {
+            line.makePDF(of: hung, then: finish)
         }
     }
 

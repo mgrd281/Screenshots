@@ -22,6 +22,9 @@ final class PageWalkTests: XCTestCase {
         var offset = 0
         var clock: UInt64 = 0
         var wheelWorks = true
+        /// Rows the page moves past the scroll asked, the first time it
+        /// scrolls down: a header above it that shrank.
+        var jump = 0
         var stopAfter: Int?
         var shots = 0
         /// When each row of the page first came into view.
@@ -97,7 +100,12 @@ final class PageWalkTests: XCTestCase {
                 shot: { self.shot().map { (picture: $0, rows: $0) } },
                 scroll: { points in
                     guard self.wheelWorks else { return }
-                    self.offset = min(max(0, self.offset - points * self.scale), self.maxOffset)
+                    var rows = points * self.scale
+                    if rows < 0, self.jump > 0 {
+                        rows -= self.jump
+                        self.jump = 0
+                    }
+                    self.offset = min(max(0, self.offset - rows), self.maxOffset)
                 },
                 press: { key in
                     switch key {
@@ -273,6 +281,43 @@ final class PageWalkTests: XCTestCase {
         let result = await page.walk()
         XCTAssertEqual(result.end, .bottom)
         XCTAssertEqual(result.moved, page.maxOffset)
+    }
+
+    @MainActor
+    func testAVideoOverMostOfTheLastScreenIsStillTheBottom() async {
+        let page = Page(length: 8000)
+        // A video 500 points tall across the page, where the page ends.
+        page.effects.append { shown, where_, page in
+            for (r, row) in where_.enumerated() {
+                guard let row, row >= 6700, row < 7700 else { continue }
+                for c in 2..<46 { shown[r][c] = Page.noise(page.shots, r, c) }
+            }
+        }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+    }
+
+    @MainActor
+    func testAHeaderThatShrinksOnTheFirstScrollIsFollowed() async {
+        let page = Page(length: 12_000)
+        // 12 points more than asked, as a sticky header that shrinks.
+        page.jump = 24
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertEqual(page.joined, page.whole)
+    }
+
+    @MainActor
+    func testATallBandOfOneColourIsCrossed() async {
+        let page = Page(length: 12_000)
+        // 900 points of plain white in the middle of the page.
+        for r in 4000..<5800 { page.rows[r] = [UInt8](repeating: 250, count: PageStitch.samples) }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertEqual(page.joined, page.whole)
     }
 
     @MainActor

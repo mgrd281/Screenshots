@@ -517,6 +517,7 @@
 "The page kept changing as it scrolled, so the picture may stop before its end." = "页面在滚动时不断变化，因此图片可能在页面结束前就停止了。";
 "The page is long, so it hangs as %d pictures, one below the other." = "页面很长，因此分成 %d 张图片，从上到下挂出。";
 "Part of the page left the line first, so the PDF holds only what is still on it." = "页面的一部分先离开了晾衣绳，因此 PDF 只包含仍在晾衣绳上的内容。";
+"The page's pictures left the line first, so the PDF could not be made." = "页面的图片先离开了晾衣绳，因此无法生成 PDF。";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "要滚动页面，Snapfly 需要替你按键。请在“系统设置”中允许，然后再试一次。";
 
 /* iPhone */

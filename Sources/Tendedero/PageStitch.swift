@@ -212,17 +212,26 @@ enum PageStitch {
             let overlap = middle - shift - fresh
             guard overlap >= max(8, middle / 8), shift <= farthest ?? shift else { break }
             var told = 0, hits = 0
+            // For each moving column, the rows that line up there.
+            var agree = [Int](repeating: 0, count: moving.count)
             for i in 0..<overlap {
                 let p = top + shift + i, n = top + i
                 guard before[p] || after[n] else { continue }
                 told += 1
                 if lineUp(previous[p], next[n]) { hits += 1 }
+                for (k, c) in moving.enumerated() where abs(Int(previous[p][c]) - Int(next[n][c])) <= 6 { agree[k] += 1 }
                 // Six rows in ten can no longer line up.
                 if (told - hits) * 10 > overlap * 4 { break }
             }
             guard hits >= 16, hits * 10 >= told * 6 else { continue }
-            // Of moves that fit as well, the one asked for.
-            let score = Double(hits) / Double(told) - Double(abs(shift - expected)) / Double(middle * 100)
+            // A line of a sparse table lines up with a gap at many moves, as
+            // most of its cells are blank; at the true one, more columns
+            // line up in nearly every row.
+            let aligned = agree.filter { $0 * 20 >= told * 19 }.count
+            // Of moves that fit as well, the one where more columns line up,
+            // then the one asked for.
+            let score = Double(hits) / Double(told) + Double(aligned) / Double(moving.count) / 50
+                - Double(abs(shift - expected)) / Double(middle * 100)
             if best == nil || score > best!.score { best = (shift, score) }
         }
         return best.map { Step(top: top, bottom: bottom, shift: $0.shift) }
