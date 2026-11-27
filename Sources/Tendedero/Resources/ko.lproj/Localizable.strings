@@ -2133,3 +2133,31 @@
 "White arrow" = "흰색 화살표";
 "Dot" = "점";
 "Made automatically. Change it as you like." = "자동으로 만들어짐. 원하는 대로 바꾸세요.";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "녹화에 시간 증명이 생겼습니다. 전달하려면 해당 메뉴에서 ‘시간 증명 저장…’을 선택하세요.";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "녹화의 시간 증명을 받을 수 없습니다. 다시 시도하려면 해당 메뉴에서 ‘시간 증명 저장…’을 선택하세요.";
+"Getting the proof of time…" = "시간 증명을 받는 중…";
+"Could not get a proof of time. Check the internet connection and try again." = "시간 증명을 받을 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요.";
+"%@ – proof of time" = "%@ – 시간 증명";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "파일, 서명된 타임스탬프, 이를 설명하는 페이지가 담긴 폴더로, 변호사나 법원에 전달할 수 있습니다.";
+"Proof of Time" = "시간 증명";
+"Saving the proof of time…" = "시간 증명 저장 중…";
+"Could not save the proof of time." = "시간 증명을 저장할 수 없습니다.";
+"File: %@" = "파일: %@";
+"Signed time: %@" = "서명된 시간: %@";
+"Accuracy: ± %@ s" = "정확도: ± %@초";
+"Time stamping authority: %@" = "타임스탬프 기관: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "EU eIDAS 규정(제41조)에 따른 적격 전자 타임스탬프입니다.";
+"A time stamp under RFC 3161, though not a qualified one." = "RFC 3161에 따른 타임스탬프이지만 적격 타임스탬프는 아닙니다.";
+"Serial number: %@" = "일련번호: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "녹화 시작: %@, PTB 원자시계 기준, Snapfly가 읽은 시간(서명되지 않음).";
+"Recording began: %@, by the Mac’s clock (not signed)." = "녹화 시작: %@, Mac 시계 기준(서명되지 않음).";
+"Length: %@" = "길이: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "증명하는 것: 바로 이 파일이 바이트 하나까지 그대로, 늦어도 서명된 시간에 존재했다는 것. 어떤 식으로든, 단 1바이트라도 바뀌면 더 이상 일치하지 않습니다. 누가 만들었는지나 무엇을 보여 주는지는 증명하지 않습니다.";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "Snapfly 없이 확인하는 방법: ‘%@’는 기관이 서명한 응답입니다(RFC 3161). RFC 3161 타임스탬프를 읽는 프로그램이라면 파일과 대조해 확인할 수 있습니다. 예를 들어 OpenSSL:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "‘root.pem’은 기관의 웹사이트에서 받는 기관의 루트 인증서를 뜻합니다.";
+"Save Proof of Time…" = "시간 증명 저장…";
+"Prove when it was recorded" = "녹화한 시간 증명하기";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "새 녹화마다 독립 기관이 서명한 EU 법상의 적격 타임스탬프가 붙습니다. Mac 시계는 절대 쓰지 않습니다.";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "시간 증명을 위해 EU의 Sectigo로 가는 것은 녹화의 지문뿐이며, 녹화 자체는 절대 가지 않습니다. 메뉴의 ‘시간 증명 저장…’으로 전달할 수 있습니다.";

@@ -2135,3 +2135,31 @@
 "White arrow" = "सफ़ेद तीर";
 "Dot" = "बिंदु";
 "Made automatically. Change it as you like." = "अपने आप बना। जैसे चाहें बदलें।";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "रिकॉर्डिंग का समय-प्रमाण तैयार है। इसे किसी को देने के लिए, उसके मेन्यू में „समय-प्रमाण सहेजें…“ चुनें।";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "रिकॉर्डिंग के लिए समय-प्रमाण नहीं मिल सका। फिर से कोशिश करने के लिए उसके मेन्यू में „समय-प्रमाण सहेजें…“ चुनें।";
+"Getting the proof of time…" = "समय-प्रमाण लिया जा रहा है…";
+"Could not get a proof of time. Check the internet connection and try again." = "समय-प्रमाण नहीं मिल सका। इंटरनेट कनेक्शन जाँचें और फिर से कोशिश करें।";
+"%@ – proof of time" = "%@ – समय-प्रमाण";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "फ़ाइल, हस्ताक्षरित टाइम स्टैम्प और उसे समझाने वाले पेज वाला फ़ोल्डर, वकील या अदालत के लिए।";
+"Proof of Time" = "समय-प्रमाण";
+"Saving the proof of time…" = "समय-प्रमाण सहेजा जा रहा है…";
+"Could not save the proof of time." = "समय-प्रमाण सहेजा नहीं जा सका।";
+"File: %@" = "फ़ाइल: %@";
+"Signed time: %@" = "हस्ताक्षरित समय: %@";
+"Accuracy: ± %@ s" = "सटीकता: ± %@ से";
+"Time stamping authority: %@" = "टाइम स्टैम्पिंग प्राधिकरण: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "EU के eIDAS विनियम (अनुच्छेद 41) के तहत एक योग्य इलेक्ट्रॉनिक टाइम स्टैम्प।";
+"A time stamp under RFC 3161, though not a qualified one." = "RFC 3161 के तहत एक टाइम स्टैम्प, पर योग्य नहीं।";
+"Serial number: %@" = "सीरियल नंबर: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "रिकॉर्डिंग शुरू हुई: %@, PTB की परमाणु घड़ी के अनुसार, जैसा Snapfly ने पढ़ा (हस्ताक्षरित नहीं)।";
+"Recording began: %@, by the Mac’s clock (not signed)." = "रिकॉर्डिंग शुरू हुई: %@, Mac की घड़ी के अनुसार (हस्ताक्षरित नहीं)।";
+"Length: %@" = "अवधि: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "यह क्या साबित करता है: ठीक यही फ़ाइल, बाइट-दर-बाइट, हस्ताक्षरित समय तक मौजूद थी। किसी भी तरह बदलने पर, एक बाइट से भी, यह मेल नहीं खाती। यह साबित नहीं करता कि इसे किसने बनाया या इसमें क्या दिखता है।";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "Snapfly के बिना इसे कैसे जाँचें: „%@“ प्राधिकरण का हस्ताक्षरित उत्तर है (RFC 3161)। RFC 3161 टाइम स्टैम्प पढ़ने वाला कोई भी प्रोग्राम इसे फ़ाइल से जाँच सकता है, जैसे OpenSSL:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "„root.pem“ प्राधिकरण का रूट प्रमाणपत्र है, उसकी अपनी वेबसाइट से।";
+"Save Proof of Time…" = "समय-प्रमाण सहेजें…";
+"Prove when it was recorded" = "साबित करें कि कब रिकॉर्ड हुआ";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "हर नई रिकॉर्डिंग को EU क़ानून के तहत एक योग्य टाइम स्टैम्प मिलता है, जिस पर एक स्वतंत्र प्राधिकरण हस्ताक्षर करता है, Mac की घड़ी कभी नहीं।";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "समय-प्रमाण के लिए EU में Sectigo को सिर्फ़ रिकॉर्डिंग का फ़िंगरप्रिंट जाता है, रिकॉर्डिंग कभी नहीं। उसके मेन्यू में „समय-प्रमाण सहेजें…“ इसे आगे देता है।";

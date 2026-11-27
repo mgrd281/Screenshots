@@ -79,6 +79,11 @@ final class Preferences: ObservableObject {
         set { change { SmoothPointer.isOn = newValue } }
     }
 
+    var provesRecordings: Bool {
+        get { TimeProof.isOn }
+        set { change { TimeProof.isOn = newValue } }
+    }
+
     var opensAtLogin: Bool {
         get { SMAppService.mainApp.status == .enabled }
         set { change { if newValue != opensAtLogin { AppDelegate.toggleLaunchAtLogin() } } }
@@ -1185,6 +1190,10 @@ private struct GeneralPane: View {
                     SettingText(.smoothPointer, L("Smooth pointer"),
                                 L("Snapfly draws a larger pointer that glides, instead of the Mac’s, in Studio and in the recording."))
                 }
+                Toggle(isOn: $prefs.provesRecordings) {
+                    SettingText(.proveRecordings, L("Prove when it was recorded"),
+                                L("Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock."))
+                }
             } header: {
                 Text(L("Screen recordings"))
             } footer: {
@@ -1193,6 +1202,7 @@ private struct GeneralPane: View {
                          ? L("The Mac’s sound is what you hear, without Snapfly’s own. The microphone is asked for the first time it records; both are mixed into one track.")
                          : L("The Mac’s sound is what you hear, without Snapfly’s own. Recording the microphone too needs macOS 15."))
                     Text(L("Studio zooms in where you click and type, and adds arrows and numbers. Where the pointer went and when keys were pressed stay on this Mac; which keys, never."))
+                    Text(L("For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on."))
                 }
                 .foregroundStyle(.secondary)
             }

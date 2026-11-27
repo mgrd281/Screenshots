@@ -1,6 +1,6 @@
 # Snapfly Privacy Policy
 
-*Last updated: November 19, 2026*
+*Last updated: November 27, 2026*
 
 Snapfly hangs your screenshots on a line at the top of the screen. Everything it
 does happens on your Mac, unless you set up the AI assistant with your own key
@@ -17,9 +17,18 @@ or turn on syncing with your iPhone (below).
   atomic clock of the PTB, Germany's national metrology institute
   (ptbtime1.ptb.de), for the exact time of each new screenshot, the way a clock
   sets itself (NTP). Only that question goes out, with nothing about you or your
-  screenshots. With the stamp off and no AI assistant set up, Snapfly never
-  connects to the internet, except when you choose Check for Updates…, which
-  downloads the newest version from GitHub and sends nothing about you.
+  screenshots. With the stamp and the proof of time off and no AI assistant
+  set up, Snapfly never connects to the internet, except when you choose Check
+  for Updates…, which downloads the newest version from GitHub and sends
+  nothing about you.
+- **The proof of time.** While Prove when it was recorded is on, and when you
+  choose Save Proof of Time… for a recording or a screenshot, Snapfly sends the
+  file's SHA-256 fingerprint, with a random number, to the time stamping
+  authority of Sectigo (Europe) SL (timestamp.sectigo.com), or, should it not
+  answer, to Sectigo's public one or to Free TSA (freetsa.org), and gets back a
+  signed time stamp. The fingerprint is a short code made from the file; the
+  file cannot be rebuilt from it, and the file itself, its name and anything
+  about you stay on your Mac.
 - **The AI assistant, only if you set it up.** In Settings › AI Assistant you
   may give Snapfly your own API key for Claude (Anthropic) or ChatGPT (OpenAI).
   The key stays in your Mac's keychain. When you save it, open that pane or
@@ -258,7 +267,13 @@ https://github.com/mgrd281/Screenshots/issues.
 
 Snapfly erhebt keine Daten. Die App hat kein Konto, keine Analyse, kein Tracking
 und keine Werbung. Mit dem Internet verbindet sie sich von sich aus nur, solange der
-Zeitstempel eingeschaltet ist, um die Atomuhr der PTB nach der Uhrzeit zu fragen.
+Zeitstempel eingeschaltet ist, um die Atomuhr der PTB nach der Uhrzeit zu fragen, und
+für den Zeitnachweis: Solange „Nachweisen, wann aufgenommen wurde“ eingeschaltet ist und wenn du
+„Zeitnachweis sichern …“ wählst, schickt Snapfly nur den SHA-256-Fingerabdruck der Datei mit
+einer Zufallszahl an den Zeitstempeldienst von Sectigo (Europe) SL, ersatzweise an den
+öffentlichen von Sectigo oder an Free TSA, und bekommt einen signierten Zeitstempel zurück.
+Aus dem Fingerabdruck lässt sich die Datei nicht wiederherstellen; die Datei selbst, ihr Name
+und alles über dich bleiben auf deinem Mac.
 Richtest du den KI-Assistenten mit deinem eigenen Schlüssel für Claude
 (Anthropic) oder ChatGPT (OpenAI) ein, schickt Snapfly ein Bildschirmfoto mit
 verdeckten privaten Angaben nur dann direkt an Anthropic oder OpenAI, wenn du
