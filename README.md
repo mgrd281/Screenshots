@@ -90,7 +90,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Click the send button over a chat | The same, without leaving the message box. Drag it to move it; it stays there for that app. |
 | <kbd>⌘</kbd>-click two or more, then the combine button on the tag | Join them into one image, ready to send. |
 | Right-click a photo or PDF in Finder, then Services › Hide Private Details with Snapfly | Choose what to hide, then send the covered copy straight to Gmail, WhatsApp, ChatGPT, Claude or any chat on for photos, copy it, share it with the Mac's Share menu, or save it beside the original. The original stays as it is. Several files, or a folder, open Cover Files. |
-| Right-click (or control-click), then Save and Export › Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. It hangs ready to send, marked PDF. |
+| Right-click (or control-click), then Save and Export › Make PDF | Put the photo, or the ones picked with it, in one PDF, a page each and private details covered. A whole page goes on as many sheets of paper as it needs. It hangs ready to send, marked PDF. |
 | <kbd>⌘</kbd>-click one or more, then the PDF button on the tag | The same PDF, from the tag, where search sits while nothing is picked. |
 | Click the download arrow on the tag, above the trash | Save the photos picked, or all of them, into Downloads as they leave the line: covered, drawn on and cropped, each as a file of its own. They stay on the line, and the files they came from stay as they are. A note says where they went; click it to see them in Finder. The App Store edition asks once which folder they go to. |
 | Click the trash on the tag | Take everything down at once, but for the photos pinned. |
@@ -117,7 +117,8 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>C</kbd> | Copy text from the screen: drag over any words, even in a picture, a video or a PDF where they cannot be selected, and they are copied, ready to paste. Nothing hangs on the line. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>A</kbd> | Capture and ask AI: take a screenshot as with ⌃⌥S, then choose what to ask about it, and in which AI chat: a question kept in Settings (⌘1 to ⌘9) or your own, then Return. The covered copy goes into the chat with the question under it, waiting for your Return there. Change it in Settings. |
 | <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>R</kbd> | Record the screen, chosen the same way. Press it again to stop. Change it in Settings. |
-| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Change it in Settings. |
+| <kbd>⌃</kbd>&thinsp;<kbd>⌥</kbd>&thinsp;<kbd>P</kbd> | Capture the whole page in the window in front, from top to bottom. Press it again, or click the note, to stop and keep what was taken. Change it in Settings. |
+| Capture Whole Page as PDF in the menu bar | The same, and a PDF of the whole page on sheets of A4 or US Letter, private details covered, picked and copied, ready to send. |
 | Right-click a photo, then Open on iPhone | Open it on the iPhone nearby with Handoff: tap Snapfly at the bottom of the iPhone's app switcher. Each new photo is offered there as it hangs. |
 | Capture Whole Chat in the menu bar | Scroll the chat in front from its first message to its last, a screenshot of each view and a short video of the scroll, which stops by itself at the bottom. |
 
@@ -899,6 +900,30 @@ follow the wheel, it presses Page Down instead. The picture hangs on the line
 like any screenshot, and with the time stamp on, it is stamped with the time
 and the website's name. It needs the permission to press keys, the same one
 the send button uses.
+
+It goes all the way down. After each scroll it waits until the page is
+still, so pictures that load as they come into view and cards that fade in
+are there. What changes by itself, like a picture that loaded late, a video,
+or a column that sticks beside the one that scrolls, does not end it, nor
+does a tall band of one colour or a header that shrinks as the page
+scrolls, and a dot that pulses at the page's end does not keep it scrolling
+there. A feed that loads more as it reaches its end is followed, and a chat
+button at the window's foot shows once, at the end, not at every seam. A page too long for one picture, 40,000 pixels, goes on in a second
+picture, and a third, one below the other. Press ⌃⌥P again, choose Stop Capturing the
+Page, or click the note to stop early and keep what was taken. If the page
+never ends, like a feed, or keeps changing so no two views fit, a note says
+the picture was cut.
+
+Choose Capture Whole Page as PDF and, once the pictures hang, a PDF of the
+whole page hangs too, picked and copied, ready to send: on sheets of A4, or
+US Letter where it is used, every pixel kept, so it reads sharp, and cut
+between two lines of text wherever it can be, also where one picture of
+the page meets the next. Its private details are covered as in every PDF
+Snapfly makes. Make PDF on any picture of a whole page does the same, with
+all its pictures. If one of them left the line before the PDF was made, sent
+or let go by a full line, a note says the PDF holds only what is still on
+it. These notes wait for one already showing, and if the PDF could not be
+made, a note says so first.
 
 <br>
 
@@ -2029,7 +2054,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Appearance.swift` | Glass by role, Liquid Glass on macOS 26, and motion that honours Reduce Motion |
 | `Search.swift` | The words in every photo, and the search bar under the line |
 | `Edition.swift` | The Mac App Store edition: what the sandbox changes |
-| `Collage.swift` | Joins several screenshots into one image, or into one PDF |
+| `Collage.swift` | Joins several screenshots into one image, or into one PDF, a whole page on sheets of paper |
 | `GrabArea.swift` | Click, long press, drag and drop |
 | `ScreenshotWatcher.swift` | Notices new screenshots |
 | `History.swift` | What left the line, kept for 7 or 30 days, with what was hidden by hand and drawn on it, moved with the file into its folder and back |
@@ -2047,11 +2072,13 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `CaptureToChat.swift` | The AI chat a new screenshot goes to by itself, and where: the chat in front, or a new one |
 | `Capture.swift` | Takes a screenshot from Snapfly itself: an area, a window or the whole screen, now or after a countdown |
 | `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
-| `FullPage.swift` | Captures a whole page by scrolling the window in front |
+| `FullPage.swift` | Captures a whole page by scrolling the window in front, in more than one picture when it is long |
+| `PageWalk.swift` | How a whole page is walked down: how far each scroll goes, waiting until the page is still, finding the move when something changed by itself, and the bottom |
+| `PaperPages.swift` | A long picture on sheets of A4 or US Letter for Make PDF, cut between lines |
 | `VideoQuality.swift` | How recordings and Studio's videos are compressed: HEVC, or H.264 where it cannot be written or for an MP4 to share, at a bit rate that follows the picture |
 | `PhoneHandoff.swift` | Offers the newest photo to the iPhone nearby with Handoff, and sends it when asked |
 | `ChatCapture.swift` | Captures a whole chat by scrolling it: a screenshot of each view and a video of the scroll |
-| `PageStitch.swift` | Joins the views of a scrolled page into one picture |
+| `PageStitch.swift` | Joins the views of a scrolled page into one picture: what stays put, how far the page moved, and where each seam goes |
 | `CaptureButton.swift` | The screenshot button: one click takes a screenshot, from the edge of the screen |
 | `Recording.swift` | Records the screen from Snapfly itself, with the countdown, recording, guide and note capsule above the Dock, and makes GIFs of recordings |
 | `ClipboardWatcher.swift` | Notices images copied to the clipboard |

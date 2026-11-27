@@ -973,11 +973,13 @@ apps.
     (`questionmark.bubble`, ⌃⌥A), Copy Text from Screen (`text.viewfinder`,
     ⌃⌥C), Take Screenshot with
     Timer (`timer`), Capture Whole Page (`rectangle.expand.vertical`),
-    Capture Whole Chat (`bubble.left.and.text.bubble.right`), Record Screen
+    Capture Whole Page as PDF (`doc.richtext`, as Make PDF), Capture Whole
+    Chat (`bubble.left.and.text.bubble.right`), Record Screen
     (`record.circle`), Record a Guide (`list.bullet.clipboard`) and Recent
     Guides (`clock`). What runs is stopped where it was started, after
-    `stop.circle`: Stop Recording, Stop Capturing the Chat, Finish Guide
-    (with Cancel Guide, `xmark.circle`).
+    `stop.circle`: Stop Recording, Stop Capturing the Page (in place of
+    both whole-page lines), Stop Capturing the Chat, Finish Guide (with
+    Cancel Guide, `xmark.circle`).
   - **Files**: Add Files… (⌘O, `plus.rectangle.on.folder`), Cover Files…
     (`lock.doc`) and Open screenshots folder (Open Workspace while it is on,
     `folder`).

@@ -464,17 +464,46 @@ final class Line: ObservableObject {
     }
 
     func makePDF(_ id: UUID) {
-        let photos = pickedIDs.contains(id)
+        var photos = pickedIDs.contains(id)
             ? items.filter { pickedIDs.contains($0.id) && !$0.falling && $0.isImage }
             : items.filter { $0.id == id && !$0.falling && $0.isImage }
+        // A whole page that took more than one picture goes whole: all its
+        // pictures on the line, top first.
+        if !pickedIDs.contains(id), let photo = photos.first, let part = FullPage.part(of: photo.url) {
+            let all = items.compactMap { item -> (number: Int, item: Pegged)? in
+                guard !item.falling, item.isImage, let other = FullPage.part(of: item.url),
+                      other.capture == part.capture else { return nil }
+                return (other.number, item)
+            }
+            if all.count > 1 { photos = all.sorted { $0.number < $1.number }.map { $0.item } }
+        }
+        makePDF(of: photos)
+    }
+
+    /// Capture Whole Page as PDF: the pictures of the page, top first, once
+    /// they hang. `done` is told whether the PDF hangs, and says so itself
+    /// when it could not be made.
+    func makePDF(of urls: [URL], then done: @escaping (Bool) -> Void) {
+        let photos = urls.compactMap { url in items.first { $0.url == url && !$0.falling && $0.isImage } }
+        guard !photos.isEmpty else {
+            done(false)
+            return
+        }
+        makePDF(of: photos, then: done)
+    }
+
+    private func makePDF(of photos: [Pegged], then done: ((Bool) -> Void)? = nil) {
         guard !photos.isEmpty else { return }
         // The pages are what leaves the line: private details covered, as
         // chosen in Settings, and parts hidden by hand.
         let pages = photos.map { (image: PrivateDetails.shareable($0.url), original: $0.url) }
-        // The name shows in the chat it is sent to.
+        // The name shows in the chat it is sent to: a whole page's is that
+        // of its first picture.
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH.mm.ss"
-        let name = photos.count == 1 ? photos[0].url.deletingPathExtension().lastPathComponent
+        let captures = Set(photos.map { FullPage.part(of: $0.url)?.capture })
+        let name = photos.count == 1 || (captures.count == 1 && captures.first! != nil)
+            ? photos[0].url.deletingPathExtension().lastPathComponent
             : "\(L("Screenshots")) \(formatter.string(from: Date()))"
         pickedIDs = []
         DispatchQueue.global(qos: .userInitiated).async {
@@ -482,9 +511,10 @@ final class Line: ObservableObject {
             DispatchQueue.main.async { [weak self] in
                 MainActor.assumeIsolated {
                     guard let self, let pdf, let id = self.hang(pdf) else {
-                        Notice.show(L("Could not make the PDF."))
+                        if let done { done(false) } else { Notice.show(L("Could not make the PDF.")) }
                         return
                     }
+                    done?(true)
                     self.pick(id)
                 }
             }

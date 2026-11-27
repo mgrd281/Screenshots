@@ -510,9 +510,16 @@
 /* Whole page */
 "Capture Whole Page" = "पूरा पेज कैप्चर करें";
 "Capture a whole page" = "पूरा पेज कैप्चर करें";
-"Capturing the whole page…" = "पूरा पेज कैप्चर हो रहा है…";
+"Capturing the whole page… Click to stop." = "पूरा पेज कैप्चर हो रहा है… रोकने के लिए क्लिक करें।";
 "Open the page to capture first, then try again." = "पहले वह पेज खोलें जिसे कैप्चर करना है, फिर दोबारा कोशिश करें।";
 "The page could not be captured." = "पेज कैप्चर नहीं हो सका।";
+"Stop Capturing the Page" = "पेज कैप्चर करना रोकें";
+"Capture Whole Page as PDF" = "पूरा पेज PDF के रूप में कैप्चर करें";
+"The page was too long, so it was cut there." = "पेज बहुत लंबा था, इसलिए वहीं रोक दिया गया।";
+"The page kept changing as it scrolled, so the picture may stop before its end." = "स्क्रॉल करते समय पेज बदलता रहा, इसलिए तस्वीर उसके अंत से पहले रुक सकती है।";
+"The page is long, so it hangs as %d pictures, one below the other." = "पेज लंबा है, इसलिए यह %d तस्वीरों में, एक के नीचे एक, टँगता है।";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "पेज का एक हिस्सा पहले ही रस्सी से हट गया, इसलिए PDF में केवल वही है जो अभी भी रस्सी पर है।";
+"The page's pictures left the line first, so the PDF could not be made." = "पेज की तस्वीरें पहले ही रस्सी से हट गईं, इसलिए PDF नहीं बन सका।";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "पेज स्क्रॉल करने के लिए Snapfly को आपकी जगह कुंजियाँ दबानी होंगी। सिस्टम सेटिंग्स में इसकी अनुमति दें, फिर दोबारा कोशिश करें।";
 
 /* iPhone */

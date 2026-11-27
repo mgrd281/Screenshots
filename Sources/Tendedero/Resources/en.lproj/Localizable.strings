@@ -510,9 +510,16 @@
 /* Whole page */
 "Capture Whole Page" = "Capture Whole Page";
 "Capture a whole page" = "Capture a whole page";
-"Capturing the whole page…" = "Capturing the whole page…";
+"Capturing the whole page… Click to stop." = "Capturing the whole page… Click to stop.";
 "Open the page to capture first, then try again." = "Open the page to capture first, then try again.";
 "The page could not be captured." = "The page could not be captured.";
+"Stop Capturing the Page" = "Stop Capturing the Page";
+"Capture Whole Page as PDF" = "Capture Whole Page as PDF";
+"The page was too long, so it was cut there." = "The page was too long, so it was cut there.";
+"The page kept changing as it scrolled, so the picture may stop before its end." = "The page kept changing as it scrolled, so the picture may stop before its end.";
+"The page is long, so it hangs as %d pictures, one below the other." = "The page is long, so it hangs as %d pictures, one below the other.";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "Part of the page left the line first, so the PDF holds only what is still on it.";
+"The page's pictures left the line first, so the PDF could not be made." = "The page's pictures left the line first, so the PDF could not be made.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again.";
 
 /* iPhone */

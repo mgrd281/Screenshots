@@ -3,10 +3,14 @@ import ScreenCaptureKit
 
 /// A screenshot of a whole page, from top to bottom, however long it is.
 /// Snapfly scrolls the window in front itself, captures it after each
-/// scroll, and joins the views into one picture (`PageStitch`), with the
-/// toolbar and any sticky header kept once. It works in a browser and in any
-/// window that scrolls. The picture hangs like any screenshot, and with the
-/// time stamp on it names the page it came from.
+/// scroll once the page is still, and joins the views into one picture
+/// (`PageWalk`, `PageStitch`), with the toolbar and any sticky header kept
+/// once. It works in a browser and in any window that scrolls. A page too
+/// long for one picture goes on in the next, one below the other. The
+/// pictures hang like any screenshot, and with the time stamp on them name
+/// the page they came from. Taken as a PDF, the PDF of them hangs too, on
+/// paper pages. A click on the note stops it early, and what was taken
+/// until then is kept.
 ///
 /// It needs Screen Recording, to capture the window, and the permission to
 /// press keys, to scroll it.
@@ -14,19 +18,35 @@ import ScreenCaptureKit
 final class FullPage {
     static let shared = FullPage()
 
-    /// Called with the picture once it is saved.
+    /// Called with each picture once it is saved, top first.
     var onCapture: (URL) -> Void = { _ in }
+    /// Called with the pictures of a page taken as a PDF, top first, once
+    /// they are saved, and what to say once the PDF hangs, like that the
+    /// page was cut; the pictures hang through `onCapture` as well.
+    var onPDF: ([URL], String?) -> Void = { _, _ in }
 
     private(set) var isRunning = false
+    /// Asked by a click on the note or from the menu: stop where it is and
+    /// keep what was taken.
+    private var stopAsked = false
     /// Long enough for a page that loads its pictures as they come into view.
     private nonisolated static let settle: UInt64 = 450_000_000
-    /// A page longer than this many views is cut there.
-    private static let maxViews = 60
-    /// Taller than this, a picture is hard to open; the page is cut there.
-    private static let maxHeight = 40_000
+    /// Taller than this, one picture is hard to open: a longer page goes on
+    /// in another picture, below it.
+    nonisolated static let maxHeight = 40_000
+    /// A page longer than this many points is cut there, like a feed that
+    /// never ends.
+    private static let maxLength = 100_000
 
-    /// - Parameter delay: lets a menu that started it fade out first.
-    func start(after delay: TimeInterval = 0) {
+    /// Stops where it is; what was taken until then is kept.
+    func stop() {
+        stopAsked = true
+    }
+
+    /// - Parameters:
+    ///   - delay: lets a menu that started it fade out first.
+    ///   - asPDF: also make a PDF of the whole page once it hangs.
+    func start(after delay: TimeInterval = 0, asPDF: Bool = false) {
         guard !isRunning, !ChatCapture.shared.isRunning, !Countdown.shared.isRunning,
               Capture.shared.hasPermission() else { return }
         guard Paste.isAllowed else {
@@ -39,9 +59,10 @@ final class FullPage {
             return
         }
         isRunning = true
+        stopAsked = false
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             Task { @MainActor in
-                await self.capture(window)
+                await self.capture(window, asPDF: asPDF)
                 self.isRunning = false
             }
         }
@@ -64,8 +85,10 @@ final class FullPage {
         return nil
     }
 
-    private func capture(_ target: (id: CGWindowID, frame: CGRect)) async {
-        let note = Notice.show(L("Capturing the whole page…"), working: true)
+    private func capture(_ target: (id: CGWindowID, frame: CGRect), asPDF: Bool) async {
+        let note = Notice.show(L("Capturing the whole page… Click to stop."), working: true) {
+            FullPage.shared.stopAsked = true
+        }
         defer { Notice.end(note) }
         guard let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true),
               let window = content.windows.first(where: { $0.windowID == target.id }) else {
@@ -101,105 +124,85 @@ final class FullPage {
         let over = found.point
         // Only the columns that scroll are compared, so a part that stays
         // beside them, like a list beside a chat, does not hide the move.
-        let band = found.band
+        let band = Scrolling.compared(found.band)
 
-        func shot() async -> (image: CGImage, rows: PageStitch.Rows)? {
+        func shot() async -> (picture: CGImage, rows: PageStitch.Rows)? {
             guard let image = try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config),
                   let rows = PageStitch.rows(of: image) else { return nil }
-            return (image, band.map { PageStitch.columns(rows, $0) } ?? rows)
-        }
-        func wait(_ nanoseconds: UInt64 = Self.settle) async {
-            try? await Task.sleep(nanoseconds: nanoseconds)
+            return (image, PageStitch.columns(rows, band))
         }
 
-        // From the top of the page: up, until the view stops changing.
-        var last = await shot()?.rows
-        for _ in 0..<40 {
-            Self.scroll(by: 4000, at: over)
-            await wait(Self.settle / 3)
-            guard let now = await shot()?.rows else { break }
-            if let last, PageStitch.alike(last, now) { break }
-            last = now
-        }
-        await wait()
-
-        // Most of a view at a time, so each new view overlaps the last. When
-        // the page moves too far, or changes by itself, the step is halved
-        // and tried again; when it does not move at all on the first try,
-        // the keys take over from the wheel, in case the page does not
-        // follow the wheel.
-        var step = max(80, (target.frame.height - 140) * 0.8)
-        var keys = false
-        var retries = 0
-        var views: [CGImage] = []
-        var rows: [PageStitch.Rows] = []
-        var steps: [PageStitch.Step] = []
-        var height = 0
-        while views.count < Self.maxViews {
-            guard let view = await shot() else { break }
-            if let previous = rows.last {
-                let expected = keys ? target.frame.height * 0.85 : step
-                guard let next = PageStitch.step(from: previous, to: view.rows, expected: Int(expected * scale)) else {
-                    // No fit: back up by what was asked, then half as far.
-                    guard retries < 2, !keys else { break }
-                    retries += 1
-                    Self.scroll(by: step, at: over)
-                    await wait()
-                    step = max(40, step / 2)
-                    Self.scroll(by: -step, at: over)
-                    await wait()
-                    continue
-                }
-                if next.shift == 0 {
-                    if views.count == 1, !keys {
-                        // Maybe the wheel does not reach this page: start
-                        // again from the top, by key.
-                        keys = true
-                        views.removeAll()
-                        rows.removeAll()
-                        Self.press(Self.homeKey)
-                        await wait()
-                        continue
-                    }
-                    break
-                }
-                steps.append(next)
-                height += next.shift
-                retries = 0
-            } else {
-                height = view.image.height
-            }
-            views.append(view.image)
-            rows.append(view.rows)
-            if height > Self.maxHeight { break }
-            if keys {
-                Self.press(Self.pageDownKey)
-            } else {
-                Self.scroll(by: -step, at: over)
-            }
-            await wait()
-        }
-        // Back to the top, where a page usually starts: by the whole height
-        // of what was seen, and more.
-        if keys {
-            Self.press(Self.homeKey)
-        } else {
-            Self.scroll(by: CGFloat(height) / scale + target.frame.height * 2, at: over)
-        }
-
-        guard !views.isEmpty else {
-            Notice.show(L("The page could not be captured."))
-            return
-        }
+        // Each strip is kept as it comes, and each view let go; a page
+        // taller than one picture goes on in the next.
+        let stamp = Capture.stamp()
         let frame = target.frame
-        let joined: CGImage? = await Task.detached(priority: .userInitiated) { [views, steps] in
-            PageStitch.compose(views, steps: steps)
-        }.value
-        guard let joined else {
+        var strips: [CGImage] = []
+        var height = 0
+        var saving: [Task<URL?, Never>] = []
+        func close() {
+            guard !strips.isEmpty else { return }
+            let part = strips, number = saving.count + 1
+            strips = []
+            height = 0
+            saving.append(Task.detached(priority: .userInitiated) {
+                guard let joined = PageStitch.stack(part) else { return nil }
+                return Self.save(joined, part: number, stamp: stamp, from: frame)
+            })
+        }
+        var walk = PageWalk<CGImage>(scale: Double(scale), windowHeight: Double(target.frame.height))
+        walk.settle = Self.settle
+        walk.maxLength = Self.maxLength
+        walk.scrolling = found.span > 0 ? Double(found.span) / Double(scale) : nil
+        let walked = await walk.run(PageWalk<CGImage>.Surface(
+            shot: shot,
+            scroll: { Self.scroll(by: CGFloat($0), at: over) },
+            press: { Self.press($0 == .home ? Self.homeKey : Self.pageDownKey) },
+            wait: { try? await Task.sleep(nanoseconds: $0) },
+            stopAsked: { FullPage.shared.stopAsked },
+            strip: { view, rows in
+                guard let piece = PageStitch.strip(of: view, rows: rows) else { return }
+                if height + piece.height > Self.maxHeight { close() }
+                strips.append(piece)
+                height += piece.height
+            }))
+        close()
+        var parts: [URL] = []
+        for task in saving {
+            if let url = await task.value { parts.append(url) }
+        }
+
+        guard !parts.isEmpty else {
             Notice.show(L("The page could not be captured."))
             return
         }
-        save(joined, from: frame)
+        for (index, url) in parts.enumerated() {
+            // One after the other, so each flies to the line on its own.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12 * Double(index)) {
+                MainActor.assumeIsolated { FullPage.shared.onCapture(url) }
+            }
+        }
+        let said: String?
+        switch walked.end {
+        case _ where parts.count < saving.count:
+            said = L("The page could not be captured.")
+        case .long:
+            said = L("The page was too long, so it was cut there.")
+        case .changing:
+            said = L("The page kept changing as it scrolled, so the picture may stop before its end.")
+        default:
+            said = parts.count > 1
+                ? String(format: L("The page is long, so it hangs as %d pictures, one below the other."), parts.count)
+                : nil
+        }
+        if asPDF {
+            // Said once the PDF hangs, so the note about making it does not
+            // hide it.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12 * Double(parts.count) + 0.3) {
+                MainActor.assumeIsolated { FullPage.shared.onPDF(parts, said) }
+            }
+        } else if let said {
+            Notice.show(said, lasting: 6)
+        }
     }
 
     // MARK: Scrolling the window in front
@@ -302,33 +305,50 @@ final class FullPage {
     }
 
     /// Saved in Snapfly's folder and tagged like a screenshot of the window,
-    /// so it flies to the line from there, and marked as a whole page.
-    private func save(_ image: CGImage, from frame: CGRect) {
+    /// so it flies to the line from there, and marked as a whole page, with
+    /// which picture of it this is when it took more than one.
+    private nonisolated static func save(_ image: CGImage, part: Int, stamp: String, from frame: CGRect) -> URL? {
         let fm = FileManager.default
-        var url = Inbox.folder.appendingPathComponent("Snapfly \(Capture.stamp()) page.png")
+        let name = part == 1 ? "Snapfly \(stamp) page" : "Snapfly \(stamp) page part \(part)"
+        var url = Inbox.folder.appendingPathComponent("\(name).png")
         var n = 2
         while fm.fileExists(atPath: url.path) {
-            url = Inbox.folder.appendingPathComponent("Snapfly \(Capture.stamp()) page \(n).png")
+            url = Inbox.folder.appendingPathComponent("\(name) \(n).png")
             n += 1
         }
-        let destination = url
+        guard Capture.write(image, to: url) else { return nil }
         let area = [frame.minX, frame.minY, frame.width, frame.height].map { Double($0) }
-        DispatchQueue.global(qos: .userInitiated).async {
-            let saved = Capture.write(image, to: destination)
-            if saved {
-                Capture.tag(destination, "com.apple.metadata:kMDItemIsScreenCapture", true)
-                Capture.tag(destination, "com.apple.metadata:kMDItemScreenCaptureGlobalRect", area)
-                Capture.tag(destination, TimeStamp.fullPageMarker, true)
-            }
-            DispatchQueue.main.async {
-                MainActor.assumeIsolated {
-                    if saved {
-                        self.onCapture(destination)
-                    } else {
-                        Notice.show(L("The page could not be captured."))
-                    }
-                }
-            }
+        Capture.tag(url, "com.apple.metadata:kMDItemIsScreenCapture", true)
+        Capture.tag(url, "com.apple.metadata:kMDItemScreenCaptureGlobalRect", area)
+        Capture.tag(url, TimeStamp.fullPageMarker, true)
+        Capture.tag(url, partMarker, ["capture": stamp, "part": part] as [String: Any])
+        return url
+    }
+
+    /// Which picture of a whole page a file is: the capture it came from,
+    /// as its time, and its place, from 1 at the top.
+    private nonisolated static let partMarker = "com.snapfly.full-page-part"
+
+    nonisolated static func part(of url: URL) -> (capture: String, number: Int)? {
+        guard let data = attribute(partMarker, of: url),
+              let value = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+              let capture = value["capture"] as? String, let number = value["part"] as? Int else { return nil }
+        return (capture, number)
+    }
+
+    /// Whether a file is a picture of a whole page, or of part of one.
+    nonisolated static func isWholePage(_ url: URL) -> Bool {
+        attribute(TimeStamp.fullPageMarker, of: url) != nil || attribute(partMarker, of: url) != nil
+    }
+
+    private nonisolated static func attribute(_ name: String, of url: URL) -> Data? {
+        url.withUnsafeFileSystemRepresentation { path in
+            guard let path else { return nil }
+            let size = getxattr(path, name, nil, 0, 0, 0)
+            guard size > 0 else { return nil }
+            var buffer = Data(count: size)
+            let read = buffer.withUnsafeMutableBytes { getxattr(path, name, $0.baseAddress, size, 0, 0) }
+            return read == size ? buffer : nil
         }
     }
 }
@@ -420,6 +440,16 @@ enum Scrolling {
         let most = rows.count * 35 / 100
         let sure = step.top < most && step.bottom < most
         return (step.shift, band, sure ? rows.count - step.top - step.bottom : 0, step.top)
+    }
+
+    /// The columns a whole page is matched on: those that scrolled, less a
+    /// column at either edge of the window, where a scroll bar comes and
+    /// goes as the page moves.
+    static func compared(_ band: Range<Int>?) -> Range<Int> {
+        let band = band ?? 0..<PageStitch.samples
+        let lower = band.lowerBound == 0 ? 1 : band.lowerBound
+        let upper = band.upperBound == PageStitch.samples ? PageStitch.samples - 1 : band.upperBound
+        return lower < upper ? lower..<upper : band
     }
 
     /// An AppKit frame, counted from the bottom left of the main screen, as

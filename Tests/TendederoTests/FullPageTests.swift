@@ -162,4 +162,15 @@ final class FullPageTests: XCTestCase {
         let frame = Scrolling.topLeft(CGRect(x: 10, y: 200, width: 40, height: 40), screenHeight: 900)
         XCTAssertEqual(frame, CGRect(x: 10, y: 660, width: 40, height: 40))
     }
+
+    func testAWholePageIsMatchedClearOfTheScrollBars() {
+        let all = PageStitch.samples
+        XCTAssertEqual(Scrolling.compared(nil), 1..<(all - 1))
+        XCTAssertEqual(Scrolling.compared(0..<all), 1..<(all - 1))
+        // A box of its own, away from the window's edges, is kept as it is.
+        XCTAssertEqual(Scrolling.compared(10..<30), 10..<30)
+        XCTAssertEqual(Scrolling.compared(30..<all), 30..<(all - 1))
+        // Too narrow to lose a column.
+        XCTAssertEqual(Scrolling.compared(0..<1), 0..<1)
+    }
 }
