@@ -290,7 +290,7 @@ TEXT["en"] = dict(
 <li>Quit Snapfly and open it again.</li>
 </ol>"""),
         ("How do I make a PDF?",
-         """<p>Press and hold a screenshot, or right-click it, and choose Make PDF. To put several screenshots in one PDF, ⌘-click them first, then click the PDF button on the tag at the end of the line.</p>"""),
+         """<p>Press and hold a screenshot, or right-click it, and choose Make PDF. To put several screenshots in one PDF, ⌘-click them first, then click the PDF button on the tag at the end of the line. A whole page of a website goes on sheets of A4 or US Letter, sharp and cut between lines: choose Capture Whole Page as PDF in the menu bar, and the PDF hangs ready to send once the page is captured.</p>"""),
         ("How do I cover private details?",
          """<p>Open Settings › Privacy and check what to cover. To cover anything it missed, hold the screenshot and choose Hide Part…, then drag over it or say what to hide, like “everything but the amount and the date”.</p>"""),
         ("Which Macs does Snapfly run on?",
@@ -569,7 +569,7 @@ TEXT["de"] = dict(
 <li>Beende Snapfly und öffne es wieder.</li>
 </ol>"""),
         ("Wie erstelle ich ein PDF?",
-         """<p>Halt ein Bildschirmfoto gedrückt oder klick mit rechts darauf und wähl „PDF erstellen“. Für mehrere Bildschirmfotos in einem PDF klickst du sie vorher mit ⌘ an und dann auf die PDF-Taste am Schild am Ende der Leine.</p>"""),
+         """<p>Halt ein Bildschirmfoto gedrückt oder klick mit rechts darauf und wähl „PDF erstellen“. Für mehrere Bildschirmfotos in einem PDF klickst du sie vorher mit ⌘ an und dann auf die PDF-Taste am Schild am Ende der Leine. Eine ganze Webseite kommt auf Blätter in A4 oder US Letter, scharf und zwischen zwei Zeilen geteilt: Wähl in der Menüleiste „Ganze Seite als PDF aufnehmen“, dann hängt das PDF versandbereit an der Leine, sobald die Seite aufgenommen ist.</p>"""),
         ("Wie verdecke ich private Angaben?",
          """<p>Öffne Einstellungen › Datenschutz und wähle, was verdeckt werden soll. Um etwas zu verdecken, das übersehen wurde, halt das Bildschirmfoto gedrückt und wähl „Bereich verdecken …“. Dann zieh darüber oder sag, was verdeckt wird, etwa „alles außer Betrag und Datum“.</p>"""),
         ("Auf welchen Macs läuft Snapfly?",
@@ -849,7 +849,7 @@ TEXT["ar"] = dict(
 <li>أغلق Snapfly وافتحه من جديد.</li>
 </ol>"""),
         ("كيف أصنع ملف PDF؟",
-         """<p>اضغط مطوّلًا على اللقطة، أو انقرها بالزر الأيمن، واختر «إنشاء PDF». ولوضع عدة لقطات في ملف واحد، انقرها أولًا وأنت ضاغط على ⌘، ثم انقر زر PDF على اللافتة في آخر الحبل.</p>"""),
+         """<p>اضغط مطوّلًا على اللقطة، أو انقرها بالزر الأيمن، واختر «إنشاء PDF». ولوضع عدة لقطات في ملف واحد، انقرها أولًا وأنت ضاغط على ⌘، ثم انقر زر PDF على اللافتة في آخر الحبل. وصفحة الموقع كاملةً توضع على أوراق بمقاس A4 أو US Letter، واضحة ومقسومة بين سطرين: اختر «تصوير الصفحة كاملة كملف PDF» من شريط القوائم، فيُعلَّق ملف PDF جاهزًا للإرسال بعد تصوير الصفحة.</p>"""),
         ("كيف أغطّي المعلومات الخاصة؟",
          """<p>افتح الإعدادات › الخصوصية واختر ما يُغطّى. ولتغطية شيء فاتته التغطية، اضغط مطوّلًا على اللقطة واختر «إخفاء جزء…»، ثم اسحب فوقه أو قل ما تريد إخفاءه، مثل «كل شيء ما عدا المبلغ والتاريخ».</p>"""),
         ("على أي أجهزة Mac يعمل Snapfly؟",

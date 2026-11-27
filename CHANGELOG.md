@@ -6,6 +6,17 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Capture Whole Page goes all the way down: it waits until the page is
+  still after each scroll, so pictures that load late and cards that fade
+  in are there, and something that changes by itself, a video or a column
+  that sticks, no longer ends it early. A chat button at the window's foot
+  shows once, at the end. A page too long for one picture goes on in the
+  next, one below the other; a note says when a page had to be cut. Press
+  ⌃⌥P again or click the note to stop early.
+- Capture Whole Page as PDF, in the menu: a PDF of the whole page on sheets
+  of A4 or US Letter, every pixel kept and cut between lines, private
+  details covered, ready to send. Make PDF on a whole page does the same.
+
 - Prove when it was recorded (Settings › General, under Screen
   recordings): each new recording gets a qualified time stamp under EU law
   (eIDAS), signed by Sectigo's time stamping authority on the recording's

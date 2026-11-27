@@ -508,9 +508,14 @@
 /* Whole page */
 "Capture Whole Page" = "捕捉整个页面";
 "Capture a whole page" = "捕捉一个完整页面";
-"Capturing the whole page…" = "正在捕捉整个页面…";
+"Capturing the whole page… Click to stop." = "正在捕捉整个页面… 点按以停止。";
 "Open the page to capture first, then try again." = "请先打开要捕捉的页面，然后再试一次。";
 "The page could not be captured." = "无法捕捉该页面。";
+"Stop Capturing the Page" = "停止捕捉页面";
+"Capture Whole Page as PDF" = "将整个页面捕捉为 PDF";
+"The page was too long, so it was cut there." = "页面太长，因此在那里截断。";
+"The page kept changing as it scrolled, so the picture may stop before its end." = "页面在滚动时不断变化，因此图片可能在页面结束前就停止了。";
+"The page is long, so it hangs as %d pictures, one below the other." = "页面很长，因此分成 %d 张图片，从上到下挂出。";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "要滚动页面，Snapfly 需要替你按键。请在“系统设置”中允许，然后再试一次。";
 
 /* iPhone */

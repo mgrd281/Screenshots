@@ -508,9 +508,14 @@
 /* Whole page */
 "Capture Whole Page" = "ページ全体をキャプチャ";
 "Capture a whole page" = "ページ全体をキャプチャ";
-"Capturing the whole page…" = "ページ全体をキャプチャしています…";
+"Capturing the whole page… Click to stop." = "ページ全体をキャプチャしています…クリックで停止。";
 "Open the page to capture first, then try again." = "キャプチャするページを先に開いてから、もう一度お試しください。";
 "The page could not be captured." = "ページをキャプチャできませんでした。";
+"Stop Capturing the Page" = "ページのキャプチャを停止";
+"Capture Whole Page as PDF" = "ページ全体をPDFとしてキャプチャ";
+"The page was too long, so it was cut there." = "ページが長すぎるため、そこで区切りました。";
+"The page kept changing as it scrolled, so the picture may stop before its end." = "スクロール中にページが変わり続けたため、画像がページの終わりより前で止まっている可能性があります。";
+"The page is long, so it hangs as %d pictures, one below the other." = "ページが長いため、%d枚の画像に分けて上から順に掛けます。";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "ページをスクロールするには、Snapflyが代わりにキーを押す必要があります。システム設定で許可してから、もう一度お試しください。";
 
 /* iPhone */

@@ -508,9 +508,14 @@
 /* Whole page */
 "Capture Whole Page" = "Capturar a páxina enteira";
 "Capture a whole page" = "Capturar unha páxina enteira";
-"Capturing the whole page…" = "Capturando a páxina enteira…";
+"Capturing the whole page… Click to stop." = "Capturando a páxina enteira… Fai clic para deter.";
 "Open the page to capture first, then try again." = "Abre primeiro a páxina que queres capturar e téntao de novo.";
 "The page could not be captured." = "Non se puido capturar a páxina.";
+"Stop Capturing the Page" = "Deter a captura da páxina";
+"Capture Whole Page as PDF" = "Capturar a páxina enteira como PDF";
+"The page was too long, so it was cut there." = "A páxina era demasiado longa, así que se cortou aí.";
+"The page kept changing as it scrolled, so the picture may stop before its end." = "A páxina non deixou de cambiar ao desprazarse, así que a imaxe pode rematar antes do seu final.";
+"The page is long, so it hangs as %d pictures, one below the other." = "A páxina é longa, así que se colga en %d imaxes, unha debaixo doutra.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Para desprazar a páxina, Snapfly necesita premer teclas por ti. Permíteo nos Axustes do Sistema e téntao de novo.";
 
 /* iPhone */

@@ -18,9 +18,12 @@ enum MenuSymbol {
     static let text = "text.viewfinder"
     static let timer = "timer"
     static let wholePage = "rectangle.expand.vertical"
+    /// Capture Whole Page as PDF.
+    static let wholePagePDF = "doc.richtext"
     static let wholeChat = "bubble.left.and.text.bubble.right"
     static let record = "record.circle"
-    /// Stop Recording, Stop Capturing the Chat and Finish Guide, while each runs.
+    /// Stop Recording, Stop Capturing the Page, Stop Capturing the Chat and
+    /// Finish Guide, while each runs.
     static let stop = "stop.circle"
     static let cancel = "xmark.circle"
     static let guide = "list.bullet.clipboard"
@@ -60,8 +63,8 @@ enum MenuSymbol {
     static let box = NSSize(width: 18, height: 16)
 
     static let all = [
-        permissions, paste, showLine, hideLine, search, history, clear, screenshot, ask, text, timer, wholePage, wholeChat,
-        record, stop, cancel, guide, recentGuides, addFiles, coverFiles, folder, privacy, button, desktopIcons,
+        permissions, paste, showLine, hideLine, search, history, clear, screenshot, ask, text, timer, wholePage, wholePagePDF,
+        wholeChat, record, stop, cancel, guide, recentGuides, addFiles, coverFiles, folder, privacy, button, desktopIcons,
         settings, updates, help, introduction, quit,
     ]
 }

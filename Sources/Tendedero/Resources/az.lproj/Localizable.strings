@@ -510,9 +510,14 @@
 /* Whole page */
 "Capture Whole Page" = "Bütün səhifəni çək";
 "Capture a whole page" = "Bütün bir səhifəni çək";
-"Capturing the whole page…" = "Bütün səhifə çəkilir…";
+"Capturing the whole page… Click to stop." = "Bütün səhifə çəkilir… Dayandırmaq üçün klik et.";
 "Open the page to capture first, then try again." = "Əvvəlcə çəkmək istədiyin səhifəni aç, sonra yenidən cəhd et.";
 "The page could not be captured." = "Səhifəni çəkmək mümkün olmadı.";
+"Stop Capturing the Page" = "Səhifənin çəkilişini dayandır";
+"Capture Whole Page as PDF" = "Bütün səhifəni PDF kimi çək";
+"The page was too long, so it was cut there." = "Səhifə çox uzun idi, ona görə orada kəsildi.";
+"The page kept changing as it scrolled, so the picture may stop before its end." = "Səhifə sürüşdükcə dəyişirdi, ona görə şəkil səhifənin sonundan əvvəl bitə bilər.";
+"The page is long, so it hangs as %d pictures, one below the other." = "Səhifə uzundur, ona görə bir-birinin altında %d şəkil kimi asılır.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Səhifəni sürüşdürmək üçün Snapfly sənin yerinə düymələri basmalıdır. Sistem Parametrlərində icazə ver, sonra yenidən cəhd et.";
 
 /* iPhone */
