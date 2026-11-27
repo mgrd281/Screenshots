@@ -516,6 +516,7 @@
 "The page was too long, so it was cut there." = "Sayfa çok uzundu, bu yüzden orada kesildi.";
 "The page kept changing as it scrolled, so the picture may stop before its end." = "Sayfa kaydırılırken değişmeye devam etti, bu yüzden resim sayfanın sonundan önce bitebilir.";
 "The page is long, so it hangs as %d pictures, one below the other." = "Sayfa uzun, bu yüzden alt alta %d resim olarak asılır.";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "Sayfanın bir kısmı ipten önce ayrıldı, bu yüzden PDF yalnızca hâlâ ipte olanı içeriyor.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Sayfayı kaydırmak için Snapfly’ın senin yerine tuşlara basması gerekir. Sistem Ayarları’nda izin ver, sonra yeniden dene.";
 
 /* iPhone */

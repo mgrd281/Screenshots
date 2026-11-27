@@ -481,12 +481,13 @@ final class Line: ObservableObject {
     }
 
     /// Capture Whole Page as PDF: the pictures of the page, top first, once
-    /// they hang. `done` is called once the PDF hangs, or could not be made.
+    /// they hang. `done` is called first, once the PDF hangs or could not
+    /// be made.
     func makePDF(of urls: [URL], then done: @escaping () -> Void) {
         let photos = urls.compactMap { url in items.first { $0.url == url && !$0.falling && $0.isImage } }
         guard !photos.isEmpty else {
-            Notice.show(L("Could not make the PDF."))
             done()
+            Notice.show(L("Could not make the PDF."))
             return
         }
         makePDF(of: photos, then: done)

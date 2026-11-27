@@ -65,10 +65,20 @@ struct PageWalk<Picture> {
     /// up, so they are left out of matching and taken from it.
     var fresh = 120
 
-    /// How far each scroll goes, in points: most of the window less its
-    /// toolbar, so each view shares a good part with the one before.
+    /// How tall the part that scrolls is, in points, when that was measured
+    /// before the walk, as between a sticky header and a bar at the foot.
+    var scrolling: Double?
+
+    /// How far each scroll goes at most, in points: most of the window less
+    /// its toolbar, so each view shares a good part with the one before.
     var stepLength: Int {
         max(80, Int(((windowHeight - 140) * 0.7).rounded()))
+    }
+
+    /// How far a scroll goes for a part that scrolls this many points tall:
+    /// most of it, and never more than `stepLength`.
+    func step(for scrolling: Double) -> Int {
+        min(stepLength, max(40, Int((scrolling * 0.7).rounded())))
     }
 
     private var freshRows: Int { Int((Double(fresh) * scale).rounded()) }
@@ -110,7 +120,10 @@ struct PageWalk<Picture> {
         }
         guard var current = await look() else { return (.nothing, 0) }
 
-        let step = stepLength
+        // Shorter once the part that scrolls is known to be shorter, as
+        // between a sticky header and a bar at the foot, so two views
+        // always share some of it.
+        var step = scrolling.map { self.step(for: $0) } ?? stepLength
         var keys = false
         var views = 1
         var moved = 0
@@ -138,13 +151,30 @@ struct PageWalk<Picture> {
                 break
             }
             let expected = Int(((keys ? windowHeight * 0.85 : Double(step)) * scale).rounded())
-            var found = match(current.rows, next.rows, expected: expected, bar: bar)
+            var found = match(current.rows, next.rows, expected: expected, keys: keys)
             if found == nil {
                 // Still loading, or moving: once more, a little later, at
                 // the same place.
                 if let again = await look() {
                     next = again
-                    found = match(current.rows, next.rows, expected: expected, bar: bar)
+                    found = match(current.rows, next.rows, expected: expected, keys: keys)
+                }
+            }
+            if found == nil, !keys {
+                // The view before may have changed since it was taken, like
+                // a picture that has loaded: the same place again, now, if
+                // what it shared with the one before it is as it was.
+                await surface.scroll(step)
+                if let again = await look(), Self.samePlace(current.rows, again.rows, through: max(start, bar)) {
+                    await surface.scroll(-step)
+                    if let after = await look(),
+                       let fit = match(again.rows, after.rows, expected: expected, keys: false) {
+                        current = again
+                        next = after
+                        found = fit
+                    }
+                } else {
+                    await surface.scroll(-step)
                 }
             }
             if found == nil, !keys {
@@ -152,10 +182,15 @@ struct PageWalk<Picture> {
                 await surface.scroll(step / 2)
                 if let half = await look(),
                    let fit = match(current.rows, half.rows, expected: Int((Double(step - step / 2) * scale).rounded()),
-                                   bar: bar) {
+                                   keys: keys) {
                     next = half
                     found = fit
                 }
+            }
+            if found == nil, Self.unmoved(current.rows, next.rows, below: bar) {
+                // Nothing else fits, and the page stayed where it was with
+                // something moving on it by itself, like a video: its bottom.
+                found = PageStitch.Step(top: 0, bottom: 0, shift: 0)
             }
             guard let found else {
                 end = .changing
@@ -174,11 +209,12 @@ struct PageWalk<Picture> {
                 break
             }
             // What this view adds is known now that the next one fits.
-            let seam = PageStitch.seam(after: found, height: current.rows.count, fresh: freshRows)
+            let seam = PageStitch.seam(after: found, height: current.rows.count, fresh: keys ? 0 : freshRows)
             if seam > start { await surface.strip(current.picture, start..<seam) }
             start = max(start, seam) - found.shift
             moved += found.shift
             toolbar = min(toolbar ?? found.top, found.top)
+            step = self.step(for: Double(current.rows.count - found.top - found.bottom) / scale)
             current = next
             views += 1
         }
@@ -195,16 +231,19 @@ struct PageWalk<Picture> {
         return (end, moved)
     }
 
-    /// How `next` follows `current`: strictly first, as a chat is read;
-    /// then not at all when the page stayed where it was with something
-    /// moving on it by itself, like a video, at its bottom; then leaving out
-    /// what stayed put or changed by itself. `bar` is how many rows at the
-    /// top stay, like the toolbar, as far as known.
+    /// How `next` follows `current`: strictly first, as a chat is read,
+    /// then leaving out what stayed put or changed by itself. The wheel
+    /// moves a page by no more than asked, so no longer move is tried for
+    /// it; a key's move is only roughly known, and so are its fresh rows.
     private func match(_ current: PageStitch.Rows, _ next: PageStitch.Rows, expected: Int,
-                       bar: Int) -> PageStitch.Step? {
-        if let step = PageStitch.step(from: current, to: next, expected: expected, fresh: freshRows) { return step }
-        if Self.unmoved(current, next, below: bar) { return PageStitch.Step(top: 0, bottom: 0, shift: 0) }
-        return PageStitch.follow(from: current, to: next, expected: expected, fresh: freshRows)
+                       keys: Bool) -> PageStitch.Step? {
+        let fresh = keys ? 0 : freshRows
+        let farthest = keys ? nil : expected + 16
+        if let step = PageStitch.step(from: current, to: next, expected: expected, fresh: fresh, farthest: farthest,
+                                      telling: keys ? 0 : 8) {
+            return step
+        }
+        return PageStitch.follow(from: current, to: next, expected: expected, fresh: fresh, farthest: farthest)
     }
 
     /// Whether the page stayed where it was between two views, though
@@ -222,6 +261,17 @@ struct PageWalk<Picture> {
             if let low = a[r].min(), let high = a[r].max(), Int(high) - Int(low) > 12 { shown += 1 }
         }
         return kept * 2 >= rows.count && shown >= max(16, rows.count / 10)
+    }
+
+    /// Whether `again` shows the same place as `view`: its rows down to
+    /// `through`, the toolbar and what `view` shared with the view before
+    /// it, are as they were, nine in ten of them, or a third of the window
+    /// for the first view. Below that, a picture may have loaded since.
+    static func samePlace(_ view: PageStitch.Rows, _ again: PageStitch.Rows, through: Int) -> Bool {
+        guard view.count == again.count, !view.isEmpty else { return false }
+        let rows = 0..<min(view.count, max(through, view.count / 3))
+        let differing = rows.filter { !PageStitch.same(view[$0], again[$0]) }.count
+        return differing * 10 <= rows.count
     }
 
     /// Two views a moment apart show the page still: at most one row in

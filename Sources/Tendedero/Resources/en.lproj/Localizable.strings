@@ -518,6 +518,7 @@
 "The page was too long, so it was cut there." = "The page was too long, so it was cut there.";
 "The page kept changing as it scrolled, so the picture may stop before its end." = "The page kept changing as it scrolled, so the picture may stop before its end.";
 "The page is long, so it hangs as %d pictures, one below the other." = "The page is long, so it hangs as %d pictures, one below the other.";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "Part of the page left the line first, so the PDF holds only what is still on it.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again.";
 
 /* iPhone */

@@ -21,8 +21,9 @@ final class FullPage {
     /// Called with each picture once it is saved, top first.
     var onCapture: (URL) -> Void = { _ in }
     /// Called with the pictures of a page taken as a PDF, top first, once
-    /// they are saved; they hang through `onCapture` as well.
-    var onPDF: ([URL]) -> Void = { _ in }
+    /// they are saved, and what to say once the PDF hangs, like that the
+    /// page was cut; the pictures hang through `onCapture` as well.
+    var onPDF: ([URL], String?) -> Void = { _, _ in }
 
     private(set) var isRunning = false
     /// Asked by a click on the note or from the menu: stop where it is and
@@ -151,6 +152,7 @@ final class FullPage {
         var walk = PageWalk<CGImage>(scale: Double(scale), windowHeight: Double(target.frame.height))
         walk.settle = Self.settle
         walk.maxLength = Self.maxLength
+        walk.scrolling = found.span > 0 ? Double(found.span) / Double(scale) : nil
         let walked = await walk.run(PageWalk<CGImage>.Surface(
             shot: shot,
             scroll: { Self.scroll(by: CGFloat($0), at: over) },
@@ -179,24 +181,27 @@ final class FullPage {
                 MainActor.assumeIsolated { FullPage.shared.onCapture(url) }
             }
         }
+        let said: String?
         switch walked.end {
         case _ where parts.count < saving.count:
-            Notice.show(L("The page could not be captured."))
+            said = L("The page could not be captured.")
         case .long:
-            Notice.show(L("The page was too long, so it was cut there."), lasting: 6)
+            said = L("The page was too long, so it was cut there.")
         case .changing:
-            Notice.show(L("The page kept changing as it scrolled, so the picture may stop before its end."),
-                        lasting: 6)
+            said = L("The page kept changing as it scrolled, so the picture may stop before its end.")
         default:
-            if parts.count > 1 {
-                Notice.show(String(format: L("The page is long, so it hangs as %d pictures, one below the other."),
-                                   parts.count), lasting: 6)
-            }
+            said = parts.count > 1
+                ? String(format: L("The page is long, so it hangs as %d pictures, one below the other."), parts.count)
+                : nil
         }
         if asPDF {
+            // Said once the PDF hangs, so the note about making it does not
+            // hide it.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12 * Double(parts.count) + 0.3) {
-                MainActor.assumeIsolated { FullPage.shared.onPDF(parts) }
+                MainActor.assumeIsolated { FullPage.shared.onPDF(parts, said) }
             }
+        } else if let said {
+            Notice.show(said, lasting: 6)
         }
     }
 

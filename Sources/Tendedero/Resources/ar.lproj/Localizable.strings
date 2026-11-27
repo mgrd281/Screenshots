@@ -516,6 +516,7 @@
 "The page was too long, so it was cut there." = "كانت الصفحة طويلة جدًا، فتوقّف التصوير عندها.";
 "The page kept changing as it scrolled, so the picture may stop before its end." = "ظلّت الصفحة تتغيّر أثناء التمرير، فقد تنتهي الصورة قبل نهاية الصفحة.";
 "The page is long, so it hangs as %d pictures, one below the other." = "الصفحة طويلة، لذلك تُعلَّق في %d صور، واحدة تحت الأخرى.";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "غادر جزء من الصفحة الحبل قبل ذلك، فلا يضم ملف PDF إلا ما بقي عليه.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "كي يمرّر Snapfly الصفحة، يحتاج إلى أن يضغط المفاتيح نيابةً عنك. اسمح له بذلك في إعدادات النظام، ثم حاول مرة أخرى.";
 
 /* iPhone */

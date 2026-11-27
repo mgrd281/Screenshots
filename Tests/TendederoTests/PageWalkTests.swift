@@ -165,7 +165,15 @@ final class PageWalkTests: XCTestCase {
         let result = await page.walk()
         XCTAssertEqual(result.end, .bottom)
         XCTAssertEqual(result.moved, page.maxOffset)
-        XCTAssertEqual(page.joined.count, page.whole.count)
+        // Every row in its place: where the picture differs from the page,
+        // it is only a picture still loading when its view was taken.
+        let joined = page.joined, whole = page.whole
+        XCTAssertEqual(joined.count, whole.count)
+        let grey = [UInt8](repeating: 200, count: PageStitch.samples)
+        let wrong = joined.indices.filter { !PageStitch.same(joined[$0], whole[$0]) }
+        XCTAssertTrue(wrong.allSatisfy { row in
+            joined[row] == grey && pictures.contains { $0.contains(row - page.toolbar) }
+        })
     }
 
     @MainActor
@@ -216,6 +224,21 @@ final class PageWalkTests: XCTestCase {
         let marked = joined.indices.filter { joined[$0][44] == 10 && whole[$0][44] != 10 }
         XCTAssertFalse(marked.isEmpty)
         XCTAssertTrue(marked.allSatisfy { $0 >= joined.count - 160 })
+    }
+
+    @MainActor
+    func testAPageBetweenAStickyHeaderAndATallBarIsWalkedInShorterSteps() async {
+        let page = Page(length: 16_000)
+        // A header of 100 points and a bar of 300 at the foot leave 440 of
+        // page, less than the first scroll.
+        let header = Page.made(200, seed: 41), bar = Page.made(600, seed: 42)
+        page.effects.append { shown, _, page in
+            for r in 0..<200 { shown[page.toolbar + r] = header[r] }
+            for r in 0..<600 { shown[page.window - 600 + r] = bar[r] }
+        }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
     }
 
     @MainActor

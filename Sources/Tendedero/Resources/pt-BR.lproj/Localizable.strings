@@ -516,6 +516,7 @@
 "The page was too long, so it was cut there." = "A página era longa demais, então foi cortada ali.";
 "The page kept changing as it scrolled, so the picture may stop before its end." = "A página não parou de mudar durante a rolagem, então a imagem pode terminar antes do fim dela.";
 "The page is long, so it hangs as %d pictures, one below the other." = "A página é longa, então fica pendurada em %d imagens, uma embaixo da outra.";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "Parte da página saiu do varal antes, então o PDF tem só o que ainda está nele.";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "Para rolar a página, o Snapfly precisa pressionar teclas por você. Permita isso nos Ajustes do Sistema e tente de novo.";
 
 /* iPhone */

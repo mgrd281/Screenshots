@@ -518,6 +518,7 @@
 "The page was too long, so it was cut there." = "पेज बहुत लंबा था, इसलिए वहीं रोक दिया गया।";
 "The page kept changing as it scrolled, so the picture may stop before its end." = "स्क्रॉल करते समय पेज बदलता रहा, इसलिए तस्वीर उसके अंत से पहले रुक सकती है।";
 "The page is long, so it hangs as %d pictures, one below the other." = "पेज लंबा है, इसलिए यह %d तस्वीरों में, एक के नीचे एक, टँगता है।";
+"Part of the page left the line first, so the PDF holds only what is still on it." = "पेज का एक हिस्सा पहले ही रस्सी से हट गया, इसलिए PDF में केवल वही है जो अभी भी रस्सी पर है।";
 "To scroll the page, Snapfly needs to press keys for you. Allow it in System Settings, then try again." = "पेज स्क्रॉल करने के लिए Snapfly को आपकी जगह कुंजियाँ दबानी होंगी। सिस्टम सेटिंग्स में इसकी अनुमति दें, फिर दोबारा कोशिश करें।";
 
 /* iPhone */

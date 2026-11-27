@@ -71,6 +71,12 @@ enum TimeStamp {
     /// unstamped for that moment rather than with a time that then changes.
     @MainActor private static var pending: Set<String> = []
 
+    /// Whether a screenshot is waiting for the time it is stamped with, so
+    /// what leaves for it is not known yet.
+    @MainActor static func isPending(_ url: URL) -> Bool {
+        pending.contains(url.path)
+    }
+
     /// Called once a screenshot's stamp is ready, so the line can draw it.
     @MainActor static var onReady: ((URL) -> Void)?
 

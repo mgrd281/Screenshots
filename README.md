@@ -915,9 +915,10 @@ the picture was cut.
 Choose Capture Whole Page as PDF and, once the pictures hang, a PDF of the
 whole page hangs too, picked and copied, ready to send: on sheets of A4, or
 US Letter where it is used, every pixel kept, so it reads sharp, and cut
-between two lines of text, never through one. Its private details are
-covered as in every PDF Snapfly makes. Make PDF on any picture of a whole
-page does the same, with all its pictures.
+between two lines of text wherever it can be, also where one picture of
+the page meets the next. Its private details are covered as in every PDF
+Snapfly makes. Make PDF on any picture of a whole page does the same, with
+all its pictures.
 
 <br>
 

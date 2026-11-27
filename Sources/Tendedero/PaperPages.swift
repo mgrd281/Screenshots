@@ -1,27 +1,26 @@
 import Foundation
 
-/// A picture too long for one page of paper, like a whole page of a
-/// website, put on pages of A4 or US Letter one below the other for Make
-/// PDF: as wide as the paper less 10 mm round it, with every pixel kept, so
-/// it reads sharp, and cut where a row is the same as the rows beside it,
-/// as between two lines of text, so no line is cut in half.
+/// A whole page of a website, too long for one page of paper, put on
+/// sheets of A4 or US Letter one below the other for Make PDF: as wide as
+/// the paper less 10 mm round it, with every pixel kept, so it reads
+/// sharp, and cut where a row is the same as the rows beside it, as between
+/// two lines of text, so a line is not cut in half wherever that can be.
 enum PaperPages {
     /// Where the picture goes on a sheet, in points from its bottom left.
     static func room(on paper: CGSize) -> CGRect {
         CGRect(origin: .zero, size: paper).insetBy(dx: PaperSize.margin, dy: PaperSize.margin)
     }
 
-    /// How many rows of a picture this many pixels wide fill one sheet.
-    static func rowsPerPage(width: Int, paper: CGSize) -> Int {
-        let room = room(on: paper)
-        guard room.width > 0 else { return 1 }
-        return max(1, Int((CGFloat(max(width, 1)) * room.height / room.width).rounded(.down)))
+    /// Points on the sheet for each pixel of a picture this wide: as wide
+    /// as the sheet allows, never wider than a point a pixel, so a narrow
+    /// picture is not blown up.
+    static func scale(width: Int, paper: CGSize) -> CGFloat {
+        min(1, room(on: paper).width / CGFloat(max(width, 1)))
     }
 
-    /// Whether a picture is too long for one sheet: more than two of them.
-    /// A whole page goes on sheets whatever its length.
-    static func needed(width: Int, height: Int, paper: CGSize) -> Bool {
-        height > 2 * rowsPerPage(width: width, paper: paper)
+    /// How many rows of a picture this many pixels wide fill one sheet.
+    static func rowsPerPage(width: Int, paper: CGSize) -> Int {
+        max(1, Int((room(on: paper).height / scale(width: width, paper: paper)).rounded(.down)))
     }
 
     /// The rows on each sheet, top first: as many as fit, less those below

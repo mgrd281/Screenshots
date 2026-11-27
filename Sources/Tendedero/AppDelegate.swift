@@ -120,7 +120,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onAsk = { [weak self] url in self?.hangCapture(url, asking: true) }
         FullPage.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
-        FullPage.shared.onPDF = { [weak self] urls in self?.makePagePDF(urls) }
+        FullPage.shared.onPDF = { [weak self] urls, said in self?.makePagePDF(urls, saying: said) }
         ChatCapture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onChange = { [weak self] in
@@ -826,18 +826,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Capture Whole Page as PDF: once the page's pictures hang and their
     /// private details are covered, a PDF of them hangs too, picked and
-    /// copied, ready to send. Two minutes at most are waited for.
-    private func makePagePDF(_ urls: [URL], since: Date = Date(), note: UUID? = nil) {
+    /// copied, ready to send. Two minutes at most are waited for. A picture
+    /// of it that left the line meanwhile, sent or let go by a full line,
+    /// leaves the PDF without it, and a note says so. Then what the capture
+    /// had to say, like that the page was cut.
+    private func makePagePDF(_ urls: [URL], saying said: String?, since: Date = Date(), note: UUID? = nil) {
         let note = note ?? Notice.show(L("Making the PDF…"), working: true)
+        // Every picture hung before this was first called.
         let hung = urls.filter { url in line.items.contains { $0.url == url && !$0.falling } }
-        let ready = hung.count == urls.count && hung.allSatisfy { PrivateDetails.readied($0) }
-        guard ready || Date().timeIntervalSince(since) > 120 else {
+        guard hung.allSatisfy({ PrivateDetails.readied($0) }) || Date().timeIntervalSince(since) > 120 else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                self?.makePagePDF(urls, since: since, note: note)
+                self?.makePagePDF(urls, saying: said, since: since, note: note)
             }
             return
         }
-        line.makePDF(of: hung) { Notice.end(note) }
+        let missing = hung.count < urls.count
+        line.makePDF(of: hung) {
+            Notice.end(note)
+            if missing, !hung.isEmpty {
+                Notice.show(L("Part of the page left the line first, so the PDF holds only what is still on it."),
+                            lasting: 6)
+            } else if let said {
+                Notice.show(said, lasting: 6)
+            }
+        }
     }
 
     /// A new screenshot lifts off from where it was taken and flies to its

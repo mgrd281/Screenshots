@@ -62,10 +62,10 @@ enum Collage {
 
     /// One PDF with a page for each image, as Finder's Create PDF makes it:
     /// every page the size its screenshot shows on screen, with every pixel
-    /// kept. A whole page of a website, or any picture longer than two
-    /// sheets of paper, goes on sheets of A4 or US Letter instead, as the
-    /// region uses, cut between lines (`PaperPages`). Saved in Snapfly's
-    /// folder under the name given.
+    /// kept. A whole page of a website goes on sheets of A4 or US Letter
+    /// instead, as the region uses, cut between lines (`PaperPages`), its
+    /// pictures one after the other as one when it took more than one.
+    /// Saved in Snapfly's folder under the name given.
     /// - Parameter pages: each image to draw, with the screenshot it stands
     ///   for, whose resolution sets the page size.
     static func pdf(_ pages: [(image: URL, original: URL)], named name: String) -> URL? {
@@ -74,17 +74,27 @@ enum Collage {
         let info: [CFString: Any] = [kCGPDFContextCreator: "Snapfly"]
         guard let context = CGContext(target as CFURL, mediaBox: nil, info as CFDictionary) else { return nil }
         let paper = PaperSize.blank(region: Locale.current.region?.identifier)
-        // Read once, as a long picture is drawn a sheet at a time.
-        let decoded = [kCGImageSourceShouldCacheImmediately: true] as CFDictionary
         var drawn = 0
-        for page in pages {
-            guard let source = CGImageSourceCreateWithURL(page.image as CFURL, nil),
-                  let image = CGImageSourceCreateImageAtIndex(source, 0, decoded) else { continue }
-            if FullPage.isWholePage(page.original)
-                || PaperPages.needed(width: image.width, height: image.height, paper: paper) {
-                if sheets(image, on: paper, into: context) { drawn += 1 }
+        var i = 0
+        while i < pages.count {
+            let page = pages[i]
+            if FullPage.isWholePage(page.original) {
+                // The pictures that follow it of the same page, in order.
+                var run = [page.image]
+                var last = FullPage.part(of: page.original)
+                while i + run.count < pages.count, let part = last,
+                      let next = FullPage.part(of: pages[i + run.count].original),
+                      next.capture == part.capture, next.number == part.number + 1 {
+                    run.append(pages[i + run.count].image)
+                    last = next
+                }
+                if sheets(run, on: paper, into: context) { drawn += run.count }
+                i += run.count
                 continue
             }
+            i += 1
+            guard let source = CGImageSourceCreateWithURL(page.image as CFURL, nil),
+                  let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { continue }
             // A Retina screenshot says 144 dpi, so its page is half its size
             // in pixels. A covered copy may not say, so the original decides.
             let scale = 72 / dpi(of: page.original)
@@ -105,24 +115,59 @@ enum Collage {
         return target
     }
 
-    /// A long picture on sheets of paper, one below the other, each as wide
-    /// as the paper less its margin and at the top of the sheet, so its
-    /// words are the same size on every sheet.
-    private static func sheets(_ image: CGImage, on paper: CGSize, into context: CGContext) -> Bool {
+    /// The pictures of a whole page, top first, on sheets of paper one below
+    /// the other as if they were one: each as wide as the paper less its
+    /// margin and at the top of the sheet, so its words are the same size on
+    /// every sheet. A sheet may hold the end of one picture and the start of
+    /// the next. Each picture is read once to find where to cut, and once
+    /// more to draw, so no more than one is held at a time.
+    private static func sheets(_ pictures: [URL], on paper: CGSize, into context: CGContext) -> Bool {
+        let decoded = [kCGImageSourceShouldCacheImmediately: true] as CFDictionary
+        func read(_ url: URL) -> CGImage? {
+            CGImageSourceCreateWithURL(url as CFURL, nil).flatMap { CGImageSourceCreateImageAtIndex($0, 0, decoded) }
+        }
+        var rows: [[UInt8]] = []
+        var heights: [Int] = []
+        var width = 0
+        for url in pictures {
+            let measured: Bool = autoreleasepool {
+                guard let image = read(url), let sampled = samples(of: image) else { return false }
+                width = max(width, image.width)
+                heights.append(image.height)
+                rows += sampled
+                return true
+            }
+            guard measured else { return false }
+        }
         let room = PaperPages.room(on: paper)
-        let perPage = PaperPages.rowsPerPage(width: image.width, paper: paper)
-        guard let rows = samples(of: image) else { return false }
-        let scale = room.width / CGFloat(image.width)
-        for cut in PaperPages.cuts(quiet: PaperPages.quiet(rows), perPage: perPage) {
+        let scale = PaperPages.scale(width: width, paper: paper)
+        let tops = heights.indices.map { heights[..<$0].reduce(0, +) }
+        var held: (index: Int, image: CGImage)?
+        for cut in PaperPages.cuts(quiet: PaperPages.quiet(rows),
+                                   perPage: PaperPages.rowsPerPage(width: width, paper: paper)) {
             let done: Bool = autoreleasepool {
-                guard let piece = image.cropping(to: CGRect(x: 0, y: cut.lowerBound, width: image.width,
-                                                            height: cut.count)) else { return false }
                 var box = CGRect(origin: .zero, size: paper)
                 context.beginPage(mediaBox: &box)
                 context.setFillColor(CGColor(gray: 1, alpha: 1))
                 context.fill(box)
-                let shown = CGFloat(cut.count) * scale
-                context.draw(piece, in: CGRect(x: room.minX, y: room.maxY - shown, width: room.width, height: shown))
+                for index in pictures.indices {
+                    let part = tops[index]..<(tops[index] + heights[index])
+                    let shown = part.clamped(to: cut)
+                    guard !shown.isEmpty else { continue }
+                    if held?.index != index {
+                        held = nil
+                        guard let image = read(pictures[index]) else { return false }
+                        held = (index, image)
+                    }
+                    guard let image = held?.image,
+                          let piece = image.cropping(to: CGRect(x: 0, y: shown.lowerBound - part.lowerBound,
+                                                                width: image.width, height: shown.count))
+                    else { return false }
+                    let across = CGFloat(image.width) * scale, down = CGFloat(shown.count) * scale
+                    let below = CGFloat(shown.upperBound - cut.lowerBound) * scale
+                    context.draw(piece, in: CGRect(x: room.midX - across / 2, y: room.maxY - below,
+                                                   width: across, height: down))
+                }
                 context.endPage()
                 return true
             }
@@ -134,8 +179,8 @@ enum Collage {
     /// The rows of a picture in gray, 256 samples across, to find where it
     /// can be cut.
     private static func samples(of image: CGImage) -> [[UInt8]]? {
-        let width = min(256, image.width), height = image.height
-        guard width > 0, height > 0,
+        let width = 256, height = image.height
+        guard height > 0,
               let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width,
                                       space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue),
               let data = context.data else { return nil }

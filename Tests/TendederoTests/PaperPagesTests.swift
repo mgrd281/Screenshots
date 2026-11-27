@@ -1,8 +1,8 @@
 import XCTest
 @testable import Tendedero
 
-/// A long picture on sheets of paper for Make PDF: how many rows fill a
-/// sheet, which pictures need sheets, and where they are cut.
+/// A whole page on sheets of paper for Make PDF: how large it is drawn,
+/// how many rows fill a sheet, and where they are cut.
 final class PaperPagesTests: XCTestCase {
     func testASheetOfA4HoldsWhatFitsItsShape() {
         // 2880 pixels across 538.58 points: 4198 rows down 785.19 points.
@@ -11,11 +11,11 @@ final class PaperPagesTests: XCTestCase {
         XCTAssertEqual(PaperPages.room(on: PaperSize.a4Size).minX, PaperSize.margin, accuracy: 0.001)
     }
 
-    func testOnlyAPictureLongerThanTwoSheetsNeedsThem() {
-        // A screenshot of a window, or of an iPhone, stays a page of its own.
-        XCTAssertFalse(PaperPages.needed(width: 2880, height: 1800, paper: PaperSize.a4Size))
-        XCTAssertFalse(PaperPages.needed(width: 1179, height: 2556, paper: PaperSize.a4Size))
-        XCTAssertTrue(PaperPages.needed(width: 2880, height: 20_000, paper: PaperSize.a4Size))
+    func testANarrowPictureIsNotBlownUp() {
+        // A window 400 pixels wide stays a point a pixel, in the middle.
+        XCTAssertEqual(PaperPages.scale(width: 400, paper: PaperSize.a4Size), 1)
+        XCTAssertEqual(PaperPages.rowsPerPage(width: 400, paper: PaperSize.a4Size), 785)
+        XCTAssertEqual(PaperPages.scale(width: 2880, paper: PaperSize.a4Size), 538.58 / 2880, accuracy: 0.0001)
     }
 
     func testEveryRowIsOnExactlyOneSheet() {

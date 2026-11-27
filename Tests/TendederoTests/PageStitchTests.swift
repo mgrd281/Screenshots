@@ -56,6 +56,14 @@ final class PageStitchTests: XCTestCase {
         let step = try XCTUnwrap(PageStitch.step(from: window(0), to: window(120), expected: 120))
         XCTAssertEqual(step.top, 30)
         XCTAssertEqual(step.shift, 120)
+        // A whole page asks for rows with something on them: plain ones
+        // line up at any move.
+        XCTAssertNil(PageStitch.step(from: window(0), to: window(120), expected: 120, telling: 8))
+    }
+
+    func testNoMoveIsTriedFartherThanThePageCouldGo() {
+        XCTAssertEqual(PageStitch.step(from: view(at: 0), to: view(at: 150), expected: 160, farthest: 176)?.shift, 150)
+        XCTAssertNil(PageStitch.step(from: view(at: 0), to: view(at: 150), expected: 100, farthest: 116))
     }
 
     func testSlicesKeepTheToolbarOnce() {
