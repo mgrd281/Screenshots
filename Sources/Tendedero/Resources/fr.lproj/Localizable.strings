@@ -2133,3 +2133,31 @@
 "White arrow" = "Flèche blanche";
 "Dot" = "Point";
 "Made automatically. Change it as you like." = "Créé automatiquement. Modifie-le comme tu veux.";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "L’enregistrement a sa preuve d’horodatage. Pour la transmettre, choisis « Enregistrer la preuve d’horodatage… » dans son menu.";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "Impossible d’obtenir une preuve d’horodatage pour l’enregistrement. Choisis « Enregistrer la preuve d’horodatage… » dans son menu pour réessayer.";
+"Getting the proof of time…" = "Obtention de la preuve d’horodatage…";
+"Could not get a proof of time. Check the internet connection and try again." = "Impossible d’obtenir une preuve d’horodatage. Vérifie la connexion à Internet et réessaie.";
+"%@ – proof of time" = "%@ – preuve d’horodatage";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "Un dossier avec le fichier, l’horodatage signé et une page qui l’explique, pour un avocat ou un tribunal.";
+"Proof of Time" = "Preuve d’horodatage";
+"Saving the proof of time…" = "Enregistrement de la preuve d’horodatage…";
+"Could not save the proof of time." = "Impossible d’enregistrer la preuve d’horodatage.";
+"File: %@" = "Fichier : %@";
+"Signed time: %@" = "Heure signée : %@";
+"Accuracy: ± %@ s" = "Précision : ± %@ s";
+"Time stamping authority: %@" = "Autorité d’horodatage : %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "Un horodatage électronique qualifié au sens du règlement eIDAS de l’UE (article 41).";
+"A time stamp under RFC 3161, though not a qualified one." = "Un horodatage selon la RFC 3161, mais pas un horodatage qualifié.";
+"Serial number: %@" = "Numéro de série : %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "Début de l’enregistrement : %@, selon l’horloge atomique de la PTB, telle que Snapfly l’a lue (non signé).";
+"Recording began: %@, by the Mac’s clock (not signed)." = "Début de l’enregistrement : %@, selon l’horloge du Mac (non signé).";
+"Length: %@" = "Durée : %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "Ce qu’elle prouve : ce fichier précis, octet par octet, existait au plus tard à l’heure signée. Modifié de quelque façon que ce soit, même d’un seul octet, il ne correspond plus. Elle ne prouve ni qui l’a fait ni ce qu’il montre.";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "La vérifier sans Snapfly : « %@ » est la réponse signée de l’autorité (RFC 3161). Tout programme qui lit les horodatages RFC 3161 peut la vérifier avec le fichier, OpenSSL par exemple :";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "« root.pem » désigne le certificat racine de l’autorité, sur son propre site.";
+"Save Proof of Time…" = "Enregistrer la preuve d’horodatage…";
+"Prove when it was recorded" = "Prouver quand l’enregistrement a eu lieu";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "Chaque nouvel enregistrement reçoit un horodatage qualifié selon le droit de l’UE, signé par une autorité indépendante, jamais par l’horloge du Mac.";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "Pour la preuve d’horodatage, seule l’empreinte de l’enregistrement part chez Sectigo dans l’UE, jamais l’enregistrement. « Enregistrer la preuve d’horodatage… » dans son menu la transmet.";

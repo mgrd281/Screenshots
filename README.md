@@ -68,6 +68,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | Right-click, then Edit › Background… | Set it on a colour, with room round it, rounded corners and a soft shadow, square or the shape a post or a story wants, so it looks finished in a post, a shop or a slide. It goes out that way; the file stays as it is. Remove Background takes it off again. |
 | Right-click, then Save and Export › Convert to SVG | Draws the photo again as shapes that stay sharp at any size, to paste into a design app or save as an `.svg` file. It is made from the copy that leaves the line, so what is covered is covered in it; the file stays as it is. |
 | Right-click, then Save and Export › Save Copy… | Keep a drawn on, cropped or covered photo as it goes out, as a file of its own, where you choose. The original stays as it is. A note says where it went; click it to see the file in Finder. |
+| Right-click, then Save and Export › Save Proof of Time… | Put a recording or a screenshot, exactly as it is, in one folder with a time stamp signed by an independent authority and a page that says what it proves and how to check it, ready for a lawyer or a court. |
 | Right-click, then Text and AI › Translate Text | Read it in your language, to copy or send. |
 | Right-click, then Text and AI › Describe | A line about what it shows, to send along with it. |
 | Right-click, then Text and AI › Write a Reply | A reply to the customer in the screenshot, written by Claude or ChatGPT with your own key, ready to send. Type what to add, like "offer a replacement", and it writes it again. |
@@ -940,8 +941,41 @@ and type a few words, like your shop's name, to stand before the date.
 
 The screenshot itself stays as it was. A stamped copy is saved next to it,
 named "… with time stamp", and the stamp also shows on the line and goes
-with whatever leaves it. Asking the PTB for the time is the only thing
-Snapfly ever sends out, and only while the stamp is on.
+with whatever leaves it. Asking the PTB for the time is all the stamp
+sends out, and only while it is on.
+
+<br>
+
+## Proved in time.
+
+A stamp the Mac draws is only as good as the Mac's word. Turn on Prove
+when it was recorded, under Screen recordings in Settings › General, and
+each new recording gets a proof of when it was made that holds without
+Snapfly or the Mac: a qualified electronic time stamp, under the EU's
+eIDAS regulation, from Sectigo's time stamping authority in Spain. The
+time is the authority's, never the Mac's clock. It signs the recording's
+SHA-256 fingerprint together with that time (RFC 3161), so the proof
+shows that this very file, byte for byte, existed no later than then;
+changed in any way, even by one byte, it no longer matches. Courts across
+the EU take a qualified time stamp as accurate until shown otherwise
+(Article 41). It does not say who recorded it, or that what it shows is
+true. Should Sectigo's qualified service not answer, its public one, and
+then Free TSA, give a time stamp that is not qualified, and the proof
+says so.
+
+Only the fingerprint goes out, with a random number that ties the answer
+to the question, never the recording. The proof is kept with the file and
+goes where it goes on this Mac. Choose Save Proof of Time… in a
+recording's menu, or a screenshot's, under Save and Export, and Snapfly
+puts into one folder, where you choose: the file, unchanged; the
+authority's signed answer, named after it with ".tsr"; and a page in your
+language with the signed time, the authority, the fingerprint, when the
+recording began by the PTB's atomic clock (Snapfly's own reading, not
+signed), how long it is, and how to check it with OpenSSL or any other
+program that reads RFC 3161 time stamps. A file with no proof yet, or
+changed since, as by Trim, gets a new one first. With Smooth pointer on,
+the proof is made again once the pointer is drawn in, so it is always of
+the recording as it hangs.
 
 <br>
 
@@ -1226,8 +1260,10 @@ No account. No server of its own. No analytics.
 Snapfly runs entirely on your Mac, and your screenshots never leave it
 unless you send them, make a link to one with Copy Link, or turn on Sync,
 which keeps your iPhone in step through your own iCloud, covered copies only
-unless you choose originals too. On its own, the only thing it ever asks the internet is
-the time, from the PTB's atomic clock, while the time stamp is on. The AI
+unless you choose originals too. On its own, the only things it ever asks the internet are
+the time, from the PTB's atomic clock, while the time stamp is on, and a
+signed time stamp on a recording's fingerprint, never the recording, while
+Prove when it was recorded is on. The AI
 assistant, once you give it your key, sends a covered screenshot to Claude or
 ChatGPT only when you choose Write a Reply, Explain or Order Details, and
 the words of each screenshot only with Find more turned on under Privacy. Claude on your Mac, once you connect it, gets covered copies and covered
@@ -1781,7 +1817,7 @@ whenever it changes on `main`. Its certificate is made once, on a Mac, with
 | **Size** | 1.7 MB |
 | **Languages** | English, German, Spanish, Galician, French, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified), Turkish, Azerbaijani, Hindi, Arabic |
 | **Built with** | Swift, AppKit and SwiftUI |
-| **Network access** | Only the time, from the PTB's atomic clock, while the time stamp is on |
+| **Network access** | Only the time, from the PTB's atomic clock, while the time stamp is on, and a signed time stamp on a recording's fingerprint, from Sectigo, while Prove when it was recorded is on |
 | **Price** | Free |
 | **License** | MIT for the code. The name and icon are not included. |
 
@@ -1925,6 +1961,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `TimeStamp.swift` | The band above a screenshot with the time, the website and the fingerprint, and the stamped copy next to it |
 | `Shared/StampSite.swift` | The website a stamp names: the host of the page's address alone, never its path, search or fragment (tested on Linux) |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
+| `TimeProof.swift` | Prove when it was recorded: the proof of time kept with a recording, made again when Snapfly changes it, and Save Proof of Time…'s folder and page |
+| `Shared/TrustedTime.swift` | Asks a time stamping authority for a signed time stamp on a fingerprint (RFC 3161), and reads and checks its answer (tested on Linux) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |

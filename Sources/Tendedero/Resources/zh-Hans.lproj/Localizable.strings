@@ -2133,3 +2133,31 @@
 "White arrow" = "白色箭头";
 "Dot" = "圆点";
 "Made automatically. Change it as you like." = "自动生成。可随意更改。";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "录制已有时间证明。要交给他人，请在其菜单中选取“存储时间证明…”。";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "无法为录制取得时间证明。要重试，请在其菜单中选取“存储时间证明…”。";
+"Getting the proof of time…" = "正在取得时间证明…";
+"Could not get a proof of time. Check the internet connection and try again." = "无法取得时间证明。请检查互联网连接后重试。";
+"%@ – proof of time" = "%@ – 时间证明";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "一个文件夹，内含文件、已签名的时间戳和一页说明，可交给律师或法院。";
+"Proof of Time" = "时间证明";
+"Saving the proof of time…" = "正在存储时间证明…";
+"Could not save the proof of time." = "无法存储时间证明。";
+"File: %@" = "文件：%@";
+"Signed time: %@" = "签名时间：%@";
+"Accuracy: ± %@ s" = "精度：± %@ 秒";
+"Time stamping authority: %@" = "时间戳机构：%@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "依据欧盟 eIDAS 条例（第 41 条）的合格电子时间戳。";
+"A time stamp under RFC 3161, though not a qualified one." = "依据 RFC 3161 的时间戳，但不是合格时间戳。";
+"Serial number: %@" = "序列号：%@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "录制开始：%@，依据 PTB 原子钟，由 Snapfly 读取（未签名）。";
+"Recording began: %@, by the Mac’s clock (not signed)." = "录制开始：%@，依据 Mac 的时钟（未签名）。";
+"Length: %@" = "时长：%@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "它证明什么：正是这个文件，逐字节完全相同，最迟在签名时间已经存在。只要有任何改动，哪怕一个字节，就不再相符。它不证明是谁制作的，也不证明内容是什么。";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "不用 Snapfly 如何核验：“%@”是机构签名的回复（RFC 3161）。任何能读取 RFC 3161 时间戳的程序都能用文件核验它，例如 OpenSSL：";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "“root.pem”指机构的根证书，可从其官网获取。";
+"Save Proof of Time…" = "存储时间证明…";
+"Prove when it was recorded" = "证明录制时间";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "每段新录制都会获得依据欧盟法律的合格时间戳，由独立机构签名，从不使用 Mac 的时钟。";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "为取得时间证明，发送到欧盟 Sectigo 的只有录制的指纹，从不发送录制本身。其菜单中的“存储时间证明…”可将它交给他人。";

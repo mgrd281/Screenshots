@@ -166,7 +166,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             Notice.saved(url)
         }
         StudioEditor.shared.onSaved = { [weak self] url in self?.hangCapture(url) }
-        SmoothPointer.onPointerAdded = { [weak self] url in self?.line.reloadThumbnail(for: url) }
+        SmoothPointer.onPointerAdded = { [weak self] url in
+            self?.line.reloadThumbnail(for: url)
+            // The proof of time is of the recording as it now is.
+            TimeProof.changed(url)
+        }
         panel.onScroll = { [weak self] event in
             // Sideways on a trackpad, or the wheel of a mouse.
             let delta = abs(event.scrollingDeltaX) >= abs(event.scrollingDeltaY)
@@ -834,6 +838,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         comeDown(on: screen)
         // Asked now, while the moment and the page in front are fresh.
         TimeStamp.arrive(url)
+        TimeProof.arrive(url)
         guard let id = line.hang(url, flying: from != nil) else {
             // Nothing hung after all, so an empty line goes away again.
             itemsChanged()

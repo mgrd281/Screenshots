@@ -2135,3 +2135,31 @@
 "White arrow" = "White arrow";
 "Dot" = "Dot";
 "Made automatically. Change it as you like." = "Made automatically. Change it as you like.";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu.";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again.";
+"Getting the proof of time…" = "Getting the proof of time…";
+"Could not get a proof of time. Check the internet connection and try again." = "Could not get a proof of time. Check the internet connection and try again.";
+"%@ – proof of time" = "%@ – proof of time";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court.";
+"Proof of Time" = "Proof of Time";
+"Saving the proof of time…" = "Saving the proof of time…";
+"Could not save the proof of time." = "Could not save the proof of time.";
+"File: %@" = "File: %@";
+"Signed time: %@" = "Signed time: %@";
+"Accuracy: ± %@ s" = "Accuracy: ± %@ s";
+"Time stamping authority: %@" = "Time stamping authority: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41).";
+"A time stamp under RFC 3161, though not a qualified one." = "A time stamp under RFC 3161, though not a qualified one.";
+"Serial number: %@" = "Serial number: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed).";
+"Recording began: %@, by the Mac’s clock (not signed)." = "Recording began: %@, by the Mac’s clock (not signed).";
+"Length: %@" = "Length: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows.";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "“root.pem” stands for the authority’s root certificate, from its own website.";
+"Save Proof of Time…" = "Save Proof of Time…";
+"Prove when it was recorded" = "Prove when it was recorded";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock.";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on.";

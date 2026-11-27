@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Prove when it was recorded (Settings › General, under Screen
+  recordings): each new recording gets a qualified time stamp under EU law
+  (eIDAS), signed by Sectigo's time stamping authority on the recording's
+  fingerprint, so its time is the authority's, never the Mac's clock. Save
+  Proof of Time… in a recording's or a screenshot's menu puts the file, the
+  signed time stamp and a page that explains it and how to check it into
+  one folder, for a lawyer or a court.
+
 - Studio comes closer all the time and follows the pointer, as a product
   video does, even without a click; it pulls back while the pointer
   crosses the screen. When, under Zoom, switches back to On clicks.

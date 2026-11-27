@@ -2133,3 +2133,31 @@
 "White arrow" = "Weißer Pfeil";
 "Dot" = "Punkt";
 "Made automatically. Change it as you like." = "Automatisch gemacht. Ändere ihn, wie du willst.";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "Die Aufnahme hat ihren Zeitnachweis. Zum Weitergeben wähle „Zeitnachweis sichern …“ in ihrem Menü.";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "Für die Aufnahme konnte kein Zeitnachweis geholt werden. Wähle „Zeitnachweis sichern …“ in ihrem Menü, um es noch einmal zu versuchen.";
+"Getting the proof of time…" = "Zeitnachweis wird geholt …";
+"Could not get a proof of time. Check the internet connection and try again." = "Es konnte kein Zeitnachweis geholt werden. Prüfe die Internetverbindung und versuche es noch einmal.";
+"%@ – proof of time" = "%@ – Zeitnachweis";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "Ein Ordner mit der Datei, dem signierten Zeitstempel und einer Seite, die ihn erklärt – für Anwalt oder Gericht.";
+"Proof of Time" = "Zeitnachweis";
+"Saving the proof of time…" = "Zeitnachweis wird gesichert …";
+"Could not save the proof of time." = "Der Zeitnachweis konnte nicht gesichert werden.";
+"File: %@" = "Datei: %@";
+"Signed time: %@" = "Signierte Zeit: %@";
+"Accuracy: ± %@ s" = "Genauigkeit: ± %@ s";
+"Time stamping authority: %@" = "Zeitstempeldienst: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "Ein qualifizierter elektronischer Zeitstempel nach der eIDAS-Verordnung der EU (Artikel 41).";
+"A time stamp under RFC 3161, though not a qualified one." = "Ein Zeitstempel nach RFC 3161, jedoch kein qualifizierter.";
+"Serial number: %@" = "Seriennummer: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "Aufnahme begann: %@, nach der Atomuhr der PTB, wie Snapfly sie gelesen hat (nicht signiert).";
+"Recording began: %@, by the Mac’s clock (not signed)." = "Aufnahme begann: %@, nach der Uhr des Macs (nicht signiert).";
+"Length: %@" = "Länge: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "Was er beweist: Genau diese Datei, Byte für Byte, gab es spätestens zur signierten Zeit. Wird sie irgendwie verändert, auch nur um ein Byte, passt sie nicht mehr. Er beweist nicht, wer sie gemacht hat oder was sie zeigt.";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "So prüfst du ihn ohne Snapfly: „%@“ ist die signierte Antwort des Zeitstempeldienstes (RFC 3161). Jedes Programm, das Zeitstempel nach RFC 3161 liest, kann sie mit der Datei prüfen, zum Beispiel OpenSSL:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "„root.pem“ steht für das Wurzelzertifikat des Zeitstempeldienstes, von seiner eigenen Website.";
+"Save Proof of Time…" = "Zeitnachweis sichern …";
+"Prove when it was recorded" = "Nachweisen, wann aufgenommen wurde";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "Jede neue Aufnahme bekommt einen qualifizierten Zeitstempel nach EU-Recht, signiert von einem unabhängigen Dienst, nie nach der Uhr des Macs.";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "Für den Zeitnachweis geht nur der Fingerabdruck der Aufnahme an Sectigo in der EU, nie die Aufnahme. „Zeitnachweis sichern …“ in ihrem Menü gibt ihn weiter.";

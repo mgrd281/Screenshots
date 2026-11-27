@@ -2133,3 +2133,31 @@
 "White arrow" = "سهم أبيض";
 "Dot" = "نقطة";
 "Made automatically. Change it as you like." = "صُنع تلقائياً. غيّره كما تشاء.";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "للتسجيل الآن إثبات وقته. لتسليمه، اختر «حفظ إثبات الوقت…» من قائمته.";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "تعذّر الحصول على إثبات وقت للتسجيل. اختر «حفظ إثبات الوقت…» من قائمته لتحاول مرة أخرى.";
+"Getting the proof of time…" = "يجري الحصول على إثبات الوقت…";
+"Could not get a proof of time. Check the internet connection and try again." = "تعذّر الحصول على إثبات الوقت. تحقّق من الاتصال بالإنترنت وحاول مرة أخرى.";
+"%@ – proof of time" = "%@ – إثبات الوقت";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "مجلد فيه الملف وختم الوقت الموقَّع وصفحة تشرحه، لمحامٍ أو لمحكمة.";
+"Proof of Time" = "إثبات الوقت";
+"Saving the proof of time…" = "يجري حفظ إثبات الوقت…";
+"Could not save the proof of time." = "تعذّر حفظ إثبات الوقت.";
+"File: %@" = "الملف: %@";
+"Signed time: %@" = "الوقت الموقَّع: %@";
+"Accuracy: ± %@ s" = "الدقة: ± %@ ث";
+"Time stamping authority: %@" = "جهة ختم الوقت: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "ختم وقت إلكتروني مؤهَّل حسب لائحة eIDAS للاتحاد الأوروبي (المادة 41).";
+"A time stamp under RFC 3161, though not a qualified one." = "ختم وقت حسب RFC 3161، لكنه غير مؤهَّل.";
+"Serial number: %@" = "الرقم التسلسلي: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "بدأ التسجيل: %@، حسب ساعة PTB الذرية، كما قرأها Snapfly (غير موقَّع).";
+"Recording began: %@, by the Mac’s clock (not signed)." = "بدأ التسجيل: %@، حسب ساعة الـMac (غير موقَّع).";
+"Length: %@" = "المدة: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "ماذا يثبت: أن هذا الملف نفسه، بايتًا بايتًا، كان موجودًا في الوقت الموقَّع أو قبله. إن تغيّر بأي شكل، ولو ببايت واحد، لم يعد يطابقه. ولا يثبت من صنعه ولا ما يُظهره.";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "كيف تتحقّق منه دون Snapfly: «%@» هو الردّ الموقَّع من الجهة (RFC 3161). أي برنامج يقرأ أختام الوقت حسب RFC 3161 يستطيع أن يتحقّق منه مع الملف، مثل OpenSSL:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "«root.pem» هي الشهادة الجذرية للجهة، من موقعها نفسه.";
+"Save Proof of Time…" = "حفظ إثبات الوقت…";
+"Prove when it was recorded" = "إثبات وقت التسجيل";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "كل تسجيل جديد يحصل على ختم وقت مؤهَّل حسب قانون الاتحاد الأوروبي، توقّعه جهة مستقلة، وليس بساعة الـMac.";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "لإثبات الوقت لا تذهب إلى Sectigo في الاتحاد الأوروبي إلا بصمة التسجيل، لا التسجيل نفسه. «حفظ إثبات الوقت…» في قائمته يسلّمه.";

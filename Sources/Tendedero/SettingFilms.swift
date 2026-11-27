@@ -5,7 +5,8 @@ extension SettingFilm {
     /// turns on, chooses or does something, in the order Settings shows them.
     enum ID: String, CaseIterable {
         case takeScreenshotsWithSnapfly, alsoFromTheScreenshotApp, handlesScreenshots, hangsCopiedImages
-        case smartSelection, stampsTime, whichScreenshots, sound, openStudioAfterRecording, smoothPointer, sounds
+        case smartSelection, stampsTime, whichScreenshots, sound, openStudioAfterRecording, smoothPointer, proveRecordings
+        case sounds
         case openAtLogin
         case watchAnotherFolder, screenshotsFolder, lineStyle, whenThePointerRestsInTheMenuBar
         case whenSomethingNewHangs, overFullScreenApps, notDuringACall, lineSize, keepOnLine, countOnTheMenuBarIcon
@@ -224,6 +225,19 @@ enum SettingFilms {
                     .init(2.25, Box(0.6, 0.55, 0.08, 0.128)), .init(2.7, Box(0.6, 0.55, 0.08, 0.128)),
                 ]),
                 .click(0.6, 0.55, at: 2.05),
+            ])
+        case .proveRecordings:
+            // A recording hangs; its fingerprint goes up and away to the authority, and a seal comes back down
+            // and lands on it.
+            return SettingFilm("checkmark.seal", FilmScene.line(cards: 1) + [
+                .move(.card(1), Box(0.5, 0.84, 0.14, 0.17), FilmScene.slot(1), start: 0.3, end: 0.8, appear: 0.2,
+                      angles: (0, FilmScene.tilt(1))),
+                .move(.symbol("play.fill"), Box(0.5, 0.84, 0.08, 0.128), Box(0.5, 0.295, 0.08, 0.128), start: 0.3,
+                      end: 0.8, appear: 0.2),
+                .move(.symbol("number"), Box(0.5, 0.3, 0.06, 0.096), Box(0.5, 0.04, 0.06, 0.096), start: 1.0, end: 1.45,
+                      appear: 0.9, leave: 1.6),
+                .move(.symbol("checkmark.seal.fill"), Box(0.5, 0.04, 0.09, 0.144), Box(0.56, 0.36, 0.09, 0.144),
+                      start: 1.8, end: 2.4, appear: 1.7),
             ])
         case .openStudioAfterRecording:
             // A click on stop hangs the recording, and Studio opens from it: a click

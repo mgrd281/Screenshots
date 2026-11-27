@@ -2133,3 +2133,31 @@
 "White arrow" = "白い矢印";
 "Dot" = "ドット";
 "Made automatically. Change it as you like." = "自動で作成。自由に変更できます。";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "収録に時刻の証明が付きました。渡すときは、そのメニューで「時刻の証明を保存…」を選んでください。";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "収録の時刻の証明を取得できませんでした。もう一度試すには、そのメニューで「時刻の証明を保存…」を選んでください。";
+"Getting the proof of time…" = "時刻の証明を取得しています…";
+"Could not get a proof of time. Check the internet connection and try again." = "時刻の証明を取得できませんでした。インターネット接続を確認して、もう一度お試しください。";
+"%@ – proof of time" = "%@ – 時刻の証明";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "ファイル、署名付きタイムスタンプ、その説明ページを入れたフォルダ。弁護士や裁判所に渡せます。";
+"Proof of Time" = "時刻の証明";
+"Saving the proof of time…" = "時刻の証明を保存しています…";
+"Could not save the proof of time." = "時刻の証明を保存できませんでした。";
+"File: %@" = "ファイル: %@";
+"Signed time: %@" = "署名された時刻: %@";
+"Accuracy: ± %@ s" = "精度: ± %@ 秒";
+"Time stamping authority: %@" = "タイムスタンプ局: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "EU の eIDAS 規則（第 41 条）に基づく適格電子タイムスタンプです。";
+"A time stamp under RFC 3161, though not a qualified one." = "RFC 3161 に基づくタイムスタンプですが、適格ではありません。";
+"Serial number: %@" = "シリアル番号: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "収録開始: %@（PTB の原子時計による。Snapfly が読み取った時刻で、署名されていません）";
+"Recording began: %@, by the Mac’s clock (not signed)." = "収録開始: %@（Mac の時計による。署名されていません）";
+"Length: %@" = "長さ: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "証明すること: まさにこのファイルが、1 バイトも違わず、署名された時刻までに存在していたこと。少しでも、たとえ 1 バイトでも変更されると一致しなくなります。誰が作ったか、何が写っているかは証明しません。";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "Snapfly なしで確かめるには: 「%@」はタイムスタンプ局の署名付きの回答です（RFC 3161）。RFC 3161 のタイムスタンプを読めるプログラムなら、ファイルと照合できます。たとえば OpenSSL:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "「root.pem」はタイムスタンプ局のルート証明書で、局のウェブサイトから入手します。";
+"Save Proof of Time…" = "時刻の証明を保存…";
+"Prove when it was recorded" = "収録した時刻を証明";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "新しい収録ごとに、EU 法に基づく適格タイムスタンプを独立した機関の署名で付けます。Mac の時計は使いません。";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "時刻の証明のために EU の Sectigo へ送られるのは収録のフィンガープリントだけで、収録そのものは送られません。メニューの「時刻の証明を保存…」で渡せます。";

@@ -89,6 +89,7 @@ final class Recording {
         self.pointerHidden = false
         hideControls()
         let frame = frame
+        let began = started
         saving = Task { @MainActor in
             defer { saving = nil }
             var saved = await recorder.finish()
@@ -125,6 +126,8 @@ final class Recording {
                 drawsPointer = events.drawsPointer
                 StudioStore.setEvents(events, for: url)
             }
+            // For its proof of time, which says when it began.
+            TimeProof.began(url, at: began)
             onFinish(url)
             if drawsPointer { SmoothPointer.addPointer(to: url) }
             if Studio.opensAfterRecording {

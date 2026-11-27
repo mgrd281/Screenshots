@@ -2135,3 +2135,31 @@
 "White arrow" = "Ağ ox";
 "Dot" = "Nöqtə";
 "Made automatically. Change it as you like." = "Avtomatik yaradılıb. İstədiyin kimi dəyiş.";
+
+/* Proof of time */
+"The recording has its proof of time. To hand it on, choose Save Proof of Time… in its menu." = "Yazının vaxt sübutu var. Onu təhvil vermək üçün menyusunda „Vaxt sübutunu saxla…“ seç.";
+"Could not get a proof of time for the recording. Choose Save Proof of Time… in its menu to try again." = "Yazı üçün vaxt sübutu alına bilmədi. Yenidən cəhd etmək üçün menyusunda „Vaxt sübutunu saxla…“ seç.";
+"Getting the proof of time…" = "Vaxt sübutu alınır…";
+"Could not get a proof of time. Check the internet connection and try again." = "Vaxt sübutu alına bilmədi. İnternet bağlantısını yoxla və yenidən cəhd et.";
+"%@ – proof of time" = "%@ – vaxt sübutu";
+"A folder with the file, the signed time stamp and a page that explains it, for a lawyer or a court." = "Fayl, imzalanmış vaxt möhürü və onu izah edən səhifə olan qovluq – vəkil və ya məhkəmə üçün.";
+"Proof of Time" = "Vaxt sübutu";
+"Saving the proof of time…" = "Vaxt sübutu saxlanılır…";
+"Could not save the proof of time." = "Vaxt sübutu saxlanıla bilmədi.";
+"File: %@" = "Fayl: %@";
+"Signed time: %@" = "İmzalanmış vaxt: %@";
+"Accuracy: ± %@ s" = "Dəqiqlik: ± %@ san";
+"Time stamping authority: %@" = "Vaxt möhürü orqanı: %@";
+"A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41)." = "Aİ-nin eIDAS reqlamentinə görə (maddə 41) kvalifikasiyalı elektron vaxt möhürü.";
+"A time stamp under RFC 3161, though not a qualified one." = "RFC 3161-ə görə vaxt möhürü, amma kvalifikasiyalı deyil.";
+"Serial number: %@" = "Seriya nömrəsi: %@";
+"Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed)." = "Yazı başladı: %@, PTB atom saatına görə, Snapfly-ın oxuduğu kimi (imzalanmayıb).";
+"Recording began: %@, by the Mac’s clock (not signed)." = "Yazı başladı: %@, Mac-in saatına görə (imzalanmayıb).";
+"Length: %@" = "Uzunluq: %@";
+"What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows." = "Nəyi sübut edir: məhz bu fayl, bayt-bayt, ən gec imzalanmış vaxtda mövcud idi. Hər hansı şəkildə, hətta bir bayt dəyişsə, artıq uyğun gəlmir. Kimin etdiyini və ya nə göstərdiyini sübut etmir.";
+"How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:" = "Snapfly olmadan necə yoxlamaq olar: „%@“ orqanın imzalı cavabıdır (RFC 3161). RFC 3161 vaxt möhürlərini oxuyan istənilən proqram onu faylla yoxlaya bilər, məsələn OpenSSL:";
+"“root.pem” stands for the authority’s root certificate, from its own website." = "„root.pem“ orqanın öz saytından götürülən kök sertifikatıdır.";
+"Save Proof of Time…" = "Vaxt sübutunu saxla…";
+"Prove when it was recorded" = "Nə vaxt yazıldığını sübut et";
+"Each new recording gets a qualified time stamp under EU law, signed by an independent authority, never the Mac’s clock." = "Hər yeni yazı Aİ qanununa görə kvalifikasiyalı vaxt möhürü alır, müstəqil orqan tərəfindən imzalanır, heç vaxt Mac-in saatı ilə yox.";
+"For the proof of time, only the recording’s fingerprint goes to Sectigo in the EU, never the recording. Save Proof of Time… in its menu hands it on." = "Vaxt sübutu üçün Aİ-dəki Sectigo-ya yalnız yazının barmaq izi gedir, yazının özü heç vaxt. Menyusundakı „Vaxt sübutunu saxla…“ onu təhvil verir.";

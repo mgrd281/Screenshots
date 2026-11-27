@@ -303,6 +303,13 @@ struct GrabArea: NSViewRepresentable {
                     sub.addItem(ClosureMenuItem(L("Save for Bookkeeping"), symbol: "folder.badge.plus") { Bookkeeping.save(url) })
                     sub.addItem(ClosureMenuItem(L("Email to Bookkeeping…"), symbol: "envelope") { Bookkeeping.mail(url) })
                 }
+                // When it was made, signed by an independent authority, for a
+                // lawyer or a court.
+                if isImage || isRecording {
+                    let url = item.url
+                    Self.gap(sub)
+                    sub.addItem(ClosureMenuItem(L("Save Proof of Time…"), symbol: "checkmark.seal") { TimeProof.save(url) })
+                }
                 // The App Store edition may not write to the Desktop; a drag
                 // into a folder keeps a photo there instead.
                 if inInbox && !Edition.appStore {
