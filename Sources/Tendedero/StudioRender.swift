@@ -286,10 +286,15 @@ enum StudioDraw {
     /// A frame of the video: the recording's picture through the camera at
     /// that time, in its place on the video, on its background when it has
     /// one, then what is drawn over it.
+    /// - Parameter banner: the time stamp's band, drawn above the picture
+    ///   for that moment of the recording (`VideoStamp`); the video is
+    ///   taller by it.
     static func frame(_ source: CVPixelBuffer, into output: CVPixelBuffer, look: StudioLook, framing: StudioFraming,
-                      ground: StudioGround?, at t: Double, context: CIContext) {
+                      ground: StudioGround?, at t: Double, context: CIContext, banner: VideoStamp.Banner? = nil) {
         let width = CVPixelBufferGetWidth(output), height = CVPixelBufferGetHeight(output)
-        let size = CGSize(width: width, height: height)
+        // The picture below the band, when there is one.
+        let above = banner?.height ?? 0
+        let size = CGSize(width: width, height: height - above)
         let video = framing.isFramed ? framing.video : CGRect(origin: .zero, size: size)
         let rect = look.camera.rect(at: t)
         let picture = blurred(CIImage(cvPixelBuffer: source), look: look, at: t)
@@ -310,8 +315,10 @@ enum StudioDraw {
                 seen = seen.composited(over: ground.image)
             }
         }
-        context.render(seen, to: output, bounds: CGRect(origin: .zero, size: size), colorSpace: nil)
-        guard look.draws(at: t) else { return }
+        context.render(seen, to: output, bounds: CGRect(x: 0, y: 0, width: width, height: height), colorSpace: nil)
+        let band = banner?.image(at: t)
+        let draws = look.draws(at: t)
+        guard draws || band != nil else { return }
         CVPixelBufferLockBaseAddress(output, [])
         defer { CVPixelBufferUnlockBaseAddress(output, []) }
         guard let base = CVPixelBufferGetBaseAddress(output), let space = CGColorSpace(name: CGColorSpace.sRGB),
@@ -319,6 +326,11 @@ enum StudioDraw {
                                       bytesPerRow: CVPixelBufferGetBytesPerRow(output), space: space,
                                       bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue
                                           | CGBitmapInfo.byteOrder32Little.rawValue) else { return }
+        if let band {
+            // Above the picture, as wide as the video, over all that is there.
+            drawing.draw(band, in: CGRect(x: 0, y: size.height, width: size.width, height: CGFloat(above)))
+        }
+        guard draws else { return }
         // Marks stay on the recording, inside its corners.
         drawing.translateBy(x: video.minX, y: video.minY)
         if framing.isFramed {
@@ -484,9 +496,14 @@ enum StudioExport {
     /// file beside it so the folder watcher ignores it until it is done: a
     /// QuickTime movie, or an MP4 for `.mp4`, in H.264, which every player
     /// and website takes.
-    /// - Parameter rate: frames a second; thirty for a recording's own copy.
+    /// - Parameters:
+    ///   - rate: frames a second; thirty for a recording's own copy.
+    ///   - stamp: the time stamp's band, drawn above the picture as the
+    ///     recording's own copy has it (`VideoStamp`); the video is taller
+    ///     by the band, which keeps one height all through it.
     static func run(_ source: URL, look: StudioLook, backdrop: Backdrop? = nil,
-                    quality: StudioOutput.Quality = .original, rate: Int32 = StudioExport.rate, to target: URL,
+                    quality: StudioOutput.Quality = .original, rate: Int32 = StudioExport.rate,
+                    stamp: VideoStamp.Stamp? = nil, to target: URL,
                     stop: Stop, progress: @escaping @Sendable (Double) -> Void) async throws {
         let asset = AVURLAsset(url: source)
         let duration = try await asset.load(.duration).seconds
@@ -512,8 +529,8 @@ enum StudioExport {
                 DispatchQueue.global(qos: .userInitiated).async {
                     do {
                         try write(asset: asset, track: track, framing: framing, mp4: mp4, sounds: sounds, hints: hints,
-                                  edited: edited, duration: duration, look: look, rate: rate, to: temp, stop: stop,
-                                  progress: progress)
+                                  edited: edited, duration: duration, look: look, rate: rate, stamp: stamp, to: temp,
+                                  stop: stop, progress: progress)
                         done.resume()
                     } catch {
                         done.resume(throwing: error)
@@ -582,7 +599,7 @@ enum StudioExport {
     // inputs' own queues, so they are never used from two places at once.
     private static func write(asset: AVAsset, track: AVAssetTrack, framing: StudioFraming, mp4: Bool, sounds: [AVAssetTrack],
                               hints: [CMFormatDescription?], edited: EditedSound?, duration: Double, look: StudioLook,
-                              rate: Int32, to temp: URL, stop: Stop,
+                              rate: Int32, stamp: VideoStamp.Stamp?, to temp: URL, stop: Stop,
                               progress: @escaping @Sendable (Double) -> Void) throws {
         // How long the video is, with parts cut out or faster.
         let parts = look.parts
@@ -597,7 +614,11 @@ enum StudioExport {
         guard reader.canAdd(pictures) else { throw Failure.cannotRead }
         reader.add(pictures)
 
-        let width = Int(framing.canvas.width), height = Int(framing.canvas.height)
+        // The time stamp's band above the picture, as wide as it and the
+        // same height all through, so the video is taller by it.
+        let banner = stamp.flatMap { VideoStamp.Banner($0, width: Int(framing.canvas.width)) }
+        if stamp != nil, banner == nil { throw Failure.cannotWrite }
+        let width = Int(framing.canvas.width), height = Int(framing.canvas.height) + (banner?.height ?? 0)
         let writer = try AVAssetWriter(outputURL: temp, fileType: mp4 ? .mp4 : .mov)
         // An MP4 is for websites: it starts playing before it has all come.
         writer.shouldOptimizeForNetworkUse = mp4
@@ -720,7 +741,7 @@ enum StudioExport {
                       CVPixelBufferPoolCreatePixelBuffer(nil, pool, &made) == kCVReturnSuccess, let output = made
                 else { return finish(true) }
                 StudioDraw.frame(source, into: output, look: look, framing: framing, ground: ground, at: t,
-                                 context: context)
+                                 context: context, banner: banner)
                 let at = CMTimeAdd(origin, CMTime(value: CMTimeValue(state.index), timescale: rate))
                 guard adaptor.append(output, withPresentationTime: at) else { return finish(true) }
                 state.index += 1
