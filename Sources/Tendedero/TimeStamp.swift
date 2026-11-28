@@ -4,9 +4,11 @@ import CryptoKit
 import UniformTypeIdentifiers
 
 /// When a screenshot was taken, as evidence: a band above the picture with
-/// the date and time from the PTB's atomic clock, the website that was open
-/// in the browser, and the screenshot's fingerprint, with a word of the
-/// user's own if they want one. It is off until turned on in Settings, and
+/// the date and time from the PTB's atomic clock, the whole address of the
+/// page that was open in the browser, and the screenshot's fingerprint, with
+/// a word of the user's own if they want one. The address is a link wherever
+/// a link can be followed: in the PDF saved beside the stamped copy, and on
+/// the line. It is off until turned on in Settings, and
 /// then marks screenshots of the whole screen, or every screenshot.
 ///
 /// The screenshot itself never changes. A stamped copy is saved next to it,
@@ -25,9 +27,9 @@ enum TimeStamp {
         /// By the atomic clock when `atomic`, by the Mac's clock otherwise.
         var taken: Date
         var atomic: Bool
-        /// The website open in the browser in front, if it was one, by its
-        /// host alone (`StampSite`); one kept from before holds the whole
-        /// address, of which the stamp shows the host too.
+        /// The page open in the browser in front, if it was a website, by its
+        /// whole address (`StampSite`); one kept from before may hold its
+        /// host alone.
         var page: String?
         /// SHA-256 of the screenshot as it arrived.
         var fingerprint: String?
@@ -35,9 +37,24 @@ enum TimeStamp {
 
     /// One line of the band.
     struct Row: Equatable, Sendable {
-        enum Kind: Sendable { case title, detail, code }
+        enum Kind: Sendable { case title, detail, code, link }
         var text: String
         var kind: Kind
+        /// Where the row leads, for a page's address.
+        var url: URL? = nil
+    }
+
+    /// Where a link sits on a stamped picture, in its pixels counted from
+    /// the top left, as a PDF page or a view on the line places it.
+    struct Link: Equatable, Sendable {
+        var rect: CGRect
+        var url: URL
+    }
+
+    /// A band, or a picture with its band, and where its links are.
+    struct Band {
+        var image: CGImage
+        var links: [Link]
     }
 
     /// What one stamp says and which way it reads. Made on the main thread,
@@ -104,8 +121,8 @@ enum TimeStamp {
         let taken = created(url) ?? Date()
         guard Date().timeIntervalSince(taken) < 60 else { return }
         pending.insert(url.path)
-        // The website alone, never the rest of its address (`StampSite`).
-        let page = ChatButton.pageInFront().flatMap { StampSite.host(of: $0.absoluteString) }
+        // The page's whole address, as evidence needs it (`StampSite`).
+        let page = ChatButton.pageInFront().flatMap { StampSite.address(of: $0.absoluteString) }
         AtomicTime.offset { offset in
             DispatchQueue.global(qos: .utility).async {
                 let record = Record(taken: taken.addingTimeInterval(offset ?? 0), atomic: offset != nil,
@@ -211,16 +228,14 @@ enum TimeStamp {
     // MARK: The words
 
     /// The lines of the band: the user's words and the date and time; where
-    /// the time comes from; the website; the fingerprint.
+    /// the time comes from; the page's address, a link; the fingerprint.
     static func mark(_ record: Record, text: String, locale: Locale,
                      timeZone: TimeZone = .autoupdatingCurrent, rightToLeft: Bool) -> Mark {
         var rows = [Row(text: label(text: text, date: record.taken, locale: locale, timeZone: timeZone), kind: .title)]
         rows.append(Row(text: record.atomic ? L("Atomic time from the PTB, Germany") : L("Time from the Mac’s clock"),
                         kind: .detail))
-        // The website alone: a stamp kept from before with the whole address
-        // shows no more of it than one made now.
-        if let site = record.page.flatMap(StampSite.host(of:)) {
-            rows.append(Row(text: String(format: L("Page: %@"), site), kind: .detail))
+        if let address = record.page.flatMap(StampSite.address(of:)) {
+            rows.append(Row(text: String(format: L("Page: %@"), address), kind: .link, url: URL(string: address)))
         }
         if let fingerprint = record.fingerprint {
             rows.append(Row(text: String(format: L("Fingerprint (SHA-256): %@"), fingerprint), kind: .code))
@@ -259,9 +274,14 @@ enum TimeStamp {
         func size(of kind: Row.Kind) -> CGFloat {
             switch kind {
             case .title: font
-            case .detail: (font * 0.86).rounded()
+            case .detail, .link: (font * 0.86).rounded()
             case .code: (font * 0.8).rounded()
             }
+        }
+
+        /// The room the words have beside the icon, at the icon's largest.
+        func room(width: Int) -> CGFloat {
+            CGFloat(width) - padding * 2 - font * 3 - gap
         }
 
         func lineHeight(of kind: Row.Kind) -> CGFloat { (size(of: kind) * 1.4).rounded() }
@@ -272,42 +292,111 @@ enum TimeStamp {
         }
     }
 
-    /// The image with the band above it: as wide, and taller by the band.
-    static func render(_ image: CGImage, _ mark: Mark) -> CGImage? {
-        let m = Metrics(width: image.width)
-        let band = Int(m.height(for: mark.rows).rounded(.up))
-        let width = image.width, height = image.height + band
-        let space = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil } ?? CGColorSpace(name: CGColorSpace.sRGB)!
-        guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+    /// The rows as drawn on a band `width` pixels wide: a page's address,
+    /// however long, goes on over three lines at most, broken anywhere, as
+    /// an address has no spaces to break at.
+    static func laidOut(_ mark: Mark, width: Int) -> [Row] {
+        let m = Metrics(width: width)
+        let room = m.room(width: width)
+        guard room > 0 else { return mark.rows }
+        return mark.rows.flatMap { row -> [Row] in
+            guard row.kind == .link else { return [row] }
+            // The face the row is drawn in, so each line fits as drawn.
+            let font = NSFont.monospacedSystemFont(ofSize: m.size(of: .link), weight: .regular)
+            return wrap(row.text, font: font, room: room, lines: 3).map { Row(text: $0, kind: .link, url: row.url) }
+        }
+    }
+
+    /// The text in lines no wider than `room`, the last taking the rest.
+    static func wrap(_ text: String, font: NSFont, room: CGFloat, lines most: Int) -> [String] {
+        let whole = text as NSString
+        let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key(kCTFontAttributeName as String): font]
+        let typesetter = CTTypesetterCreateWithAttributedString(NSAttributedString(string: text, attributes: attributes))
+        var lines: [String] = []
+        var start = 0
+        while start < whole.length {
+            if lines.count == most - 1 {
+                lines.append(whole.substring(from: start))
+                break
+            }
+            let count = CTTypesetterSuggestCharacterBreak(typesetter, start, Double(room))
+            guard count > 0 else {
+                lines.append(whole.substring(from: start))
+                break
+            }
+            lines.append(whole.substring(with: NSRange(location: start, length: count)))
+            start += count
+        }
+        return lines.isEmpty ? [text] : lines
+    }
+
+    /// How tall the band is on a picture `width` pixels wide.
+    static func bandHeight(_ mark: Mark, width: Int) -> Int {
+        Int(Metrics(width: width).height(for: laidOut(mark, width: width)).rounded(.up))
+    }
+
+    /// The band alone, `width` pixels wide: the app icon leading in the
+    /// reading direction, then the words, with a hairline along its foot.
+    static func band(_ mark: Mark, width: Int) -> Band? {
+        let m = Metrics(width: width)
+        let rows = laidOut(mark, width: width)
+        let height = Int(m.height(for: rows).rounded(.up))
+        guard width > 0, height > 0, let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
                                       space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         else { return nil }
-        // Core Graphics counts from the bottom: the picture below, the band on top.
-        context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-        let top = CGRect(x: 0, y: CGFloat(image.height), width: CGFloat(width), height: CGFloat(band))
+        // Core Graphics counts from the bottom.
+        let full = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
         context.setFillColor(CGColor(gray: 0.97, alpha: 1))
-        context.fill(top)
+        context.fill(full)
         context.setFillColor(CGColor(gray: 0.82, alpha: 1))
-        context.fill(CGRect(x: 0, y: top.minY, width: top.width, height: max(1, (m.font / 16).rounded())))
+        context.fill(CGRect(x: 0, y: 0, width: full.width, height: max(1, (m.font / 16).rounded())))
 
-        // The app icon leads in the reading direction, then the words.
-        let icon = min(top.height - m.padding * 2, m.font * 3)
-        let iconX = mark.rightToLeft ? CGFloat(width) - m.padding - icon : m.padding
-        drawIcon(in: CGRect(x: iconX, y: top.maxY - m.padding - icon, width: icon, height: icon), context: context)
-        let room = CGFloat(width) - m.padding * 2 - icon - m.gap
+        let icon = min(full.height - m.padding * 2, m.font * 3)
+        let iconX = mark.rightToLeft ? full.width - m.padding - icon : m.padding
+        drawIcon(in: CGRect(x: iconX, y: full.maxY - m.padding - icon, width: icon, height: icon), context: context)
+        let room = full.width - m.padding * 2 - icon - m.gap
 
-        var y = top.maxY - m.padding
-        for row in mark.rows {
+        var links: [Link] = []
+        var y = full.maxY - m.padding
+        for row in rows {
             let lineHeight = m.lineHeight(of: row.kind)
             y -= lineHeight
             guard room > 0 else { continue }
             let line = textLine(row, size: m.size(of: row.kind), room: room)
             var ascent: CGFloat = 0, descent: CGFloat = 0
-            let textWidth = CGFloat(CTLineGetTypographicBounds(line, &ascent, &descent, nil))
+            let textWidth = min(CGFloat(CTLineGetTypographicBounds(line, &ascent, &descent, nil)), room)
             let x = mark.rightToLeft ? iconX - m.gap - textWidth : iconX + icon + m.gap
             context.textPosition = CGPoint(x: x, y: y + (lineHeight - ascent - descent) / 2 + descent)
             CTLineDraw(line, context)
+            if let url = row.url {
+                links.append(Link(rect: CGRect(x: x, y: full.maxY - y - lineHeight, width: textWidth, height: lineHeight),
+                                  url: url))
+            }
         }
-        return context.makeImage()
+        guard let image = context.makeImage() else { return nil }
+        return Band(image: image, links: links)
+    }
+
+    /// The image with the band above it: as wide, and taller by the band.
+    static func render(_ image: CGImage, _ mark: Mark) -> CGImage? {
+        stamped(image, mark)?.image
+    }
+
+    /// The image with the band above it, and where the band's links are on
+    /// it: the band is on top, so they are where the band has them.
+    static func stamped(_ image: CGImage, _ mark: Mark) -> Band? {
+        guard let band = band(mark, width: image.width) else { return nil }
+        let width = image.width, height = image.height + band.image.height
+        let space = image.colorSpace.flatMap { $0.model == .rgb ? $0 : nil } ?? CGColorSpace(name: CGColorSpace.sRGB)!
+        guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        else { return nil }
+        // The picture below, the band on top.
+        context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+        context.draw(band.image, in: CGRect(x: 0, y: image.height, width: width, height: band.image.height))
+        guard let made = context.makeImage() else { return nil }
+        return Band(image: made, links: band.links)
     }
 
     /// One row in its weight and colour, cut short with an ellipsis where
@@ -318,11 +407,14 @@ enum TimeStamp {
         switch row.kind {
         case .title: font = .monospacedDigitSystemFont(ofSize: size, weight: .semibold); gray = 0.08
         case .detail: font = .systemFont(ofSize: size); gray = 0.32
-        case .code: font = .monospacedSystemFont(ofSize: size, weight: .regular); gray = 0.4
+        case .code, .link: font = .monospacedSystemFont(ofSize: size, weight: .regular); gray = 0.4
         }
+        // A link in link blue, 6:1 on the band.
+        let color = row.kind == .link ? CGColor(srgbRed: 0.04, green: 0.36, blue: 0.82, alpha: 1)
+                                      : CGColor(gray: gray, alpha: 1)
         let attributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key(kCTFontAttributeName as String): font,
-            NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: gray, alpha: 1),
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String): color,
         ]
         let line = CTLineCreateWithAttributedString(NSAttributedString(string: row.text, attributes: attributes))
         let ellipsis = CTLineCreateWithAttributedString(NSAttributedString(string: "…", attributes: attributes))

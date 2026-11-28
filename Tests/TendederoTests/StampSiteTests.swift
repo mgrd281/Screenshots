@@ -1,9 +1,38 @@
 import XCTest
 @testable import Tendedero
 
-/// The website a time stamp names: the host alone, whatever the rest of the
-/// page's address holds. Pure text, so it runs anywhere, Linux too.
+/// The page a time stamp names: its whole address, without a user name or
+/// password, and its host where only the website is wanted. Pure text, so
+/// it runs anywhere, Linux too.
 final class StampSiteTests: XCTestCase {
+    func testTheWholeAddressIsKept() {
+        let review = "https://businessapp.b2b.trustpilot.com/reviews?filter=1#review-42"
+        XCTAssertEqual(StampSite.address(of: review), review)
+        XCTAssertEqual(StampSite.address(of: "https://www.kaufland.de/shops/LLC/"), "https://www.kaufland.de/shops/LLC/")
+    }
+
+    func testAUserNameAndPasswordAreLeftOutOfTheAddress() {
+        XCTAssertEqual(StampSite.address(of: "https://lena:geheim@shop.example.com:8443/reset?code=482913"),
+                       "https://shop.example.com:8443/reset?code=482913")
+    }
+
+    func testTheAddressHasItsSchemeAndHostInLowerCase() {
+        XCTAssertEqual(StampSite.address(of: "HTTPS://Mail.Google.COM./Inbox"), "https://mail.google.com/Inbox")
+        XCTAssertEqual(StampSite.address(of: "  http://example.com  "), "http://example.com")
+    }
+
+    /// A stamp from before kept the host alone; it reads as the site's address.
+    func testAHostAloneBecomesAnAddress() {
+        XCTAssertEqual(StampSite.address(of: "www.kaufland.de"), "https://www.kaufland.de")
+    }
+
+    func testWhatIsNoWebsiteHasNoAddress() {
+        XCTAssertNil(StampSite.address(of: "file:///Users/lena/Documents/Kontoauszug.pdf"))
+        XCTAssertNil(StampSite.address(of: "about:blank"))
+        XCTAssertNil(StampSite.address(of: "chrome://settings/passwords"))
+        XCTAssertNil(StampSite.address(of: ""))
+    }
+
     func testOnlyTheHostIsKept() {
         let mail = "https://mail.google.com/mail/u/0/?token=a1B2c3#search/lena.hoffmann%40example.com"
         XCTAssertEqual(StampSite.host(of: mail), "mail.google.com")
