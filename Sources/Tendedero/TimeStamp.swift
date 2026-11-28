@@ -319,7 +319,7 @@ enum TimeStamp {
                 lines.append(whole.substring(from: start))
                 break
             }
-            let count = CTTypesetterSuggestCharacterBreak(typesetter, start, Double(room))
+            let count = CTTypesetterSuggestClusterBreak(typesetter, start, Double(room))
             guard count > 0 else {
                 lines.append(whole.substring(from: start))
                 break
