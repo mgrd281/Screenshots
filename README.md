@@ -14,6 +14,10 @@
   &nbsp;&nbsp;
   <a href="https://mgrd281.github.io/Screenshots/privacy.html">Privacy&nbsp;&rsaquo;</a>
   &nbsp;&nbsp;
+  <a href="https://mgrd281.github.io/Screenshots/terms.html">Terms&nbsp;&rsaquo;</a>
+  &nbsp;&nbsp;
+  <a href="https://mgrd281.github.io/Screenshots/withdrawal.html">Withdrawal&nbsp;&rsaquo;</a>
+  &nbsp;&nbsp;
   <a href="https://mgrd281.github.io/Screenshots/support.html">Support&nbsp;&rsaquo;</a>
   <br><br>
   English&nbsp;·&nbsp;<a href="docs/i18n/README.es.md">Español</a>&nbsp;·&nbsp;<a href="docs/i18n/README.gl.md">Galego</a>&nbsp;·&nbsp;<a href="docs/i18n/README.fr.md">Français</a>&nbsp;·&nbsp;<a href="docs/i18n/README.pt-BR.md">Português (Brasil)</a>&nbsp;·&nbsp;<a href="docs/i18n/README.ja.md">日本語</a>&nbsp;·&nbsp;<a href="docs/i18n/README.ko.md">한국어</a>&nbsp;·&nbsp;<a href="docs/i18n/README.zh-Hans.md">简体中文</a>&nbsp;·&nbsp;<a href="docs/i18n/README.tr.md">Türkçe</a>&nbsp;·&nbsp;<a href="docs/i18n/README.az.md">Azərbaycanca</a>&nbsp;·&nbsp;<a href="docs/i18n/README.hi.md">हिन्दी</a>
@@ -1809,6 +1813,62 @@ whenever it changes on `main`. Its certificate is made once, on a Mac, with
 
 <br>
 
+## Snapfly Pro, later.
+
+Everything in Snapfly is free, and nothing is locked until the owner sets
+the day Snapfly Pro begins (`Plan.proStarts`). Pro will be a subscription,
+by the year or by the month, for people who send orders, receipts and guides
+every day. The features it adds are listed in `Shared/Plan.swift`, in three
+groups: orders and receipts, pictures and videos, sharing and routines.
+Covering private details is never one of them, and whoever used Snapfly on
+a Mac or an iPhone before Pro begins keeps every feature there.
+
+Its screen is ready for that day, a window on the Mac and a full screen on
+the iPhone:
+
+- **When it shows.** Never, until Pro begins. Then, when you choose a
+  feature that needs Pro: the first time on a day, the Pro screen opens;
+  after that, the same day, a note says so instead ("Studio is part of
+  Snapfly Pro."), and a click on the note opens the screen. What runs on
+  its own, like Cover a folder at launch or Studio after a recording, stays
+  still and says nothing. Settings › About › Snapfly Pro… on the Mac and
+  More › Features › Snapfly Pro on the iPhone open it too, once Pro has
+  begun. No badge on the line, ever.
+- **What it shows.** A drawn line with three cards that hang in and sway a
+  little, the locked feature on the middle one, over a green seal whose
+  lock opens once the App Store has confirmed the purchase. Then what Pro
+  adds; the plans, each at the price the App Store gives in your currency,
+  the yearly one saying how much it saves when that is 5% or more; what
+  Subscribe bills and when it renews, before the button; Subscribe and
+  Restore Purchases; and the promise that covering private details stays
+  free. With Reduce Motion or Low Power Mode it keeps still.
+- **Apple sells it.** Pro is bought in the app through the App Store, with
+  your Apple account. Apple is the seller: it takes the payment, renews,
+  and handles cancelling, withdrawing and refunds. One subscription opens
+  Pro in Snapfly from the App Store on the Mac and the iPhone with the same
+  Apple account. Snapfly asks the App Store on the device whether Pro is on
+  and keeps only that answer there; nothing about it reaches the developer.
+- **The website's edition cannot subscribe.** The download from GitHub and
+  the website never asks the App Store; its Pro window says Pro is bought
+  in Snapfly from the Mac App Store.
+- **The legal links** are always on the screen: Terms of Use, Privacy
+  Policy and Withdrawal Policy, the website's
+  [terms](https://mgrd281.github.io/Screenshots/terms.html),
+  [privacy](https://mgrd281.github.io/Screenshots/privacy.html) and
+  [withdrawal](https://mgrd281.github.io/Screenshots/withdrawal.html)
+  pages in English, German or Arabic, as Snapfly shows; Withdraw from
+  Contract, Apple's own page to withdraw within 14 days; and Cancel
+  Subscription, the App Store's subscriptions (on the iPhone, the system's
+  own sheet).
+
+For review without the App Store, debug builds open the screen on made-up
+prices (`-SnapflyPro <phase>`), and the First Run Captures workflow keeps
+it in each phase, on the iPhone (`pro-*`, with a recording of how it comes
+in) and on the Mac (`pro-mac-*`). What App Store Connect needs on the day
+Pro begins is in [docs/store/app-review.md](docs/store/app-review.md).
+
+<br>
+
 ## Tech Specs
 
 | | |
@@ -1941,7 +2001,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `iOS/Snapfly/AlwaysHide.swift` | Always Hide on the iPhone (More › Protection): the details and rules as rows, the privacy strip as the keychain code allows, rules turned on and off, Edit and a swipe to delete, the screen with nothing yet, and the made-up set the simulator's frames and UI tests open (`-SnapflyAlwaysHide`, debug builds only) |
 | `iOS/Snapfly/AlwaysHideSheets.swift` | Always Hide's sheets, as tall as what they hold: the four kinds, then a kind's fields and the checks before Add; New Rule with Word or After Label, a label's reach and a line of an example covered as typed |
 | `iOS/Snapfly/OwnDetailsSettings.swift` | The mint tile every symbol under More and in Always Hide stands on |
-| `iOS/Snapfly/SettingsView.swift` | More on the iPhone: the hero card, the four Protection tiles, Features and Help, the pages they open, growing out of their tile from iOS 18 on; and Double Tap the Back |
+| `iOS/Snapfly/SettingsView.swift` | More on the iPhone: the hero card, the four Protection tiles, Features (with Snapfly Pro first, once Pro has begun) and Help, the pages they open, growing out of their tile from iOS 18 on; and Double Tap the Back |
 | `iOS/Snapfly/MoreStore.swift` | What More shows and changes, kept under the keys it always was, and the made-up choices the simulator's frames and UI tests open (`-SnapflyMore`, debug builds only) |
 | `iOS/Snapfly/MoreParts.swift` | More's motion and its pieces: the cards, the press, the meter, and the covers drawn small on paper as a copy draws them |
 | `iOS/Snapfly/CoveredKindsView.swift` | What Is Covered: the stage with the made-up documents, the count and the preset, the six tiles with their rings, a group's sheet of switches, and the menu with Recommended, All and None |
@@ -1965,6 +2025,12 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `Shared/TrustedTime.swift` | Asks a time stamping authority for a signed time stamp on a fingerprint (RFC 3161), and reads and checks its answer (tested on Linux) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
+| `Shared/ProPlan.swift` | What Snapfly Pro offers and says, the same on the Mac and the iPhone: the features in three groups (`ProCatalog`), the products' IDs, the plans as the App Store gives them and the words round a price, from "Saves 16%" to the renewal, what the Pro screen shows (`ProPhase`), the links to the terms and to Apple's pages, the screen once a day and then a note (`ProNudge`), and the made-up screen for the captures (`-SnapflyPro`, debug builds only) |
+| `Shared/ProHero.swift` | The Pro screen's drawing, on the Mac and the iPhone: the line with a receipt, the locked feature and a recording on its clips and the seal pinned under the middle card, as they hang in, sway and swing when the lock opens, in the colours each app passes; still with Reduce Motion |
+| `ProWindow.swift` | The Snapfly Pro window on the Mac, the gate a Pro feature asks (`ProGate`: the window the first time a day, a note after that, silence for what runs on its own), and the window drawn into a picture for the captures (`-SnapflyProPreview`, debug builds only) |
+| `ProStore.swift` | Snapfly Pro from the App Store on the Mac, in the Mac App Store edition only: the plans, buying in a sheet on the window, restoring, and whether Pro is on, kept for what runs without a window |
+| `iOS/Snapfly/ProScreen.swift` | The Snapfly Pro screen on the iPhone, over everything: the drawing, the words, the plans or the subscription, what Pro adds, the links and the one green button |
+| `iOS/Snapfly/ProStore.swift` | Snapfly Pro from the App Store on the iPhone: the plans, buying through the system's purchase, Ask to Buy, restoring, and whether Pro is on |
 | `Shared/VectorTrace.swift`, `Shared/VectorPalette.swift`, `Shared/VectorContour.swift`, `Shared/VectorModel.swift` | Convert to SVG's engine, on the Mac and later the iPhone: the colors of a picture, which color each pixel is, the edges between them placed between pixels, lines and curves fitted to them, and the SVG written out |
 | `iOS/Snapfly/` | The iPhone app: the screenshots in Photos, covered, the Shortcuts actions, and the introduction on its screens (`PhoneGuide.swift`) |
 | `iOS/Snapfly/ProtectView.swift`, `ProtectSession.swift`, `MarkCanvas.swift`, `EditorParts.swift`, `PhoneParts.swift` | The iPhone's protect screen: the page on a bright ground, to zoom with its places marked, covered in steps and checked; the one bar of tools to select, draw, box, lasso and erase with their handles; the status capsule with how many details were found; Details, which checks the unsure places one by one and lists every place by whose it is and what it is, each topic covered with one switch; the ways out, which wait for the checked copy and ask while places are to check; the menu with Explain, Copy, Send to Mac and Full Screen; for a scanned page, Review: the wipe, the status chip, the page large with its eye, its pages and its one bar |
@@ -2076,7 +2142,8 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `cloudkit/schema.ckdb`, `cloudkit/share.ckdb` | The record types in the iCloud container, and the type shares are kept in, put there by the CloudKit Schema workflow |
 | `SCAN_TEXT.md` | The scan's text, from capture to export: the audit of what each cleaning step does to small grey print and an umlaut's dots, measured on a made-up letter, what changed, the guard that keeps what a line says, reading order and the text in every script, and what is verified and what is not |
 | `FIRST_RUN.md` | The iPhone's first run: the audit of the launch before it, the journey, the storyboard second by second, the engine behind the sample, accessibility, tests, measurements and what is not yet known |
-| `scripts/first-run-captures.sh` | Plays the first run on the simulator for the First Run Captures workflow: still frames, a recording, how soon it showed, and main's build beside it; then Protect Picture on the made-up invoice (`-SnapflyEditorSample`, debug builds only), on this iPhone and the smallest there is |
+| `scripts/first-run-captures.sh` | Plays the first run on the simulator for the First Run Captures workflow: still frames, a recording, how soon it showed, and main's build beside it; then Protect Picture on the made-up invoice (`-SnapflyEditorSample`, debug builds only), on this iPhone and the smallest there is; then the Snapfly Pro screen on made-up prices in each phase, with a locked feature, further down the page, at the largest text size and with Reduce Motion, and a recording of how it comes in (`-SnapflyPro`, `pro-*`) |
+| `scripts/pro-mac-captures.sh` | The Snapfly Pro window on the Mac for the First Run Captures workflow: the website's edition built in debug draws the window into a picture itself and quits, in each phase, in German, English and Arabic, light and dark (`pro-mac-*`) |
 | `SYNC.md` | The audit and plan for Mac and iPhone as one: what there is, the design, the threat model, what goes wrong and what happens then, the owner's steps at Apple, and what is verified |
 | `Inbox.swift` | Takes over screenshot settings and puts them back |
 | `Markup.swift` | Opens the system Markup editor and saves the result |
@@ -2093,6 +2160,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `StudioEditor.swift`, `StudioEditorView.swift` | Studio's window: the video as it will be saved, the timeline, the inspector, Undo and Save Video |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
 | `Tests/TendederoTests/CoverCorpus.swift`, `CoverCorpusGerman.swift`, `CoverCorpusPostal.swift`, `CoverAccuracyTests.swift` | 116 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, and more German papers (a tax notice, a tenancy agreement, a bank statement, a chat export, a CV, an order confirmation; a sick note's insured copy whose name has no label read over it and whose stamp repeats the practice's and the doctor's numbers, a company's letter, a newsletter whose words with a number are no streets), each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |
+| `Tests/TendederoTests/ProPlanTests.swift` | Snapfly Pro's rules: when it has begun and who keeps everything, every feature once in the catalogue, the plans' order, the savings rounded down and only from 5%, the words round a price, the phases, the links in each language, and the screen once a day |
 | `FullScreen.swift` | Knows when to stay hidden (the App Store edition goes by the windows on screen) |
 | `Line.swift` | What is hanging, and what you can do with it |
 

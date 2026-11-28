@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The Snapfly Pro screen is ready for later, on the Mac and the iPhone:
+  what Pro will add, its prices as the App Store gives them, and the
+  terms, the privacy policy and Apple's own pages to withdraw and to
+  cancel. Nothing is locked: every feature stays free until Pro begins,
+  and whoever uses Snapfly before then keeps them all. The website now
+  has the terms of use (AGB) and the right of withdrawal (Widerruf), in
+  English, German and Arabic.
+
 - Prove when it was recorded (Settings › General, under Screen
   recordings): each new recording gets a qualified time stamp under EU law
   (eIDAS), signed by Sectigo's time stamping authority on the recording's

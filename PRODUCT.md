@@ -86,18 +86,47 @@ leaves, and photos that leave the line once sent.
 ## Plans
 
 - Everything in Snapfly is free for now.
-- Pro, a subscription, comes later. It adds the features listed in
-  `Shared/Plan.swift` for people who send orders and receipts every day: the
-  order binder, the send log, the order card, covering profiles, saved
-  messages, the hand-off to bookkeeping and step-by-step guides. Each is
-  built free first.
+- Pro, a subscription by the year or the month, comes later. It adds the
+  features listed in `Shared/Plan.swift` for people who send orders and
+  receipts every day, in the three groups the Pro screen shows
+  (`ProCatalog`): orders and receipts (the order binder, the order card,
+  the send log, saved messages, the hand-off to bookkeeping, the shop
+  header), pictures and videos (drawing and cropping, backgrounds, Studio,
+  step-by-step guides), and sharing and routines (share links, covering
+  profiles, covering a folder, AI apps). Each is built free first.
 - Nothing is held back until the owner sets the day Pro begins
   (`Plan.proStarts`). Whoever used Snapfly before that day keeps every
   feature.
 - Covering private details, of every kind, is never Pro, and neither is
   anything Snapfly does today.
 - Pro needs no account, no server and no tracking.
-- At most one note about Pro a day, and never a badge on the line.
+- **The Pro screen** (November 2026) is built and waits for that day: a
+  window on the Mac, a full screen on the iPhone. A locked feature opens
+  it (below), and so, once Pro has begun, do Settings › About on the Mac
+  and More › Features on the iPhone; nothing else does. It says what Pro
+  adds, the price as the App Store gives it, what is billed and when it
+  renews, before its one Subscribe button, and that covering stays free.
+- **Once a day, then a note** (decided November 2026). The first locked
+  feature chosen on a day opens the Pro screen; for the rest of that day a
+  note says so instead ("Studio is part of Snapfly Pro."), and a click on
+  it opens the screen (`ProNudge`). What runs on its own (covering a
+  folder, Studio after a recording, the AI apps' server) stays still and
+  says nothing. Never a badge on the line.
+- **The website's edition cannot subscribe.** Pro is bought in Snapfly
+  from the Mac App Store and on the iPhone. The download from the website
+  never asks the App Store; its Pro window says where Pro is bought.
+- **Apple sells it.** One subscription group, Snapfly Pro, with a yearly
+  and a monthly plan (`ProProducts`). Apple is the seller: it takes the
+  payment and handles renewing, cancelling, withdrawal and refunds
+  through the Apple account. One subscription opens Pro on the Mac and the
+  iPhone with the same Apple account. Prices come only from the App Store;
+  the yearly plan's "Saves N%" is worked out from its two prices and shown
+  only from 5%.
+- **The legal links** are always on the Pro screen: Terms of Use, Privacy
+  Policy and Withdrawal Policy (the website's pages, in English, German or
+  Arabic as Snapfly shows), Withdraw from Contract (Apple's own withdrawal
+  online) and Cancel Subscription (the App Store's subscriptions). Every
+  page of the website links to the same terms and withdrawal pages.
 
 ## Accessibility & Inclusion
 

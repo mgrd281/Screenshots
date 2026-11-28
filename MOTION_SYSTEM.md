@@ -25,8 +25,10 @@ none of it is built without the owner asking.
    things (hover, press) take 120–300 ms; travel takes 450–820 ms.
 5. **Interruptible.** A new action takes over from a running animation at
    its current state. Nothing makes the user wait for it to finish.
-6. **Once is enough.** Entrances play once. Only the hanging photos' small
-   sway loops.
+6. **Once is enough.** Entrances play once; the Pro screen's plays once
+   each time it is opened, which is always on purpose. Only the hanging
+   photos' small sway loops, and the same sway of the cards on the Pro
+   screen's line (`pro.sway`), the one loop there.
 7. **Reduce Motion always has an answer:** a quick fade, or nothing.
 8. **Reading direction.** Anything that travels sideways mirrors in
    right-to-left languages.
@@ -51,7 +53,7 @@ Each token lists where its value ships today. "App" is SwiftUI or AppKit;
 | `duration.reveal` | 700 ms | Site: a new theme spreading from its swatch |
 | `duration.flight` | 820 ms | Site paper-plane flight |
 | `duration.entrance` | 0.8–1.2 s | Site first view and arrivals, once per page |
-| `duration.ambient` | 5.6 s | Site sway of a hanging photo (alternate, loops) |
+| `duration.ambient` | 5.6 s | Site sway of a hanging photo (alternate, loops); the Pro hero's cards (`pro.sway`, a sine) |
 | `duration.run` | 30 s, linear, loops | Site bold look: the band of words running across the first view |
 
 ### Easing
@@ -149,6 +151,36 @@ Motion and Low Power Mode. The first run uses them all.
 | `more.press` | spring 0.22 / 0.9, to 97% | A tile, a chip or a button of More pressed, back on release; no haptic |
 | `scan.wipe` | 0.5 s ease-out, from the leading edge; a 0.3 s cross-fade with Reduce Motion | A scanned page's cleaning, once: the cleaned page wipes in over the page as it came, then its covers grow in on `stagger.cover` (at once with Reduce Motion) |
 
+### Snapfly Pro (Mac and iPhone)
+
+The Pro screen's drawing (`ProHero` in `Shared/ProHero.swift`) is the same
+on both: Snapfly's line, three cards hung on its clips (a receipt, the
+locked feature, a recording) and a seal with a lock pinned under the middle
+card. It plays from the start each time the screen opens, once, and the
+cards then sway; when the App Store confirms the purchase, the lock opens.
+Still means Reduce Motion, Low Power Mode or a capture (`ProSample.still`,
+the Mac's preview): everything is at rest at once, nothing loops, and the
+picture is complete. The values are in `DESIGN.md` under "Snapfly Pro" and
+"Snapfly Pro window".
+
+| Token | Value | Where it ships | Still |
+|---|---|---|---|
+| `pro.line` | trim 0 → 1 from the reading side (mirrored in right to left), fading in with it, 0.5 s on `ease.out` (`timingCurve(0.16, 1, 0.3, 1)`), after 0.05 s | The line across the drawing | Drawn whole at once |
+| `pro.hang` | each card from 56 pt (`drop.photo`) above its place, transparent and turned 16° further, clockwise (mirrored in right to left), as `spring.arrive`'s swing, onto its clip on `spring.arrive` (0.42 / 0.72), from 0.18 s, 0.11 s apart in reading order (receipt, middle card, recording; the other way round in right to left), turning about its clip | The three cards | Hanging at rest at once |
+| `pro.seal` | from 60% and transparent to whole, spring 0.5 / 0.7, after 0.6 s; it swings with the middle card it is pinned to, under the same one shadow | The seal | There at once |
+| `pro.sway` | each card ±1.1° about its clip on a sine of 5.6 s (`duration.ambient`), phases 0, 1.9 and 3.7 s in reading order, from 1.3 s; its width eases in over 0.8 s so it never jumps; drawn at 30 frames a second at most, and only while the screen shows. The Pro screen's one loop | The cards, once they hang | None |
+| `pro.unlock` | `lock.fill` replaced by `lock.open.fill` (`.symbolEffect(.replace)`, on spring 0.42 / 0.72) with one bounce (`.bounce`, non-repeating); each card swings 6° clockwise (mirrored in right to left) and back on `spring.arrive`'s spring, out over 0.24 s, 40 ms apart in reading order from 40 ms after the lock; a success haptic on the iPhone; VoiceOver hears "Welcome to Snapfly Pro" | The App Store's verified purchase, and nothing before it. Should Pro end while the screen shows, the symbol swaps back with no bounce or swing | The open lock at once, no bounce or swing; the haptic and the announcement stay |
+| `pro.appear` (iPhone) | rising 8 pt and fading in, 0.26 s ease-out (as `more.appear`), from 0.15 s, 40 ms apart (`stagger.more`): the words, the plans, what Pro adds, the foot | `ProScreen`, each time it opens, after the line has begun | A 0.15 s fade (`SnapflyMotion.calm`) |
+| `pro.appear` (Mac) | rising 8 pt and fading in on `spring.reveal` (0.42 / 0.82), from 0.15 s, 40 ms apart: the chip and title, what Pro adds, the plans, the buttons | The Pro window, each time it opens; its view is gone while it is closed, so the next opening plays from the start | There at once |
+
+Around them: on the iPhone a new title gives way on `words.change`, a plan's
+ring on `motion.toggle` with a selection haptic (none for the first choice
+made as the prices come), Subscribe with a light impact, and notes and
+phases on `motion.change`; on the Mac, the title cross-fades and the plan's
+ring, the phases and the notes change on `spring.row` (0.25 / 0.85), 0.15 s
+fades with Reduce Motion. The placeholder tiles while the prices are asked
+for never shimmer.
+
 ### Stagger
 
 | Token | Value | Where it ships |
@@ -210,7 +242,8 @@ Motion and Low Power Mode. The first run uses them all.
 
 ### Rotation
 
-- Sway: ±1.1° around the photo's own tilt, `duration.ambient`.
+- Sway: ±1.1° around the photo's own tilt, `duration.ambient`; the Pro
+  hero's cards the same, about their clips (`pro.sway`).
 - Arrival swing in the app: 16°, settled by `spring.arrive`.
 - Drop on the site: −7° to 3° to −1.2° to 0.4° to rest.
 - Flight tilt: −9° at the top of the arc (9° in right-to-left).
@@ -259,6 +292,12 @@ Motion and Low Power Mode. The first run uses them all.
   down itself. On More (`MoreMotion`) nothing moves, scales or staggers:
   0.15 s cross-fades, a pill keeps its check's room so nothing reflows,
   the system's push instead of the zoom, and the numbers still change.
+- **Snapfly Pro (Mac and iPhone):** with Reduce Motion or Low Power Mode
+  the drawing is still and complete, its cards at rest, the sway stopped,
+  the lock shown open or shut with no bounce; the screen's parts fade in
+  over 0.15 s on the iPhone and are simply there on the Mac. Turning
+  Reduce Motion on while it shows puts everything at rest at once; turning
+  it off starts the sway, easing in, with no replay.
 - **Rule:** a change that adds motion defines its reduced form in the same
   change.
 
@@ -273,7 +312,9 @@ to nothing else; don't put them on ordinary buttons.
   same idea. It is the icon in motion, and it means "sent".
 - **Hang.** A card drops onto its clip and swings to rest, each swing
   smaller (`hang-in` on the site, `spring.arrive` in the app), then sways
-  a little. It means "here, ready".
+  a little. It means "here, ready". The Pro screen's drawing hangs its
+  three cards the same way (`pro.hang`, `pro.sway`), as the photos Pro
+  works on.
 
 On the website a third move belongs to the envelope: **strike.** A postmark
 comes down onto what was sent, from 118% to rest in `duration.strike`, a
