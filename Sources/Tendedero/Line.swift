@@ -1122,6 +1122,43 @@ final class Line: ObservableObject {
         NSWorkspace.shared.open(item.url)
     }
 
+    // MARK: The page in the time band
+
+    /// The pages a photo's time band names, a recording's each from when it
+    /// was opened: none with the stamp off or no website in front.
+    func pages(_ id: UUID) -> [TimeProof.Seen.Page] {
+        guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage || item.isRecording
+        else { return [] }
+        return TimeProof.seen(item.url).pages
+    }
+
+    /// Opens a page the time band names in the browser. Only a website: the
+    /// address was read from the browser, and is never anything else.
+    func openPage(_ address: String) {
+        guard let url = URL(string: address), let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https"
+        else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    /// Where the links of a photo's time band are on the photo as it hangs;
+    /// nil with the stamp off, without a page, or before the photo shows its
+    /// band, as the copy with it is still being made.
+    func bandLinks(_ id: UUID) -> BandLinks? {
+        guard TimeStamp.isOn, let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage, item.altered,
+              let mark = TimeStamp.mark(for: item.url), let links = BandLinks.screenshot(item.url, mark),
+              // The photo shows that very picture.
+              links.fits(item.thumb.size) else { return nil }
+        return links
+    }
+
+    /// The same on a recording, whose pictures carry the band themselves,
+    /// once its size is read from the file.
+    func recordingBandLinks(_ id: UUID) async -> BandLinks? {
+        guard TimeStamp.isOn, let item = items.first(where: { $0.id == id && !$0.falling }), item.isRecording,
+              let links = await BandLinks.recording(item.url), links.fits(item.thumb.size) else { return nil }
+        return links
+    }
+
     /// Moves the file to the Trash and takes the photo off the line. When a
     /// drag ends on the Dock's Trash, macOS only reports it: deleting the file
     /// is the source app's job, as Finder does.

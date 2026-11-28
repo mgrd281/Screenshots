@@ -223,9 +223,10 @@ final class ScreenshotWatcher {
 
     private func isCandidate(_ url: URL) -> Bool {
         if isRecording(url) { return acceptsRecordings }
-        if isDocument(url) { return acceptsDocuments }
+        // A stamped copy Snapfly saved next to a screenshot, a picture or a
+        // PDF, is not a new one.
+        if isDocument(url) { return acceptsDocuments && !TimeStamp.isStampedCopy(url) }
         guard Self.imageExtensions.contains(url.pathExtension.lowercased()) else { return false }
-        // A stamped copy Snapfly saved next to a screenshot is not a new one.
         if TimeStamp.isStampedCopy(url) { return false }
         return onlyTaggedScreenshots ? isScreenCapture(url) : true
     }

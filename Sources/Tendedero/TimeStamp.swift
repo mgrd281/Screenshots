@@ -436,33 +436,97 @@ enum TimeStamp {
         String(format: L("%@ with time stamp"), url.deletingPathExtension().lastPathComponent)
     }
 
-    /// Writes the stamped copy next to the screenshot, as a PNG that also
-    /// carries the stamp's words in its description. It is marked first and
-    /// named last, so the folder never shows it as a new screenshot.
+    /// Writes the stamped copy next to the screenshot: a PNG that also
+    /// carries the stamp's words in its description, and a PDF of the same
+    /// picture whose address opens the page when clicked. Each is marked
+    /// first and named last, so the folder never shows it as a new
+    /// screenshot.
     private static func saveCopy(of url: URL, named name: String, _ mark: Mark, _ record: Record) {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateImageAtIndex(source, 0, nil),
-              let stamped = render(image, mark) else { return }
+              let withBand = stamped(image, mark) else { return }
         let folder = url.deletingLastPathComponent()
-        var target = folder.appendingPathComponent(name).appendingPathExtension("png")
+        // The picture and its PDF share one name, free for both.
+        let base = freeName(name, in: folder)
+        let words = mark.rows.map(\.text).joined(separator: "\n")
+
+        let png = folder.appendingPathComponent(".snapfly-\(UUID().uuidString).png")
+        if let destination = CGImageDestinationCreateWithURL(png as CFURL, UTType.png.identifier as CFString, 1, nil) {
+            let properties: [CFString: Any] = [
+                kCGImagePropertyPNGDescription: words,
+                kCGImagePropertyPNGSoftware: "Snapfly",
+                kCGImagePropertyPNGCreationTime: ISO8601DateFormatter().string(from: record.taken),
+            ]
+            CGImageDestinationAddImage(destination, withBand.image, [kCGImagePropertyPNGDictionary: properties] as CFDictionary)
+            if CGImageDestinationFinalize(destination) {
+                place(png, at: folder.appendingPathComponent(base).appendingPathExtension("png"))
+            } else {
+                try? FileManager.default.removeItem(at: png)
+            }
+        }
+
+        let pdf = folder.appendingPathComponent(".snapfly-\(UUID().uuidString).pdf")
+        if writePDF(withBand, title: base, subject: words, to: pdf) {
+            place(pdf, at: folder.appendingPathComponent(base).appendingPathExtension("pdf"))
+        } else {
+            try? FileManager.default.removeItem(at: pdf)
+        }
+    }
+
+    /// The name, or the name with a number after it, that neither a picture
+    /// nor a PDF in the folder has yet.
+    static func freeName(_ name: String, in folder: URL) -> String {
+        func taken(_ base: String) -> Bool {
+            ["png", "pdf"].contains { ext in
+                FileManager.default.fileExists(atPath: folder.appendingPathComponent(base).appendingPathExtension(ext).path)
+            }
+        }
+        var base = name
         var n = 2
-        while FileManager.default.fileExists(atPath: target.path) {
-            target = folder.appendingPathComponent("\(name) \(n)").appendingPathExtension("png")
+        while taken(base) {
+            base = "\(name) \(n)"
             n += 1
         }
-        let hidden = folder.appendingPathComponent(".snapfly-\(UUID().uuidString).png")
-        guard let destination = CGImageDestinationCreateWithURL(hidden as CFURL, UTType.png.identifier as CFString, 1, nil)
-        else { return }
-        let png: [CFString: Any] = [
-            kCGImagePropertyPNGDescription: mark.rows.map(\.text).joined(separator: "\n"),
-            kCGImagePropertyPNGSoftware: "Snapfly",
-            kCGImagePropertyPNGCreationTime: ISO8601DateFormatter().string(from: record.taken),
-        ]
-        CGImageDestinationAddImage(destination, stamped, [kCGImagePropertyPNGDictionary: png] as CFDictionary)
-        guard CGImageDestinationFinalize(destination) else { return }
+        return base
+    }
+
+    /// Marks a copy as Snapfly's own, then gives it its name.
+    private static func place(_ hidden: URL, at target: URL) {
         setAttribute(copyMarker, Data([1]), on: hidden)
         if (try? FileManager.default.moveItem(at: hidden, to: target)) == nil {
             try? FileManager.default.removeItem(at: hidden)
         }
+    }
+
+    /// The longest side of a page that PDF readers take: 200 inches.
+    static let largestPage: CGFloat = 14_400
+
+    /// The stamped picture as a PDF of one page its size, a point for each
+    /// pixel, so it stays as sharp as the picture, with a link over each
+    /// line of the page's address. A whole page taller than a PDF page can
+    /// be is set on a smaller page, with all its pixels still there.
+    static func writePDF(_ stamped: Band, title: String, subject: String, to url: URL) -> Bool {
+        let width = CGFloat(stamped.image.width), height = CGFloat(stamped.image.height)
+        let scale = min(1, largestPage / max(width, height, 1))
+        var box = CGRect(x: 0, y: 0, width: width * scale, height: height * scale)
+        let info: [CFString: Any] = [kCGPDFContextCreator: "Snapfly", kCGPDFContextTitle: title, kCGPDFContextSubject: subject]
+        guard box.width > 0, box.height > 0,
+              let context = CGContext(url as CFURL, mediaBox: &box, info as CFDictionary) else { return false }
+        context.beginPDFPage(nil)
+        context.draw(stamped.image, in: box)
+        for link in stamped.links {
+            let place = CGRect(x: link.rect.minX * scale, y: link.rect.minY * scale,
+                               width: link.rect.width * scale, height: link.rect.height * scale)
+            context.setURL(link.url as CFURL, for: pageRect(place, height: box.height))
+        }
+        context.endPDFPage()
+        context.closePDF()
+        return FileManager.default.fileExists(atPath: url.path)
+    }
+
+    /// A place on a picture, counted from its top left, as a PDF page of the
+    /// picture's height counts it: from the bottom left.
+    static func pageRect(_ rect: CGRect, height: CGFloat) -> CGRect {
+        CGRect(x: rect.minX, y: height - rect.maxY, width: rect.width, height: rect.height)
     }
 }
