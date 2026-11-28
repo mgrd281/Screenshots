@@ -2245,3 +2245,11 @@
 "Terms of Use" = "이용 약관";
 "Privacy Policy" = "개인정보 처리방침";
 "Withdrawal Policy" = "청약 철회 안내";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "녹화에 시간 도장을 넣지 못했어요.";
+"From %@" = "%@부터";
+"Open Page" = "페이지 열기";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "스크린샷을 찍을 때 앞쪽 브라우저에 열려 있던 페이지, Snapfly가 읽은 그대로(서명되지 않음):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "녹화하는 동안 앞쪽 브라우저에 열려 있던 페이지들, 각각 열린 때부터, Snapfly가 읽은 그대로(서명되지 않음):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "Snapfly가 시간 도장을 그려 넣은 스크린샷(서명되지 않음):";

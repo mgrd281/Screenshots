@@ -2247,3 +2247,11 @@
 "Terms of Use" = "Terms of Use";
 "Privacy Policy" = "Privacy Policy";
 "Withdrawal Policy" = "Withdrawal Policy";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "Could not add the time stamp to the recording.";
+"From %@" = "From %@";
+"Open Page" = "Open Page";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "The screenshot with the time stamp Snapfly drew on it (not signed):";

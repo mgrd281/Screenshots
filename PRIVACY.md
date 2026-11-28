@@ -151,10 +151,14 @@ or turn on syncing with your iPhone (below).
   Record Screen or Record a Guide. So that the send button shows only on chat websites, it asks
   the browser in front for the address of the open page, once you allow it,
   and reads nothing else. While the time stamp is on, the stamp of a new
-  screenshot also names the website that was open, by its name alone, like
-  mail.google.com, never the rest of the address, which can hold a search,
-  an email address or a sign-in link. The stamp goes with every copy that
-  leaves the line, so that name goes with it. Settings › Permissions shows each of these, and you
+  screenshot also shows the whole address of the page that was open, as
+  evidence needs it, without a user name or password written into it; and
+  while a recording runs with the stamp on, Snapfly asks the browser in
+  front for its page about once a second, keeps the pages with the
+  recording on this Mac and draws them into the video. An address can hold
+  a search, an email address or a sign-in link; the stamp goes with every
+  copy that leaves the line, so the address goes with it. Snapfly sends the
+  addresses nowhere. Settings › Permissions shows each of these, and you
   can turn any off at any time in System Settings.
 - **Guides.** While you record a guide, Snapfly takes a screenshot of the
   screen at each click and asks the app you clicked, through Accessibility,
@@ -328,7 +332,9 @@ PDFs, die du der App selbst gibst, und kopiert, sendet oder löscht sie nur, wen
 du es willst. Fotos verlassen die Leine ohne Aufnahmeort und Kameradaten.
 Bildschirmaufnahmen macht es nur, wenn du darum bittest, und vom Browser liest
 es nur die Adresse der offenen Seite, damit die Senden-Taste nur auf
-Chat-Websites erscheint. Beim Aufnehmen einer Anleitung macht Snapfly bei jedem
+Chat-Websites erscheint, und, bei eingeschaltetem Zeitstempel, damit der
+Stempel die ganze Adresse zeigt: während einer Aufnahme etwa einmal pro
+Sekunde; die Seiten bleiben bei der Aufnahme auf deinem Mac. Beim Aufnehmen einer Anleitung macht Snapfly bei jedem
 Klick ein Bildschirmfoto und fragt die angeklickte App, was dort angeklickt
 wurde, nie, was du tippst; die Anleitung bleibt auf deinem Mac. Ob das Mikrofon
 gerade in Gebrauch ist, fragt Snapfly

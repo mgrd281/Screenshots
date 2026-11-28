@@ -62,6 +62,7 @@ nothing. Not during a call, in Settings under Line, turns this off.
 | | |
 |:--|:--|
 | Click | Copy the image. |
+| Click the address in a photo's or recording's time band | Open that page in your browser. Open Page in the photo's menu does the same. |
 | <kbd>⌘</kbd>-click several, or click the circle on each | Pick them, to send or copy just those together. They stay picked, even when the line goes up, until they are sent. All Photos › Pick All in a photo's menu, then put back the few that should stay. |
 | Right-click, then Copy Text | Copy the words in it, to paste as text. |
 | Right-click, then Copy Link | Upload it as it leaves the line, covered, and copy a link to paste anywhere: a message, an email, a ticket. The link works for seven days, then the file is deleted; the same photo keeps its link. Delete Link takes it down sooner. Recordings and PDFs too. |
@@ -968,16 +969,31 @@ Turn on Stamp the date and time under General in Settings, and every
 screenshot of the whole screen gets a band above it, like a letterhead,
 that says when and where it was taken: the date and the time to the
 second, from the atomic clock of the PTB in Germany (or the Mac's clock
-when there is no connection); the website that was open in the browser, by
-its name alone, like mail.google.com, never the rest of its address, which
-can hold a search, an email address or a sign-in link; and the
-screenshot's SHA-256 fingerprint, so anyone can check the copy was made
-from that very file. Choose Every screenshot to stamp all of them,
-and type a few words, like your shop's name, to stand before the date.
+when there is no connection); the whole address of the page that was open
+in the browser, as evidence needs it (which review, which listing, which
+order), in blue, over three lines at most; and the screenshot's SHA-256
+fingerprint, so anyone can check the copy was made from that very file.
+A user name and a password written into an address are left out; anything
+else in it, a search, an email address or a sign-in link, is drawn as it
+is, so look at the address before you send a stamped photo. Choose Every
+screenshot to stamp all of them, and type a few words, like your shop's
+name, to stand before the date.
 
 The screenshot itself stays as it was. A stamped copy is saved next to it,
-named "… with time stamp", and the stamp also shows on the line and goes
-with whatever leaves it. Asking the PTB for the time is all the stamp
+named "… with time stamp", once as a picture and once as a PDF whose
+address is a link, and the stamp also shows on the line and goes with
+whatever leaves it. On the line, click the address in the band to open the
+page in your browser, or choose Open Page in the photo's menu; the rest of
+the band copies the photo, as a click does.
+
+Every new screen recording gets the band too, in the video itself, above
+its picture: the time runs second by second from the moment the recording
+began, by the PTB's atomic clock, and the address follows the page in
+front as you go from one page to another. While recording, Snapfly asks
+the browser in front for its page about once a second, less often when the
+browser is slow to answer, and keeps the pages with the recording. Open
+Page lists each page a recording showed, from when it was opened. A video
+saved from Studio has no band. Asking the PTB for the time is all the stamp
 sends out, and only while it is on.
 
 <br>
@@ -1011,7 +1027,13 @@ signed), how long it is, and how to check it with OpenSSL or any other
 program that reads RFC 3161 time stamps. A file with no proof yet, or
 changed since, as by Trim, gets a new one first. With Smooth pointer on,
 the proof is made again once the pointer is drawn in, so it is always of
-the recording as it hangs.
+the recording as it hangs, and so it is once the time stamp's band is.
+
+Beside the page, the folder holds "Proof of Time.pdf": the same words laid
+out to print, then what Snapfly read, marked as not signed: for a
+screenshot, the page's address as a link and the stamped picture; for a
+recording, every page it showed, from when each was opened, with a picture
+of that moment, each address a link.
 
 <br>
 
@@ -2050,10 +2072,11 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `scripts/always-hide-checks.sh` | Runs the UI tests in `iOS/SnapflyUITests` for the Always Hide Checks workflow, all but Scan's and PDF's, which the Scan Checks and PDF Checks workflows run on optimized builds, and keeps frames of the screen and each sheet, light and dark, at the largest text sizes and in Arabic and English, on the newest iPhone and the smallest, for the `always-hide-captures` pre-release |
 | `docs/snapfly-always-hide-audit.md` | Always Hide's audit: what there was, where details and rules are kept, how covering uses them, how a label's reach was decided, what is promised and what holds in code, and what changed |
 | `Shared/Localization.swift`, `Shared/Log.swift` | `L()` for the translations, and the log, for both apps |
-| `TimeStamp.swift` | The band above a screenshot with the time, the website and the fingerprint, and the stamped copy next to it |
+| `TimeStamp.swift` | The band above a screenshot with the time, the page's whole address as a link and the fingerprint, and the stamped copy next to it, as a picture and as a PDF |
+| `VideoStamp.swift` | The time stamp on a recording: the pages noted while it records, kept with the file, and the band drawn into its pictures, the time running |
 | `Shared/StampSite.swift` | The website a stamp names: the host of the page's address alone, never its path, search or fragment (tested on Linux) |
 | `Shared/AtomicTime.swift` | Asks the PTB's atomic clock for the exact time (NTP) |
-| `TimeProof.swift` | Prove when it was recorded: the proof of time kept with a recording, made again when Snapfly changes it, and Save Proof of Time…'s folder and page |
+| `TimeProof.swift` | Prove when it was recorded: the proof of time kept with a recording, made again when Snapfly changes it, and Save Proof of Time…'s folder, its page and its PDF with the pages as links |
 | `Shared/TrustedTime.swift` | Asks a time stamping authority for a signed time stamp on a fingerprint (RFC 3161), and reads and checks its answer (tested on Linux) |
 | `Shared/CoverReport.swift` | What was covered in a picture, kind by kind, for the lock, the photo's menu, VoiceOver and the iPhone |
 | `Shared/Plan.swift` | The features that will need Pro later, all free for now, and the date Snapfly first opened |
@@ -2195,6 +2218,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `StudioEditor.swift`, `StudioEditorView.swift` | Studio's window: the video as it will be saved, the timeline, the inspector, Undo and Save Video |
 | `Tests/TendederoTests` | Tests for the logic that needs no screen, run by CI with `swift test` |
 | `Tests/TendederoTests/CoverCorpus.swift`, `CoverCorpusGerman.swift`, `CoverCorpusPostal.swift`, `CoverAccuracyTests.swift` | 116 made-up documents (invoices, medical letters, transfers, payslips, chats, emails, forms) in German, English, French, Spanish, Turkish, Arabic and Portuguese, and more German papers (a tax notice, a tenancy agreement, a bank statement, a chat export, a CV, an order confirmation; a sick note's insured copy whose name has no label read over it and whose stamp repeats the practice's and the doctor's numbers, a company's letter, a newsletter whose words with a number are no streets), each detail marked with its kind, and how much of each the recommended kinds cover whole. The build fails when a kind falls below its floor or more of what should stay is covered; Build Snapfly prints the numbers last ("Say how well covering does") |
+| `Tests/TendederoTests/VideoStampTests.swift`, `StampLinkTests.swift` | The time stamp on recordings (the page at a moment, the band's even height, a real export) and its links (where they sit in the PDFs and on the line) |
 | `Tests/TendederoTests/ProPlanTests.swift` | Snapfly Pro's rules: when it has begun and who keeps everything, every feature once in the catalogue, the plans' order, the savings rounded down and only from 5%, the words round a price, the phases, the links in each language, and the screen once a day |
 | `FullScreen.swift` | Knows when to stay hidden (the App Store edition goes by the windows on screen) |
 | `Line.swift` | What is hanging, and what you can do with it |

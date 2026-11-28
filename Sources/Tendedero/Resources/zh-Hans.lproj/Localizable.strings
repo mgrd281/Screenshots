@@ -2245,3 +2245,11 @@
 "Terms of Use" = "使用条款";
 "Privacy Policy" = "隐私政策";
 "Withdrawal Policy" = "撤销须知";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "无法给录制内容加上时间戳。";
+"From %@" = "从 %@ 起";
+"Open Page" = "打开页面";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "截屏时前台浏览器中打开的页面，由 Snapfly 读取（未签名）：";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "录制期间前台浏览器中打开的页面，各自从打开时起，由 Snapfly 读取（未签名）：";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "带有 Snapfly 所加时间戳的截屏（未签名）：";

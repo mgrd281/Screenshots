@@ -2247,3 +2247,11 @@
 "Terms of Use" = "İstifadə şərtləri";
 "Privacy Policy" = "Məxfilik siyasəti";
 "Withdrawal Policy" = "İmtina hüququ";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "Vaxt möhürü yazıya əlavə edilə bilmədi.";
+"From %@" = "%@-dən";
+"Open Page" = "Səhifəni aç";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "Ekran şəkli çəkilərkən öndəki brauzerdə açıq olan səhifə, Snapfly-ın oxuduğu kimi (imzalanmayıb):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "Yazı zamanı öndəki brauzerdə açıq olan səhifələr, hər biri açıldığı andan, Snapfly-ın oxuduğu kimi (imzalanmayıb):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "Snapfly-ın üzərinə çəkdiyi vaxt möhürü ilə ekran şəkli (imzalanmayıb):";

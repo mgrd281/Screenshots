@@ -2245,3 +2245,11 @@
 "Terms of Use" = "Condiciones de uso";
 "Privacy Policy" = "Política de privacidad";
 "Withdrawal Policy" = "Derecho de desistimiento";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "No se pudo añadir el sello de tiempo a la grabación.";
+"From %@" = "Desde %@";
+"Open Page" = "Abrir página";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "La página abierta en el navegador en primer plano al tomar la captura, tal como la leyó Snapfly (sin firmar):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "Las páginas abiertas en el navegador en primer plano durante la grabación, cada una desde que se abrió, tal como las leyó Snapfly (sin firmar):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "La captura con el sello de tiempo que Snapfly dibujó en ella (sin firmar):";
