@@ -5,14 +5,17 @@ does not copy this file into the site.
 
 ## Scope
 
-- **Pages:** the landing page (Persuade), the privacy policy and support
-  (Read).
+- **Pages:** the landing page (Persuade); the privacy policy, the terms of
+  use (`terms.html`, AGB in German), the right of withdrawal
+  (`withdrawal.html`, Widerruf) and support (Read). See "Legal pages"
+  below.
 - **Languages:** English at the root, German under `/de/`, Arabic (right to
   left) under `/ar/`.
 - **Host:** GitHub Pages. App Store Connect links to the privacy and support
-  pages.
+  pages; once Snapfly Pro begins, the store descriptions link to the terms
+  too (`docs/store/app-review.md`).
 - **Audience:** Mac users who send screenshots into chats every day. Apple's
-  reviewers read the privacy and support pages.
+  reviewers read the privacy and support pages, and the terms.
 - **Action:** Download for Mac, free. It links to the notarized
   `Snapfly.zip` on the `latest` release. An App Store badge comes later,
   once Apple approves the app.
@@ -28,6 +31,36 @@ does not copy this file into the site.
     Fonts, no analytics, no cookies).
   - UI labels come from the app's own `Localizable.strings`.
   - No invented claims: no ratings, user counts or prices other than free.
+
+## Legal pages
+
+The terms and the withdrawal page (November 2026) are there for Snapfly
+Pro, the subscription Apple will sell in the apps; the Pro screen in each
+app links to them in the language Snapfly shows (`ProLinks`). They are
+documents like the privacy policy, and every footer links to both, right
+after Privacy.
+
+- **Job:** say plainly who sells what. Snapfly is free; Pro is optional and
+  sold by Apple Distribution International Ltd.; covering private details
+  is never part of it. Apple's own terms govern the purchase, and the
+  pages say what they hold for withdrawing and cancelling.
+- **The terms** (eleven sections): scope and provider, Snapfly is free,
+  Snapfly Pro, renewal and cancelling, withdrawal, licence (Apple's
+  standard EULA, the source on GitHub), what can be promised, liability,
+  privacy, law and disputes, changes.
+- **The withdrawal page** (eight sections) puts Apple's two pages first,
+  under its summary, as buttons: withdraw from the contract online at
+  Apple (the accent pill) and cancel the subscription (the quieter one).
+  Then who sells Pro, the 14 days, the steps online, the other ways with
+  the EU model withdrawal form, the refund, when the right ends early,
+  cancelling, and where to ask.
+- **Words:** the three languages say the same in the same order and are
+  numbered alike; German says du; Apple's pages are linked in the reader's
+  language where Apple has one; `LEGAL_UPDATED` in `content.py` is the
+  day they last changed, written out in each language.
+- **Not settled by the site:** the maker's postal address (there is no
+  Impressum), and the reasons for a price rise, which Apple's terms ask an
+  app's own agreement to give. Both wait for the owner.
 
 ## Direction contract
 

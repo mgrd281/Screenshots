@@ -14,7 +14,31 @@ EMAIL = "mgrdegh@gmx.de"
 MAKER = "Mgrdegh Ghazarian"
 # The day the privacy policy last changed. It is the same policy in every
 # language, so one date; each language writes it out as "updated".
-PRIVACY_UPDATED = "2026-11-27"
+PRIVACY_UPDATED = "2026-11-28"
+# The day the terms and the withdrawal page last changed, written out in
+# each language as "legal_updated".
+LEGAL_UPDATED = "2026-11-28"
+
+# Apple's own pages for Snapfly Pro, which Apple sells: where a purchase is
+# withdrawn from, where a subscription is cancelled, and the licence an app
+# from the App Store comes under. The apps' Pro screen opens the first two.
+APPLE_WITHDRAWAL = "https://reportaproblem.apple.com/"
+APPLE_SUBSCRIPTIONS = "https://apps.apple.com/account/subscriptions"
+APPLE_EULA = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+# Apple's Media Services Terms: the German edition for German, the Irish one,
+# in English, for the rest of the European Union.
+APPLE_TERMS_DE = "https://www.apple.com/legal/internet-services/itunes/de/terms.html"
+APPLE_TERMS_EU = "https://www.apple.com/legal/internet-services/itunes/ie/terms.html"
+# Where Apple Distribution International takes a withdrawal by letter or email.
+APPLE_ADI = ["Apple Distribution International Ltd.", "Apple Support", "Hollyhill Industrial Estate, Hollyhill",
+             "Cork, Republic of Ireland"]
+APPLE_ADI_EMAIL = "rightofwithdrawal@apple.com"
+# The address as it is set on the page, a line at a time, and on one line,
+# as the model form begins.
+ADI_LINES = "<br>".join(APPLE_ADI + [f'<a href="mailto:{APPLE_ADI_EMAIL}">{APPLE_ADI_EMAIL}</a>'])
+ADI_LINES_AR = "<br>".join([f"<bdi>{line}</bdi>" for line in APPLE_ADI]
+                           + [f'<a href="mailto:{APPLE_ADI_EMAIL}"><bdi>{APPLE_ADI_EMAIL}</bdi></a>'])
+ADI_ONE_LINE = ", ".join(APPLE_ADI + [APPLE_ADI_EMAIL])
 
 # Code, folder, name in the language menu.
 LANGS = [("en", "", "English"), ("de", "de/", "Deutsch"), ("ar", "ar/", "العربية")]
@@ -34,10 +58,16 @@ TEXT["en"] = dict(
     desc_privacy="Snapfly collects no data. It runs entirely on your Mac, and on its own it asks the internet only for the time.",
     title_support="Support · Snapfly",
     desc_support="Help with Snapfly, the screenshot line for the Mac, and how to reach us.",
+    title_terms="Terms of Use · Snapfly",
+    desc_terms="The terms for Snapfly and for Snapfly Pro, the subscription Apple sells through the App Store.",
+    title_withdrawal="Right of Withdrawal · Snapfly",
+    desc_withdrawal="How to withdraw from Snapfly Pro within 14 days, online at Apple, and how to cancel the subscription.",
     skip="Skip to content",
     nav_features="Features",
     nav_privacy="Privacy",
     nav_support="Support",
+    nav_terms="Terms",
+    nav_withdrawal="Withdrawal",
     lang_label="Language",
     brand_label="Color theme",
     brand_sunset="Original Sunset",
@@ -207,7 +237,8 @@ TEXT["en"] = dict(
     footer_contact="Contact",
 
     updated_label="Last updated",
-    updated="November 27, 2026",
+    updated="November 28, 2026",
+    legal_updated="November 28, 2026",
 
     privacy_title="Privacy Policy",
     privacy_short_h="In short",
@@ -244,6 +275,8 @@ TEXT["en"] = dict(
 </ul>"""),
         ("Apple’s services",
          """<p>Translate Text uses Apple’s translation on your Mac; macOS may download language files from Apple for it. Describe, and Hide Part when you say what to hide in a sentence, use Apple Intelligence on your Mac. When you get Snapfly from the Mac App Store or TestFlight, Apple handles that under its own privacy policy. If you have agreed to share analytics with app developers, Apple may give us anonymous crash reports and usage statistics, which we use only to fix problems. See <a href="https://www.apple.com/legal/privacy/">Apple’s privacy policy</a>.</p>"""),
+        ("Snapfly Pro",
+         """<p>Snapfly Pro, the optional subscription, is bought in the app through Apple’s App Store. Apple handles the payment and your Apple account under its own privacy policy. We receive no name, email address or payment details from Apple, only its sales and subscription reports, which show figures such as purchases by country and product, not who made them. To know whether Pro is open, Snapfly from the App Store asks the App Store on your device whether a subscription is active, and the App Store may check that with Apple. Snapfly keeps only the answer, on the device, and sends nothing about it to us.</p>"""),
         ("This website",
          """<p>This website is hosted on GitHub Pages, a service of GitHub, Inc. in the United States. When you visit it, GitHub’s servers receive technical data such as your IP address and browser, and GitHub logs it to keep the service secure. We have no access to those logs. The legal basis is our legitimate interest in offering this website securely (Art. 6(1)(f) GDPR). See the <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.</p>
 <p>The website sets no cookies, loads nothing from other services and uses no analytics. If you pick a language, your browser remembers it in its local storage. That never leaves your device.</p>"""),
@@ -255,6 +288,87 @@ TEXT["en"] = dict(
          """<p>Under the GDPR you have the right to access, correct and delete your data, to restrict or object to its processing, and to data portability. You may also complain to a data protection supervisory authority. As Snapfly holds no data about you, these will rarely apply, but you can write to us at any time.</p>"""),
         ("Changes",
          """<p>If this policy changes, we update this page and the date at the top.</p>"""),
+    ],
+
+    # In the terms and the withdrawal page a number keeps its unit, and the
+    # phone number its digits, on one line (\u00a0, a no-break space).
+    terms_title="Terms of Use",
+    terms_short="Snapfly is free. Snapfly Pro is an optional subscription that Apple sells through the App Store. Covering private details is never part of Pro.",
+    terms=[
+        ("1. Scope and provider",
+         f"""<p>These terms apply to the Snapfly apps for the Mac and the iPhone and to the Snapfly Pro subscription. The apps are provided by {MAKER} (“we”). You can reach us at <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>"""),
+        ("2. Snapfly is free",
+         """<p>Snapfly is free and works without an account. You get it from this website or from the App Store.</p>"""),
+        ("3. Snapfly Pro",
+         f"""<p>Snapfly Pro is an optional subscription that renews automatically, by the month or by the year. You take it out in the app, through the App Store. For customers in the European Union, the seller is Apple Distribution International Ltd. (“Apple”), and the purchase is governed by <a href="{APPLE_TERMS_EU}">Apple’s Media Services Terms and Conditions</a> in the edition for your country.</p>
+<p>The app shows you the price and the period before you subscribe, and Apple’s purchase sheet shows them again. The contract with Apple is made when you confirm the purchase in that sheet. Apple bills you and takes the payment. One subscription opens Pro in Snapfly from the App Store on the Mac and on the iPhone, when both are signed in with the same Apple account.</p>
+<p>Until Pro begins, every feature is free. If you use Snapfly on a Mac or an iPhone before Pro begins, every feature stays available on it afterwards, even without Pro. Covering private details is never part of Pro.</p>"""),
+        ("4. Renewal and cancelling",
+         f"""<p>The subscription renews automatically for the same period at the price shown, unless you cancel it at least 24\u00a0hours before the current period ends. If the app offers a free trial, the trial turns into a paid subscription in the same way, unless you cancel at least 24\u00a0hours before it ends. You can cancel at any time in your Apple account, under <a href="{APPLE_SUBSCRIPTIONS}">Subscriptions</a>. The subscription then ends when the period you have paid for is over.</p>
+<p>If the price goes up, Apple tells you by email at least 30\u00a0days ahead. If you don’t agree, you can cancel free of charge before the new price applies. Where your consent is needed, Apple asks for it; without it, the subscription ends before the new price applies.</p>"""),
+        ("5. Withdrawal",
+         """<p>As a consumer, you can withdraw from buying Snapfly Pro within 14\u00a0days. How to do it, online too, and when the right ends early, is set out on the <a href="withdrawal.html">Right of Withdrawal</a> page.</p>"""),
+        ("6. Licence",
+         f"""<p>Snapfly from the App Store is licensed to you under Apple’s <a href="{APPLE_EULA}">Licensed Application End User License Agreement</a> (Standard EULA), together with these terms. Snapfly’s source code is public on <a href="{REPO}">GitHub</a>; its licence is in the LICENSE file there.</p>"""),
+        ("7. What we can promise",
+         """<p>We make Snapfly with care, but we cannot promise that it is free of errors or always available. Snapfly keeps developing, so its features can change. The features Pro adds are listed in the app. Your rights under the law are not affected.</p>"""),
+        ("8. Liability",
+         """<p>We are liable without limit for intent and gross negligence, for injury to life, body or health, under the German Product Liability Act and where we have given a guarantee.</p>
+<p>For slight negligence, we are liable only if we breach an essential obligation: one that makes the contract possible in the first place and on which you may regularly rely. Our liability is then limited to the damage that is typical and foreseeable for a contract like this.</p>
+<p>Otherwise, we are not liable.</p>"""),
+        ("9. Privacy",
+         """<p>How Snapfly handles data is set out in the <a href="privacy.html">privacy policy</a>.</p>"""),
+        ("10. Governing law and disputes",
+         """<p>German law applies. As a consumer, you keep the protection of the mandatory law of the country where you habitually live.</p>
+<p>We are neither obliged nor willing to take part in dispute resolution proceedings before a consumer arbitration board.</p>"""),
+        ("11. Changes",
+         """<p>The version on this page applies from the date shown at the top. If these terms change to your disadvantage, the change applies to a running subscription only once you agree to it.</p>"""),
+    ],
+
+    withdrawal_title="Right of Withdrawal",
+    withdrawal_short="Snapfly Pro is sold by Apple. You can withdraw from your purchase within 14\u00a0days, online at Apple, without giving a reason. You can cancel the subscription at any time.",
+    withdrawal_button="Withdraw from contract",
+    withdrawal_cancel="Cancel contracts here",
+    withdrawal=[
+        ("1. Who sells Snapfly Pro",
+         f"""<p>For customers in the European Union, Snapfly Pro is sold by Apple Distribution International Ltd. (“Apple”), as the merchant of record. {MAKER} provides the app. The purchase is governed by <a href="{APPLE_TERMS_EU}">Apple’s Media Services Terms and Conditions</a> in the edition for your country. This page sets out what they say about withdrawal and cancelling; where the two differ, Apple’s terms apply.</p>"""),
+        ("2. Your right of withdrawal",
+         """<p>You can withdraw from your purchase within 14\u00a0days of receiving Apple’s receipt, without giving any reason. For a subscription, this applies when you first subscribe, not to its renewals. To meet the deadline, it is enough to send your withdrawal before the 14\u00a0days are over.</p>"""),
+        ("3. Withdraw online",
+         """<p>Apple offers a withdrawal function online:</p>
+<ol>
+<li>Choose “Withdraw from contract” above, or the same button on the Snapfly Pro screen in the app, and sign in with your Apple account.</li>
+<li>In your purchase history, choose the Snapfly Pro purchase, then “Withdraw Transaction”.</li>
+<li>Choose “Next”, then “Confirm”.</li>
+<li>Apple promptly sends you a confirmation of receipt by email, with what you withdrew and the date and time it arrived.</li>
+</ol>"""),
+        ("4. Other ways to withdraw",
+         f"""<p>You can also withdraw by sending Apple a clear statement of your decision, by letter or by email, to:</p>
+<p>{ADI_LINES}</p>
+<p>You may use the model form below, but you don’t have to.</p>
+<blockquote>
+<p><strong>Model withdrawal form</strong></p>
+<p>(Complete and return this form only if you wish to withdraw from the contract.)</p>
+<ul>
+<li>To {ADI_ONE_LINE}:</li>
+<li>I/We (*) hereby give notice that I/We (*) withdraw from my/our (*) contract for the provision of the following service: Snapfly Pro, order ID [from Apple’s receipt]</li>
+<li>Ordered on (*)/received on (*)</li>
+<li>Name of consumer(s)</li>
+<li>Address of consumer(s)</li>
+<li>Email address of the Apple account</li>
+<li>Signature of consumer(s) (only if this form is notified on paper)</li>
+<li>Date</li>
+</ul>
+<p>(*) Delete as appropriate.</p>
+</blockquote>"""),
+        ("5. Effects of withdrawal",
+         """<p>Apple refunds your payment within 14\u00a0days of receiving your withdrawal. It uses the same means of payment you used for the purchase, and the refund costs you nothing.</p>"""),
+        ("6. When the right ends early",
+         """<p>Under Apple’s terms, you can no longer withdraw once delivery has begun with your express consent and your acknowledgement that you thereby lose your right of withdrawal.</p>"""),
+        ("7. Cancelling a subscription",
+         f"""<p>You can cancel at any time in your Apple account, under <a href="{APPLE_SUBSCRIPTIONS}">Subscriptions</a>. The subscription then ends when the period you have paid for is over. If your home country is Germany, <a href="{APPLE_TERMS_DE}">Apple’s terms for Germany</a> also give you the right to cancel at any time with immediate effect and get a pro rata refund. For this, contact Apple Support or call 0800\u00a06645\u00a0451. Apple explains how to cancel in <a href="https://support.apple.com/en-us/118428">Cancel a subscription from Apple</a>.</p>"""),
+        ("8. Questions",
+         f"""<p>If you have questions about Snapfly Pro, write to <a href="mailto:{EMAIL}">{EMAIL}</a>. Send the withdrawal itself to Apple, as described above.</p>"""),
     ],
 
     support_title="Support",
@@ -314,10 +428,16 @@ TEXT["de"] = dict(
     desc_privacy="Snapfly erhebt keine Daten. Die App läuft vollständig auf deinem Mac, und von sich aus fragt sie das Internet nur nach der Uhrzeit.",
     title_support="Support · Snapfly",
     desc_support="Hilfe zu Snapfly, der Leine für Bildschirmfotos auf dem Mac, und wie du uns erreichst.",
+    title_terms="AGB · Snapfly",
+    desc_terms="Die Allgemeinen Geschäftsbedingungen für Snapfly und für Snapfly Pro, das Abonnement, das Apple über den App Store verkauft.",
+    title_withdrawal="Widerruf · Snapfly",
+    desc_withdrawal="Wie du Snapfly Pro innerhalb von 14 Tagen widerrufst, online bei Apple, und wie du das Abonnement kündigst.",
     skip="Zum Inhalt springen",
     nav_features="Funktionen",
     nav_privacy="Datenschutz",
     nav_support="Support",
+    nav_terms="AGB",
+    nav_withdrawal="Widerruf",
     lang_label="Sprache",
     brand_label="Farbthema",
     brand_sunset="Original Sunset",
@@ -487,7 +607,8 @@ TEXT["de"] = dict(
     footer_contact="Kontakt",
 
     updated_label="Stand",
-    updated="27. November 2026",
+    updated="28. November 2026",
+    legal_updated="28. November 2026",
 
     # A soft hyphen: on a phone the long word breaks there instead of being cut.
     privacy_title="Datenschutz\u00aderklärung",
@@ -523,6 +644,8 @@ TEXT["de"] = dict(
 </ul>"""),
         ("Dienste von Apple",
          """<p>„Text übersetzen“ nutzt Apples Übersetzung auf deinem Mac; macOS lädt dafür eventuell Sprachdateien von Apple. „Beschreiben“ und „Bereich verdecken“, wenn du in einem Satz sagst, was verdeckt wird, nutzen Apple Intelligence auf deinem Mac. Wenn du Snapfly aus dem Mac App Store oder über TestFlight lädst, verarbeitet Apple das nach seiner eigenen Datenschutzrichtlinie. Wenn du zugestimmt hast, Analysedaten mit App-Entwicklern zu teilen, kann Apple uns anonyme Absturzberichte und Nutzungsstatistiken geben, die wir nur zur Fehlerbehebung verwenden. Siehe die <a href="https://www.apple.com/de/legal/privacy/">Datenschutzrichtlinie von Apple</a>.</p>"""),
+        ("Snapfly Pro",
+         """<p>Snapfly Pro, das optionale Abonnement, kaufst du in der App über Apples App Store. Apple verarbeitet die Zahlung und deinen Apple Account nach seiner eigenen Datenschutzrichtlinie. Von Apple erhalten wir weder deinen Namen noch deine E-Mail-Adresse noch Zahlungsdaten, nur Apples Verkaufs- und Abonnementberichte. Sie zeigen Zahlen wie die Käufe nach Land und Produkt, aber nicht, wer gekauft hat. Um zu wissen, ob Pro freigeschaltet ist, fragt Snapfly aus dem App Store den App Store auf deinem Gerät, ob ein Abonnement aktiv ist, und der App Store kann das bei Apple prüfen. Snapfly speichert nur die Antwort, auf dem Gerät, und sendet nichts davon an uns.</p>"""),
         ("Diese Website",
          """<p>Diese Website wird bei GitHub Pages gehostet, einem Dienst der GitHub, Inc. in den USA. Beim Besuch erhalten die Server von GitHub technische Daten wie deine IP-Adresse und deinen Browser, und GitHub protokolliert sie, um den Dienst sicher zu betreiben. Wir haben keinen Zugriff auf diese Protokolle. Rechtsgrundlage ist unser berechtigtes Interesse, diese Website sicher anzubieten (Art. 6 Abs. 1 lit. f DSGVO). Siehe das <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement">Datenschutz-Statement von GitHub</a>.</p>
 <p>Die Website setzt keine Cookies, lädt nichts von anderen Diensten und nutzt keine Analyse. Wenn du eine Sprache wählst, merkt sich dein Browser das in seinem lokalen Speicher. Das verlässt dein Gerät nie.</p>"""),
@@ -534,6 +657,86 @@ TEXT["de"] = dict(
          """<p>Nach der DSGVO hast du das Recht auf Auskunft, Berichtigung und Löschung deiner Daten, auf Einschränkung der Verarbeitung, auf Widerspruch und auf Datenübertragbarkeit. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren. Da Snapfly keine Daten über dich hat, betrifft dich das selten, aber du kannst uns jederzeit schreiben.</p>"""),
         ("Änderungen",
          """<p>Wenn sich diese Erklärung ändert, aktualisieren wir diese Seite und das Datum oben.</p>"""),
+    ],
+
+    # Soft hyphens, as in the privacy policy's title.
+    terms_title="Allgemeine Geschäfts\u00adbedingungen",
+    terms_short="Snapfly ist kostenlos. Snapfly Pro ist ein optionales Abonnement, das Apple über den App Store verkauft. Das Verdecken privater Angaben gehört nie zu Pro.",
+    terms=[
+        ("1. Geltungsbereich und Anbieter",
+         f"""<p>Diese Geschäftsbedingungen gelten für die Apps Snapfly für Mac und iPhone und für das Abonnement Snapfly Pro. Anbieter der Apps ist {MAKER} („wir“). Du erreichst uns unter <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>"""),
+        ("2. Snapfly ist kostenlos",
+         """<p>Snapfly ist kostenlos und funktioniert ohne Konto. Du bekommst die App auf dieser Website oder im App Store.</p>"""),
+        ("3. Snapfly Pro",
+         f"""<p>Snapfly Pro ist ein optionales Abonnement, das sich automatisch verlängert, monatlich oder jährlich. Du schließt es in der App über den App Store ab. Verkäufer ist für Kundinnen und Kunden in der Europäischen Union die Apple Distribution International Ltd. („Apple“); für den Kauf gelten die <a href="{APPLE_TERMS_DE}">Bedingungen der Apple Mediendienste</a> in der Fassung für dein Land.</p>
+<p>Preis und Laufzeit zeigt dir die App, bevor du abonnierst, und Apples Kaufdialog zeigt sie noch einmal. Der Vertrag mit Apple kommt zustande, wenn du den Kauf in diesem Dialog bestätigst. Apple rechnet ab und zieht die Zahlung ein. Ein Abonnement schaltet Pro in Snapfly aus dem App Store auf dem Mac und auf dem iPhone frei, wenn beide mit demselben Apple Account angemeldet sind.</p>
+<p>Bis Pro beginnt, sind alle Funktionen kostenlos. Benutzt du Snapfly auf einem Mac oder iPhone schon, bevor Pro beginnt, bleiben dort danach alle Funktionen freigeschaltet, auch ohne Pro. Das Verdecken privater Angaben gehört nie zu Pro.</p>"""),
+        ("4. Verlängerung und Kündigung",
+         f"""<p>Das Abonnement verlängert sich automatisch um denselben Zeitraum zum angezeigten Preis, wenn du es nicht spätestens 24\u00a0Stunden vor Ende des laufenden Zeitraums kündigst. Bietet die App eine kostenlose Testphase an, geht diese ebenso in ein bezahltes Abonnement über, wenn du nicht spätestens 24\u00a0Stunden vor ihrem Ende kündigst. Kündigen kannst du jederzeit in deinem Apple Account unter <a href="{APPLE_SUBSCRIPTIONS}">Abonnements</a>. Das Abonnement endet dann mit Ablauf der bezahlten Laufzeit.</p>
+<p>Steigt der Preis, teilt Apple dir das mindestens 30\u00a0Tage vorher per E-Mail mit. Bist du nicht einverstanden, kannst du kostenlos kündigen, bevor der neue Preis gilt. Wo deine Zustimmung nötig ist, bittet Apple dich darum; ohne sie endet das Abonnement, bevor der neue Preis gilt.</p>"""),
+        ("5. Widerruf",
+         """<p>Als Verbraucherin oder Verbraucher kannst du den Kauf von Snapfly Pro innerhalb von 14\u00a0Tagen widerrufen. Wie das geht, auch online, und wann das Widerrufsrecht vorzeitig erlischt, steht in der <a href="withdrawal.html">Widerrufsbelehrung</a>.</p>"""),
+        ("6. Lizenz",
+         f"""<p>Für Snapfly aus dem App Store gilt Apples <a href="{APPLE_EULA}">Endnutzer-Lizenzvertrag für lizenzierte Anwendungen</a> (Standard-EULA), zusammen mit diesen Bedingungen. Der Quellcode von Snapfly ist auf <a href="{REPO}">GitHub</a> öffentlich; seine Lizenz steht dort in der Datei LICENSE.</p>"""),
+        ("7. Was wir versprechen können",
+         """<p>Wir entwickeln Snapfly mit Sorgfalt, können aber nicht versprechen, dass die App fehlerfrei oder immer verfügbar ist. Snapfly entwickelt sich weiter, daher können sich Funktionen ändern. Welche Funktionen Pro hinzufügt, steht in der App. Deine gesetzlichen Rechte bleiben unberührt.</p>"""),
+        ("8. Haftung",
+         """<p>Wir haften unbeschränkt bei Vorsatz und grober Fahrlässigkeit, bei der Verletzung des Lebens, des Körpers oder der Gesundheit, nach dem Produkthaftungsgesetz und soweit wir eine Garantie übernommen haben.</p>
+<p>Bei leichter Fahrlässigkeit haften wir nur, wenn wir eine wesentliche Vertragspflicht verletzen, also eine Pflicht, die den Vertrag erst möglich macht und auf deren Erfüllung du regelmäßig vertrauen darfst. Dann ist unsere Haftung auf den Schaden begrenzt, der für einen solchen Vertrag typisch und vorhersehbar ist.</p>
+<p>Im Übrigen ist unsere Haftung ausgeschlossen.</p>"""),
+        ("9. Datenschutz",
+         """<p>Wie Snapfly mit Daten umgeht, steht in der <a href="privacy.html">Datenschutzerklärung</a>.</p>"""),
+        ("10. Anwendbares Recht und Streitbeilegung",
+         """<p>Es gilt deutsches Recht. Als Verbraucherin oder Verbraucher behältst du den Schutz der zwingenden Vorschriften des Staates, in dem du deinen gewöhnlichen Aufenthalt hast.</p>
+<p>Wir sind weder verpflichtet noch bereit, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>"""),
+        ("11. Änderungen",
+         """<p>Es gilt die Fassung auf dieser Seite ab dem oben genannten Stand. Ändern sich diese Bedingungen zu deinem Nachteil, gilt das für ein laufendes Abonnement erst, wenn du zustimmst.</p>"""),
+    ],
+
+    withdrawal_title="Widerrufs\u00adbelehrung",
+    withdrawal_short="Snapfly Pro wird von Apple verkauft. Du kannst den Kauf innerhalb von 14\u00a0Tagen widerrufen, online bei Apple und ohne Angabe von Gründen. Kündigen kannst du das Abonnement jederzeit.",
+    withdrawal_button="Vertrag widerrufen",
+    withdrawal_cancel="Verträge hier kündigen",
+    withdrawal=[
+        ("1. Wer Snapfly Pro verkauft",
+         f"""<p>Für Kundinnen und Kunden in der Europäischen Union verkauft die Apple Distribution International Ltd. („Apple“) Snapfly Pro als eingetragener Händler. {MAKER} stellt die App bereit. Für den Kauf gelten die <a href="{APPLE_TERMS_DE}">Bedingungen der Apple Mediendienste</a> in der Fassung für dein Land. Diese Seite gibt wieder, was sie zu Widerruf und Kündigung sagen; weichen beide voneinander ab, gelten Apples Bedingungen.</p>"""),
+        ("2. Dein Widerrufsrecht",
+         """<p>Du kannst den Kauf innerhalb von 14\u00a0Tagen nach Erhalt der Rechnung von Apple ohne Angabe von Gründen widerrufen. Bei einem Abonnement gilt das für den ersten Abschluss, nicht für die Verlängerungen. Zur Wahrung der Frist genügt es, dass du den Widerruf vor ihrem Ablauf absendest.</p>"""),
+        ("3. Online widerrufen",
+         """<p>Apple bietet dafür eine Widerrufsfunktion online an:</p>
+<ol>
+<li>Wähle oben „Vertrag widerrufen“ oder in der App dieselbe Taste auf dem Bildschirm Snapfly Pro und melde dich mit deinem Apple Account an.</li>
+<li>Wähle in der Kaufhistorie den Kauf von Snapfly Pro und dann „Transaktion widerrufen“.</li>
+<li>Wähle „Weiter“ und dann „Bestätigen“.</li>
+<li>Apple schickt dir unverzüglich eine Empfangsbestätigung per E-Mail, mit dem Inhalt deines Widerrufs sowie Datum und Uhrzeit seines Eingangs.</li>
+</ol>"""),
+        ("4. Andere Wege zum Widerruf",
+         f"""<p>Du kannst auch widerrufen, indem du Apple eine eindeutige Erklärung deines Entschlusses schickst, per Brief oder per E-Mail, an:</p>
+<p>{ADI_LINES}</p>
+<p>Dafür kannst du das folgende Muster-Widerrufsformular verwenden; vorgeschrieben ist es nicht.</p>
+<blockquote>
+<p><strong>Muster-Widerrufsformular</strong></p>
+<p>(Wenn du den Vertrag widerrufen willst, dann fülle bitte dieses Formular aus und sende es zurück.)</p>
+<ul>
+<li>An {ADI_ONE_LINE}:</li>
+<li>Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über die Erbringung der folgenden Dienstleistung: Snapfly Pro, Bestellnummer [aus der Rechnung von Apple]</li>
+<li>Bestellt am (*)/erhalten am (*)</li>
+<li>Name des/der Verbraucher(s)</li>
+<li>Anschrift des/der Verbraucher(s)</li>
+<li>E-Mail-Adresse des Apple Accounts</li>
+<li>Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier)</li>
+<li>Datum</li>
+</ul>
+<p>(*) Unzutreffendes streichen.</p>
+</blockquote>"""),
+        ("5. Folgen des Widerrufs",
+         """<p>Apple erstattet dir deine Zahlung innerhalb von 14\u00a0Tagen, nachdem dein Widerruf eingegangen ist. Apple nutzt dafür dasselbe Zahlungsmittel wie beim Kauf, und die Erstattung kostet dich nichts.</p>"""),
+        ("6. Wann das Widerrufsrecht vorzeitig erlischt",
+         """<p>Nach Apples Bedingungen kannst du nicht mehr widerrufen, sobald die Lieferung mit deiner ausdrücklichen Zustimmung begonnen hat und du zur Kenntnis genommen hast, dass du dadurch dein Widerrufsrecht verlierst.</p>"""),
+        ("7. Ein Abonnement kündigen",
+         f"""<p>Kündigen kannst du jederzeit in deinem Apple Account unter <a href="{APPLE_SUBSCRIPTIONS}">Abonnements</a>. Das Abonnement endet dann mit Ablauf der bezahlten Laufzeit. Ist dein Heimatland Deutschland, hast du nach <a href="{APPLE_TERMS_DE}">Apples Bedingungen für Deutschland</a> außerdem das Recht, Abonnements jederzeit mit sofortiger Wirkung zu kündigen und eine anteilige Rückerstattung zu erhalten. Wende dich dafür an den Apple Support oder ruf 0800\u00a06645\u00a0451 an. Wie du kündigst, erklärt Apple unter <a href="https://support.apple.com/de-de/118428">Ein Abonnement von Apple kündigen</a>.</p>"""),
+        ("8. Fragen",
+         f"""<p>Hast du Fragen zu Snapfly Pro, schreib an <a href="mailto:{EMAIL}">{EMAIL}</a>. Den Widerruf selbst richtest du an Apple, wie oben beschrieben.</p>"""),
     ],
 
     support_title="Support",
@@ -593,10 +796,16 @@ TEXT["ar"] = dict(
     desc_privacy="لا يجمع Snapfly أي بيانات. يعمل بالكامل على جهاز Mac، ولا يسأل الإنترنت من تلقاء نفسه إلا عن الوقت.",
     title_support="الدعم · Snapfly",
     desc_support="مساعدة في استخدام Snapfly، حبل لقطات الشاشة على Mac، وطريقة التواصل معنا.",
+    title_terms="شروط الاستخدام · Snapfly",
+    desc_terms="شروط استخدام Snapfly واشتراك Snapfly Pro، الذي تبيعه Apple عبر App Store.",
+    title_withdrawal="حق الانسحاب من العقد · Snapfly",
+    desc_withdrawal="كيف تنسحب من Snapfly Pro خلال 14 يومًا عبر الإنترنت لدى Apple، وكيف تلغي الاشتراك.",
     skip="انتقل إلى المحتوى",
     nav_features="المزايا",
     nav_privacy="الخصوصية",
     nav_support="الدعم",
+    nav_terms="الشروط",
+    nav_withdrawal="الانسحاب",
     lang_label="اللغة",
     brand_label="سمة الألوان",
     brand_sunset="الغروب الأصلي",
@@ -766,7 +975,8 @@ TEXT["ar"] = dict(
     footer_contact="تواصل معنا",
 
     updated_label="آخر تحديث",
-    updated="27 نوفمبر 2026",
+    updated="28 نوفمبر 2026",
+    legal_updated="28 نوفمبر 2026",
 
     privacy_title="سياسة الخصوصية",
     privacy_short_h="باختصار",
@@ -803,6 +1013,8 @@ TEXT["ar"] = dict(
 </ul>"""),
         ("خدمات Apple",
          """<p>تستخدم «ترجمة النص» ترجمة Apple على جهازك، وقد ينزّل macOS ملفات لغة من Apple لذلك. ويستخدم «وصف ذكي»، و«إخفاء جزء» حين تقول بجملة ما تريد إخفاءه، Apple Intelligence على جهازك. وحين تحصل على Snapfly من Mac App Store أو TestFlight، تتولّى Apple ذلك وفق سياسة الخصوصية الخاصة بها. وإن وافقت على مشاركة التحليلات مع مطوّري التطبيقات، فقد تعطينا Apple تقارير أعطال وإحصاءات استخدام مجهولة الهوية، نستخدمها فقط لإصلاح المشكلات. انظر <a href="https://www.apple.com/legal/privacy/">سياسة خصوصية Apple</a>.</p>"""),
+        ("Snapfly Pro",
+         """<p>يُشترى Snapfly Pro، الاشتراك الاختياري، داخل التطبيق عبر App Store من Apple. وتتولّى Apple الدفع وحسابك في Apple وفق سياسة الخصوصية الخاصة بها. ولا يصلنا من Apple اسم ولا عنوان بريد إلكتروني ولا بيانات دفع، بل تقارير المبيعات والاشتراكات وحدها، وهي تعرض أرقامًا مثل عدد المشتريات حسب البلد والمنتج، لا هوية من اشترى. ولكي تعرف نسخة Snapfly من App Store هل Pro مفتوح، تسأل App Store على جهازك هل هناك اشتراك فعّال، وقد يتحقّق App Store من ذلك لدى Apple. ولا تحتفظ إلا بالجواب، على الجهاز، ولا ترسل إلينا شيئًا من ذلك.</p>"""),
         ("هذا الموقع",
          """<p>هذا الموقع مستضاف على GitHub Pages، وهي خدمة من شركة GitHub, Inc. في الولايات المتحدة. حين تزوره، تتلقّى خوادم GitHub بيانات تقنية مثل عنوان IP ونوع المتصفح، وتسجّلها GitHub لحماية الخدمة. ولا نستطيع الوصول إلى هذه السجلات. والأساس القانوني هو مصلحتنا المشروعة في تقديم هذا الموقع بأمان (المادة 6(1)(f) من اللائحة العامة لحماية البيانات GDPR). انظر <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">بيان خصوصية GitHub</a>.</p>
 <p>لا يستخدم الموقع ملفات تعريف الارتباط، ولا يحمّل شيئًا من خدمات أخرى، ولا يستخدم أدوات تحليل. وإن اخترت لغة، يتذكّرها متصفحك في تخزينه المحلي، ولا يغادر ذلك جهازك أبدًا.</p>"""),
@@ -814,6 +1026,85 @@ TEXT["ar"] = dict(
          """<p>بموجب GDPR لك الحق في الاطلاع على بياناتك وتصحيحها وحذفها، وفي تقييد معالجتها أو الاعتراض عليها، وفي نقلها. ويحق لك أيضًا تقديم شكوى إلى سلطة رقابية لحماية البيانات. وبما أن Snapfly لا يحتفظ بأي بيانات عنك، فنادرًا ما ينطبق ذلك، لكن يمكنك مراسلتنا في أي وقت.</p>"""),
         ("التغييرات",
          """<p>إن تغيّرت هذه السياسة، نحدّث هذه الصفحة والتاريخ في أعلاها.</p>"""),
+    ],
+
+    terms_title="شروط الاستخدام",
+    terms_short="Snapfly مجاني. أما Snapfly Pro فاشتراك اختياري تبيعه Apple عبر App Store. وتغطية المعلومات الخاصة لا تكون جزءًا من Pro أبدًا.",
+    terms=[
+        ("1. النطاق والمزوّد",
+         f"""<p>تسري هذه الشروط على تطبيقَي Snapfly لجهاز Mac وجهاز iPhone، وعلى اشتراك Snapfly Pro. ويقدّم التطبيقين <bdi>{MAKER}</bdi> («نحن»). ويمكنك مراسلتنا على <a href="mailto:{EMAIL}"><bdi>{EMAIL}</bdi></a>.</p>"""),
+        ("2. Snapfly مجاني",
+         """<p>Snapfly مجاني ويعمل دون حساب. وتحصل عليه من هذا الموقع أو من App Store.</p>"""),
+        ("3. Snapfly Pro",
+         f"""<p>Snapfly Pro اشتراك اختياري يتجدّد تلقائيًا، شهريًا أو سنويًا. وتشترك فيه داخل التطبيق عبر App Store. والبائع للعملاء في الاتحاد الأوروبي هو <bdi>Apple Distribution International Ltd.</bdi> («Apple»)، ويخضع الشراء <a href="{APPLE_TERMS_EU}">لشروط وأحكام خدمات الوسائط من Apple</a> في نسختها الخاصة ببلدك.</p>
+<p>يعرض لك التطبيق السعر والمدة قبل أن تشترك، ثم تعرضهما نافذة الشراء من Apple مرة أخرى. ويُبرَم العقد مع Apple حين تؤكّد الشراء في تلك النافذة. وتتولّى Apple الفوترة وتحصيل المبلغ. واشتراك واحد يفتح Pro في Snapfly من App Store على جهاز Mac وعلى جهاز iPhone، حين يكون كلاهما مسجَّل الدخول بحساب Apple نفسه.</p>
+<p>حتى يبدأ Pro، كل المزايا مجانية. وإن استخدمت Snapfly على جهاز Mac أو iPhone قبل أن يبدأ Pro، تبقى كل مزاياه متاحة على ذلك الجهاز بعدها، حتى دون Pro. وتغطية المعلومات الخاصة لا تكون جزءًا من Pro أبدًا.</p>"""),
+        ("4. التجديد والإلغاء",
+         f"""<p>يتجدّد الاشتراك تلقائيًا للمدة نفسها وبالسعر المعروض، ما لم تُلغِه قبل نهاية المدة الحالية بـ 24\u00a0ساعة على الأقل. وإن عرض التطبيق فترة تجربة مجانية، فإنها تتحوّل بالطريقة نفسها إلى اشتراك مدفوع، ما لم تُلغِ قبل نهايتها بـ 24\u00a0ساعة على الأقل. ويمكنك الإلغاء في أي وقت من حساب Apple، في <a href="{APPLE_SUBSCRIPTIONS}">الاشتراكات</a>. وعندها ينتهي الاشتراك بانتهاء المدة التي دفعت ثمنها.</p>
+<p>وإن ارتفع السعر، تُعلمك Apple بالبريد الإلكتروني قبل 30\u00a0يومًا على الأقل. وإن لم توافق، يمكنك الإلغاء دون أي تكلفة قبل أن يسري السعر الجديد. وحيث تلزم موافقتك، تطلبها Apple منك؛ ودونها ينتهي الاشتراك قبل أن يسري السعر الجديد.</p>"""),
+        ("5. الانسحاب",
+         """<p>بصفتك مستهلكًا، يمكنك الانسحاب من شراء Snapfly Pro خلال 14\u00a0يومًا. وتجد طريقة ذلك، عبر الإنترنت أيضًا، ومتى ينتهي هذا الحق مبكرًا، في صفحة <a href="withdrawal.html">حق الانسحاب من العقد</a>.</p>"""),
+        ("6. الترخيص",
+         f"""<p>يُرخَّص لك Snapfly من App Store بموجب <a href="{APPLE_EULA}">اتفاقية ترخيص المستخدم النهائي للتطبيقات المرخّصة</a> من Apple (<bdi>Standard EULA</bdi>)، مع هذه الشروط. والشيفرة المصدرية لـ Snapfly منشورة على <a href="{REPO}">GitHub</a>، وترخيصها في ملف <bdi>LICENSE</bdi> هناك.</p>"""),
+        ("7. ما يمكننا أن نعد به",
+         """<p>نصنع Snapfly بعناية، لكننا لا نستطيع أن نعد بأنه خالٍ من الأخطاء أو متاح دائمًا. ويتطوّر Snapfly باستمرار، لذا قد تتغيّر مزاياه. والمزايا التي يضيفها Pro مذكورة في التطبيق. ولا يمسّ ذلك حقوقك التي يكفلها القانون.</p>"""),
+        ("8. المسؤولية",
+         """<p>نتحمّل المسؤولية دون حدّ عن العمد والإهمال الجسيم، وعن الإضرار بالحياة أو الجسد أو الصحة، وبموجب قانون المسؤولية عن المنتجات الألماني، وحيث نكون قد قدّمنا ضمانًا.</p>
+<p>وعن الإهمال البسيط لا نتحمّل المسؤولية إلا إذا أخللنا بالتزام جوهري، أي التزام لا يقوم العقد إلا به ويحق لك أن تعتمد عليه عادةً. وعندها تقتصر مسؤوليتنا على الضرر المعتاد والمتوقَّع في عقد كهذا.</p>
+<p>وفيما عدا ذلك لا نتحمّل أي مسؤولية.</p>"""),
+        ("9. الخصوصية",
+         """<p>طريقة تعامل Snapfly مع البيانات مذكورة في <a href="privacy.html">سياسة الخصوصية</a>.</p>"""),
+        ("10. القانون الواجب التطبيق وتسوية النزاعات",
+         """<p>يسري القانون الألماني. وبصفتك مستهلكًا، تحتفظ بالحماية التي تمنحك إياها الأحكام الإلزامية في البلد الذي تقيم فيه عادةً.</p>
+<p>ولسنا ملزمين ولا مستعدين للمشاركة في إجراءات أمام جهة لتسوية نزاعات المستهلكين.</p>"""),
+        ("11. التغييرات",
+         """<p>تسري النسخة المعروضة في هذه الصفحة اعتبارًا من التاريخ المذكور في أعلاها. وإن تغيّرت هذه الشروط في غير صالحك، فلا يسري التغيير على اشتراك قائم إلا بعد موافقتك.</p>"""),
+    ],
+
+    withdrawal_title="حق الانسحاب من العقد",
+    withdrawal_short="تبيع Apple اشتراك Snapfly Pro. ويمكنك الانسحاب من الشراء خلال 14\u00a0يومًا، عبر الإنترنت لدى Apple، دون ذكر أي سبب. ويمكنك إلغاء الاشتراك في أي وقت.",
+    withdrawal_button="الانسحاب من العقد",
+    withdrawal_cancel="إلغاء الاشتراك من هنا",
+    withdrawal=[
+        ("1. من يبيع Snapfly Pro",
+         f"""<p>للعملاء في الاتحاد الأوروبي، تبيع <bdi>Apple Distribution International Ltd.</bdi> («Apple») اشتراك Snapfly Pro بصفتها التاجر المسجَّل. ويقدّم <bdi>{MAKER}</bdi> التطبيق. ويخضع الشراء <a href="{APPLE_TERMS_EU}">لشروط وأحكام خدمات الوسائط من Apple</a> في نسختها الخاصة ببلدك. وتعرض هذه الصفحة ما تقوله تلك الشروط عن الانسحاب والإلغاء؛ وإن اختلفت الصفحة عنها، فالعبرة بشروط Apple.</p>"""),
+        ("2. حقك في الانسحاب",
+         """<p>يمكنك الانسحاب من الشراء خلال 14\u00a0يومًا من استلام إيصال Apple، دون ذكر أي سبب. وفي الاشتراك يسري هذا الحق على اشتراكك الأول، لا على تجديداته. ويكفي للالتزام بالمهلة أن ترسل انسحابك قبل انقضاء الأيام الأربعة عشر.</p>"""),
+        ("3. الانسحاب عبر الإنترنت",
+         """<p>تتيح Apple لذلك وظيفة انسحاب عبر الإنترنت:</p>
+<ol>
+<li>اختر «الانسحاب من العقد» في الأعلى، أو الزر نفسه في شاشة Snapfly Pro داخل التطبيق، وسجّل الدخول بحساب Apple.</li>
+<li>في سجل المشتريات، اختر شراء Snapfly Pro، ثم <bdi lang="en">Withdraw Transaction</bdi> (سحب المعاملة).</li>
+<li>اختر <bdi lang="en">Next</bdi> (التالي)، ثم <bdi lang="en">Confirm</bdi> (تأكيد).</li>
+<li>ترسل لك Apple دون تأخير بالبريد الإلكتروني تأكيدًا باستلام انسحابك، يتضمّن مضمونه وتاريخ وصوله ووقته.</li>
+</ol>"""),
+        ("4. طرق أخرى للانسحاب",
+         f"""<p>يمكنك أيضًا أن تنسحب بإرسال إعلان واضح بقرارك إلى Apple، برسالة ورقية أو بالبريد الإلكتروني، على العنوان:</p>
+<p>{ADI_LINES_AR}</p>
+<p>ويمكنك استخدام النموذج أدناه، لكنه ليس إلزاميًا.</p>
+<blockquote>
+<p><strong>نموذج الانسحاب من العقد</strong></p>
+<p>(املأ هذا النموذج وأرسله فقط إن أردت الانسحاب من العقد.)</p>
+<ul>
+<li>إلى <bdi>{ADI_ONE_LINE}</bdi>:</li>
+<li>أُعلمكم/نُعلمكم (*) بأنني/بأننا (*) أنسحب/ننسحب (*) من العقد الذي أبرمته/أبرمناه (*) لتقديم الخدمة التالية: Snapfly Pro، رقم الطلب [من إيصال Apple]</li>
+<li>تاريخ الطلب (*)/تاريخ الاستلام (*)</li>
+<li>اسم المستهلك (المستهلكين)</li>
+<li>عنوان المستهلك (المستهلكين)</li>
+<li>عنوان البريد الإلكتروني لحساب Apple</li>
+<li>توقيع المستهلك (المستهلكين) (فقط إن أُرسل هذا النموذج على الورق)</li>
+<li>التاريخ</li>
+</ul>
+<p>(*) احذف ما لا ينطبق.</p>
+</blockquote>"""),
+        ("5. آثار الانسحاب",
+         """<p>تردّ لك Apple ما دفعته خلال 14\u00a0يومًا من استلام انسحابك، بوسيلة الدفع نفسها التي استخدمتها في الشراء، ودون أي رسوم عليك.</p>"""),
+        ("6. متى ينتهي الحق مبكرًا",
+         """<p>وفق شروط Apple، لا يمكنك الانسحاب بعد أن يبدأ التسليم بموافقتك الصريحة وإقرارك بأنك تفقد بذلك حقك في الانسحاب.</p>"""),
+        ("7. إلغاء الاشتراك",
+         f"""<p>يمكنك الإلغاء في أي وقت من حساب Apple، في <a href="{APPLE_SUBSCRIPTIONS}">الاشتراكات</a>. وعندها ينتهي الاشتراك بانتهاء المدة التي دفعت ثمنها. وإن كان بلدك الأساسي ألمانيا، تمنحك <a href="{APPLE_TERMS_DE}">شروط Apple الخاصة بألمانيا</a> أيضًا الحق في إلغاء الاشتراك في أي وقت بأثر فوري واسترداد ما يقابل المدة الباقية من المبلغ. ولفعل ذلك، تواصل مع دعم Apple أو اتصل بالرقم <bdi dir="ltr">0800\u00a06645\u00a0451</bdi>. وتشرح Apple طريقة الإلغاء في <a href="https://support.apple.com/ar-ae/118428">إلغاء اشتراك من Apple</a>.</p>"""),
+        ("8. أسئلة",
+         f"""<p>إن كانت لديك أسئلة عن Snapfly Pro، راسلنا على <a href="mailto:{EMAIL}"><bdi>{EMAIL}</bdi></a>. أما الانسحاب نفسه فترسله إلى Apple، كما هو موضّح أعلاه.</p>"""),
     ],
 
     support_title="الدعم",

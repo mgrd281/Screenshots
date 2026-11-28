@@ -19,7 +19,8 @@ import sys
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
-from content import AIRMAIL, DOWNLOAD, EMAIL, LANGS, MAKER, PRIVACY_UPDATED, REPO, SITE_URL, TEXT
+from content import (AIRMAIL, APPLE_SUBSCRIPTIONS, APPLE_WITHDRAWAL, DOWNLOAD, EMAIL, LANGS, LEGAL_UPDATED, MAKER,
+                     PRIVACY_UPDATED, REPO, SITE_URL, TEXT)
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "_site"
@@ -360,6 +361,8 @@ def footer(lang, page):
     <ul class="footer-links">
       <li><a href="{features}">{esc(t["nav_features"])}</a></li>
       <li><a href="{href_to(lang, lang, "privacy")}">{esc(t["nav_privacy"])}</a></li>
+      <li><a href="{href_to(lang, lang, "terms")}">{esc(t["nav_terms"])}</a></li>
+      <li><a href="{href_to(lang, lang, "withdrawal")}">{esc(t["nav_withdrawal"])}</a></li>
       <li><a href="{href_to(lang, lang, "support")}">{esc(t["nav_support"])}</a></li>
       <li><a href="{REPO}">{esc(t["footer_source"])}</a></li>
       <li><a href="mailto:{EMAIL}">{esc(t["footer_contact"])}</a></li>
@@ -1227,6 +1230,8 @@ def section_private(lang):
         for k, label in kinds)
     field = lambda kind, text, cls="": f'<span class="pd{(" " + cls) if cls else ""}" data-pd="{kind}">{esc(text)}</span>'
     items = "".join(f'<li><span>{esc(a)}</span><span>{esc(b)}</span></li>' for a, b in inv["items"])
+    # The settings pane is a plain group, not a form: it has nothing to send,
+    # so no key pressed on a switch can reload the page.
     return f"""<section class="section private" aria-labelledby="priv-h">
   <div class="wrap split">
     <div class="copy">
@@ -1240,7 +1245,7 @@ def section_private(lang):
       {window_titlebar(L(lang, "Settings"))}
       <div class="settings-body">
         {settings_sidebar(lang, "Privacy")}
-        <form class="settings-pane" data-cover onsubmit="return false">
+        <div class="settings-pane" data-cover>
           <fieldset class="group">
             <legend class="group-label">{esc(L(lang, "Hide private details"))}</legend>
             <div class="group-box">{switches}</div>
@@ -1265,7 +1270,7 @@ def section_private(lang):
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
     </div>
@@ -1433,7 +1438,7 @@ def home(lang):
     return document(lang, "index", t["title_home"], t["desc_home"], main)
 
 
-# MARK: Privacy and support
+# MARK: Privacy, the terms, withdrawal and support
 
 def doc_head(lang, title, extra=""):
     return f"""<header class="doc-head">
@@ -1443,16 +1448,55 @@ def doc_head(lang, title, extra=""):
   </header>"""
 
 
+def updated_line(lang, day, words):
+    """When a document last changed, under its title."""
+    t = TEXT[lang]
+    return f'<p class="muted">{esc(t["updated_label"])}: <time datetime="{day}">{esc(words)}</time></p>'
+
+
+def doc_sections(items):
+    return "\n".join(f'<section><h2>{esc(h)}</h2>{body}</section>' for h, body in items)
+
+
+def summary(lang, words):
+    """The short version at the top of a document."""
+    return f'<aside class="summary"><h2>{esc(TEXT[lang]["privacy_short_h"])}</h2><p>{esc(words)}</p></aside>'
+
+
 def privacy(lang):
     t = TEXT[lang]
-    updated = f'<p class="muted">{esc(t["updated_label"])}: <time datetime="{PRIVACY_UPDATED}">{esc(t["updated"])}</time></p>'
-    sections = "\n".join(f'<section><h2>{esc(h)}</h2>{body}</section>' for h, body in t["privacy"])
     main = f"""<article class="doc wrap narrow">
-  {doc_head(lang, t["privacy_title"], updated)}
-  <aside class="summary"><h2>{esc(t["privacy_short_h"])}</h2><p>{esc(t["privacy_short"])}</p></aside>
-  {sections}
+  {doc_head(lang, t["privacy_title"], updated_line(lang, PRIVACY_UPDATED, t["updated"]))}
+  {summary(lang, t["privacy_short"])}
+  {doc_sections(t["privacy"])}
 </article>"""
     return document(lang, "privacy", t["title_privacy"], t["desc_privacy"], main)
+
+
+def terms(lang):
+    """The terms of use (AGB): Snapfly is free, and Apple sells Snapfly Pro."""
+    t = TEXT[lang]
+    main = f"""<article class="doc wrap narrow">
+  {doc_head(lang, t["terms_title"], updated_line(lang, LEGAL_UPDATED, t["legal_updated"]))}
+  {summary(lang, t["terms_short"])}
+  {doc_sections(t["terms"])}
+</article>"""
+    return document(lang, "terms", t["title_terms"], t["desc_terms"], main)
+
+
+def withdrawal(lang):
+    """How to withdraw from Snapfly Pro and cancel it: the two buttons that lead
+    to Apple first, where they are found at once, then the details."""
+    t = TEXT[lang]
+    buttons = (f'<p class="contact"><a class="btn btn-primary" href="{APPLE_WITHDRAWAL}">{esc(t["withdrawal_button"])}</a> '
+               f'<a class="btn btn-secondary" href="{APPLE_SUBSCRIPTIONS}">{esc(t["withdrawal_cancel"])}</a></p>')
+    main = f"""<article class="doc wrap narrow">
+  {doc_head(lang, t["withdrawal_title"], updated_line(lang, LEGAL_UPDATED, t["legal_updated"]))}
+  {summary(lang, t["withdrawal_short"])}
+  {buttons}
+  {doc_sections(t["withdrawal"])}
+</article>"""
+    return document(lang, "withdrawal", t["title_withdrawal"], t["desc_withdrawal"], main)
 
 
 # Each question's glyph, in the order of the questions in content.py; the
@@ -1513,9 +1557,13 @@ def not_found():
 """
 
 
+# Every page, in every language.
+PAGES = ("index", "privacy", "terms", "withdrawal", "support")
+
+
 def sitemap():
     urls = []
-    for page in ("index", "privacy", "support"):
+    for page in PAGES:
         for code, d, _ in LANGS:
             loc = f"{SITE_URL}{d}{'' if page == 'index' else page + '.html'}"
             alts = "".join(
@@ -1551,6 +1599,8 @@ def main():
         folder.mkdir(parents=True, exist_ok=True)
         (folder / "index.html").write_text(home(code), encoding="utf-8")
         (folder / "privacy.html").write_text(privacy(code), encoding="utf-8")
+        (folder / "terms.html").write_text(terms(code), encoding="utf-8")
+        (folder / "withdrawal.html").write_text(withdrawal(code), encoding="utf-8")
         (folder / "support.html").write_text(support(code), encoding="utf-8")
     (OUT / "404.html").write_text(not_found(), encoding="utf-8")
     (OUT / "sitemap.xml").write_text(sitemap(), encoding="utf-8")
