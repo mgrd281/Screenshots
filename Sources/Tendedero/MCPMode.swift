@@ -107,6 +107,10 @@ enum MCPMode {
         guard isOn else {
             return .failure("Snapfly is not letting AI apps read the line. The user can turn on “Let AI apps use Snapfly” in Snapfly’s Settings › AI Assistant.")
         }
+        // Without a window here, a refusal is only said to the AI app.
+        guard Plan.allows(.aiApps, subscribed: Plan.subscribedLately) else {
+            return .failure(L("Letting AI apps use Snapfly is part of Snapfly Pro."))
+        }
         switch name {
         case "latest_screenshot":
             guard let newest = items.first else { return .failure("Nothing hangs on the user's Snapfly line yet.") }

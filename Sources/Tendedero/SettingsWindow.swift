@@ -585,6 +585,8 @@ final class Preferences: ObservableObject {
         get { FolderCover.isOn }
         set {
             change {
+                // Turning it on is part of Snapfly Pro; refused, the switch goes back.
+                guard !newValue || ProGate.allows(.folderCover) else { return }
                 FolderCover.isOn = newValue
                 if newValue, FolderCover.source == nil { chooseFolderCover(source: true) }
                 if newValue, FolderCover.target == nil { chooseFolderCover(source: false) }
@@ -622,6 +624,8 @@ final class Preferences: ObservableObject {
         get { CoveringProfile.coversAllInAIChats }
         set {
             change {
+                // Turning it on is part of Snapfly Pro; refused, the switch goes back.
+                guard !newValue || ProGate.allows(.coveringProfiles) else { return }
                 CoveringProfile.coversAllInAIChats = newValue
                 line.readPrivateDetails()
                 ChatButton.shared?.refresh()
@@ -759,6 +763,7 @@ final class Preferences: ObservableObject {
     private var messagesSave: Task<Void, Never>?
 
     func addSavedMessage() {
+        guard ProGate.allows(.savedMessages) else { return }
         savedMessages.append(SavedMessage())
         saveSavedMessages()
     }
@@ -2370,6 +2375,11 @@ private struct AboutPane: View {
                 .padding(.top, 4)
             Button(L("Check for Updates…")) { prefs.checkForUpdates() }
                 .padding(.top, 18)
+            // Once Pro has begun, the way to it: to subscribe, restore or cancel.
+            if Plan.hasBegun() {
+                Button(L("Snapfly Pro…")) { ProWindow.shared.show() }
+                    .padding(.top, 8)
+            }
             Spacer()
         }
         .multilineTextAlignment(.center)

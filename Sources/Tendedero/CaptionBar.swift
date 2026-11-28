@@ -325,6 +325,7 @@ private struct CaptionBarView: View {
     /// A saved message, its blanks filled from the photo: the order's
     /// number, total, date, name and tracking number, read on this Mac.
     private func use(_ message: SavedMessage) {
+        guard ProGate.allows(.savedMessages) else { return }
         focused = true
         guard let photo, SavedMessages.hasBlanks(message.text) else {
             text = message.text

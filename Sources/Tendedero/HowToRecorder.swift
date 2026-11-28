@@ -35,6 +35,7 @@ final class HowToRecorder {
     private let asking = DispatchQueue(label: "Snapfly.HowTo.asking", qos: .userInitiated)
 
     func start() {
+        guard ProGate.allows(.guides) else { return }
         guard !isRecording, !Recording.shared.isRecording, Capture.shared.hasPermission() else { return }
         isRecording = true
         finishing = false

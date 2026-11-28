@@ -95,7 +95,10 @@ final class FolderCover {
     /// stays as it is; only what lands from now on is covered.
     func restart() {
         stop()
-        guard Self.isOn, let source = Self.source, let target = Self.target, Self.areApart(source, target) else { return }
+        // Part of Snapfly Pro. It starts on its own at launch, so without Pro
+        // it stays still and says nothing.
+        guard Self.isOn, ProGate.isOpen(.folderCover), let source = Self.source, let target = Self.target,
+              Self.areApart(source, target) else { return }
         for folder in [source, target] where folder.startAccessingSecurityScopedResource() {
             opened.append(folder)
         }

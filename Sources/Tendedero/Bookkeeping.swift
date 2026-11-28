@@ -100,6 +100,7 @@ enum Bookkeeping {
     /// the books under a name that says what it is, and notes it in the
     /// folder's table. The folder is asked for the first time.
     static func save(_ url: URL) {
+        guard ProGate.allows(.bookkeeping) else { return }
         guard let folder = folder ?? chooseFolder() else { return }
         let copy = PrivateDetails.shareable(url)
         let covering = PrivateDetails.details
@@ -123,6 +124,7 @@ enum Bookkeeping {
     /// The photo, covered, in a new email to whoever keeps the books, its
     /// subject saying what it is. Nothing goes until it is sent.
     static func mail(_ url: URL) {
+        guard ProGate.allows(.bookkeeping) else { return }
         guard let service = NSSharingService(named: .composeEmail) else {
             Notice.show(L("No email app could be opened."))
             return
@@ -152,6 +154,7 @@ enum Bookkeeping {
     /// A month's receipts in one PDF, made beside them in the folder and
     /// shown in the Finder, to hand to the tax advisor.
     static func makePack(month: String) {
+        guard ProGate.allows(.bookkeeping) else { return }
         guard let folder else { return }
         let rightToLeft = NSApp.userInterfaceLayoutDirection == .rightToLeft
         let file = folder.appendingPathComponent(tableName)
