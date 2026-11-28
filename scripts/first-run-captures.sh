@@ -5,8 +5,11 @@
 # soon it showed, from the app's log. With the main branch's build beside it,
 # as it was before. Then Protect Picture on the first run's made-up invoice,
 # covered by the real engine, on this iPhone and the smallest the runner
-# has. Simulator numbers say how it behaves, not how fast a phone is. Writes
-# everything to captures/.
+# has. Then the Snapfly Pro screen on made-up prices (-SnapflyPro): each
+# phase, a locked feature, further down the page, the largest text size,
+# Reduce Motion and the smallest iPhone, and a recording of how it comes
+# in (pro-*). Simulator numbers say how it behaves, not how fast a phone is.
+# Writes everything to captures/.
 set -euo pipefail
 
 out=captures
@@ -114,6 +117,64 @@ editor "$device" de dark de-dark
 editor "$device" ar light ar-light
 editor "$device" en light en-light
 
+# The Snapfly Pro screen, as the sample opens it over the app: on a device,
+# in a language and an appearance, in a phase, with more arguments after
+# it. A picture more, never a reason to stop.
+pro() {
+  local on=$1 language=$2 appearance=$3 phase=$4 name=$5
+  shift 5
+  {
+    xcrun simctl ui "$on" appearance "$appearance" &&
+      { xcrun simctl terminate "$on" "$bundle" >/dev/null 2>&1 || true; } &&
+      xcrun simctl launch "$on" "$bundle" -AppleLanguages "($language)" -AppleLocale "$language" \
+        -SnapflyPro "$phase" "$@" >/dev/null &&
+      sleep 5 &&
+      xcrun simctl io "$on" screenshot "$out/pro-$name.png" >/dev/null
+  } || echo "The Pro screen could not be captured as pro-$name." >&2
+}
+
+# Records a launch of the Pro screen for some seconds, as it comes in: in
+# German and light, in a phase, with more arguments after it.
+record_pro() {
+  local name=$1 seconds=$2
+  shift 2
+  xcrun simctl ui "$device" appearance light || true
+  xcrun simctl io "$device" recordVideo --codec=h264 --force "$out/$name.mp4" &
+  local recorder=$!
+  sleep 2
+  launch de -SnapflyPro "$@" || echo "The Pro screen did not open for $name.mp4." >&2
+  sleep "$seconds"
+  kill -INT "$recorder" 2>/dev/null || true
+  wait "$recorder" || true
+}
+
+# Once to warm up: a first launch of the screen takes longer than the frame waits.
+xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
+if xcrun simctl launch "$device" "$bundle" -SnapflyPro offers >/dev/null; then
+  sleep 10
+else
+  echo "The Pro screen's warm-up launch did not start." >&2
+fi
+pro "$device" de light offers offers-de-light
+pro "$device" de dark offers offers-de-dark
+pro "$device" ar light offers offers-ar-light
+pro "$device" en light offers offers-en-light
+# A locked feature, named over the title and marked among the features.
+pro "$device" de light offers order-card-de-light -SnapflyProFeature orderCard
+# Further down the page: what Pro adds, then the links and the seller.
+pro "$device" de light offers features-de-light -SnapflyProScroll features
+pro "$device" de dark offers features-de-dark -SnapflyProScroll features
+pro "$device" de light offers footer-de-light -SnapflyProScroll footer
+pro "$device" ar light offers footer-ar-light -SnapflyProScroll footer
+# Every other phase the screen can be in.
+for phase in loading unavailable buying pending welcome subscribed keeps; do
+  pro "$device" de light "$phase" "$phase-de-light"
+done
+pro "$device" de light offers offers-de-light-accessibility-xxxl \
+  -UIPreferredContentSizeCategoryName UICTContentSizeCategoryAccessibilityXXXL
+pro "$device" de light offers offers-de-light-reduce-motion -SnapflyReduceMotion
+record_pro pro-entrance 6 offers || echo "The Pro screen's entrance could not be recorded." >&2
+
 # And on the smallest iPhone there is, where the apps beside the page are tightest.
 small=$(xcrun simctl list devices available --json | python3 -c '
 import json, sys
@@ -142,6 +203,7 @@ if [ -n "$small" ] && [ "$small" != "$device" ]; then
     xcrun simctl install "$small" "$after"
     editor "$small" de light de-light-small
   ) || echo "The smallest iPhone could not be captured." >&2
+  pro "$small" de light offers offers-de-light-small
   xcrun simctl shutdown "$small" || true
 fi
 
