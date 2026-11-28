@@ -142,7 +142,10 @@ or turn on syncing with your iPhone (below).
   using when you send a screenshot. While you choose what a screenshot takes,
   smart selection uses it to ask the app under the pointer where a picture or
   a button sits there, to outline it: only where things are, and nothing of
-  it leaves your Mac. While you record a guide, it asks the app you click what
+  it leaves your Mac. While it captures a whole page, it scrolls the page
+  for you and asks the app where a few things on it sit, to tell how far each
+  scroll moved it: only where they are, and nothing of it leaves your Mac.
+  While you record a guide, it asks the app you click what
   was clicked there, below. Screen Recording lets it take the
   screenshots and recordings you ask for, with ⌃⌥S, the screenshot button,
   Record Screen or Record a Guide. So that the send button shows only on chat websites, it asks

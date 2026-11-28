@@ -27,6 +27,11 @@ final class PageWalkTests: XCTestCase {
         var jump = 0
         /// How much farther than asked the page moves at each scroll.
         var gain = 1.0
+        /// What the app tells of each move, in points, given the true one in
+        /// rows, as a browser does through Accessibility; nil, it tells
+        /// nothing.
+        var tells: ((Int) -> Double?)?
+        private var marked = 0
         var stopAfter: Int?
         var shots = 0
         /// When each row of the page first came into view.
@@ -117,7 +122,9 @@ final class PageWalkTests: XCTestCase {
                 },
                 wait: { self.clock += $0 },
                 stopAsked: { false },
-                strip: { shot, rows in self.strips.append((shot, rows)) })
+                strip: { shot, rows in self.strips.append((shot, rows)) },
+                mark: { self.marked = self.offset },
+                measured: { self.tells.flatMap { $0(self.offset - self.marked) } })
         }
 
         func walk(maxLength: Int = 100_000) async -> (end: PageWalk<Shot>.End, moved: Int) {
@@ -423,6 +430,125 @@ final class PageWalkTests: XCTestCase {
     }
 
     @MainActor
+    func testAPageThatTellsHowFarItMovedIsTakenWholePastWhiteTallerThanTheWindow() async {
+        // 1500 points of white, taller than the window, and a page that
+        // moves 8% farther than asked: told by the app, every row is in place.
+        let page = Page(length: 10)
+        page.rows = Page.made(4000, seed: 31) + Array(repeating: [UInt8](repeating: 250, count: PageStitch.samples),
+                                                     count: 3000) + Page.made(4000, seed: 32)
+        page.gain = 1.08
+        page.tells = { Double($0) / 2 }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertTrue(page.joined == page.whole)
+    }
+
+    @MainActor
+    func testAMoveToldWronglyGoesByThePictures() async {
+        // The app tells half as much again as the page moved, as when what it
+        // reads scrolls on its own: the pictures say otherwise and win.
+        let page = Page(length: 12_000)
+        page.tells = { Double($0) * 1.5 / 2 }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertTrue(page.joined == page.whole)
+    }
+
+    @MainActor
+    func testAPageThatTellsItStayedEndsAtItsBottomThoughADotPulses() async {
+        let page = Page(length: 10)
+        page.rows = Page.made(3000, seed: 5) + Array(repeating: [UInt8](repeating: 250, count: PageStitch.samples),
+                                                    count: 2600)
+        page.effects.append { shown, _, page in
+            for r in (page.toolbar + 1100)..<(page.toolbar + 1124) {
+                for c in 40..<46 { shown[r][c] = Page.noise(page.shots, r, c) }
+            }
+        }
+        page.tells = { Double($0) / 2 }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertTrue(Page.shown(page.joined).count >= Page.shown(page.whole).count)
+        XCTAssertLessThan(page.clock, 20_000_000_000)
+    }
+
+    @MainActor
+    func testABlockThatScrollsByItselfAtThePageEndIsNotTakenForAMove() async {
+        // A wall of cards near the page's foot scrolls up on its own, and at
+        // the end, where the page stays, the app tells how far the cards
+        // moved: the pictures show the page stayed, and it ends there.
+        let page = Page(length: 8000)
+        let wall = Page.made(2000, seed: 50)
+        let region = 7000..<7400
+        let columns = 6..<18
+        page.effects.append { shown, where_, page in
+            let moved = Int(Double(page.clock) / 1e9 * 40)
+            for (r, row) in where_.enumerated() {
+                guard let row, region.contains(row) else { continue }
+                let card = wall[(row - region.lowerBound + moved) % wall.count]
+                for c in columns { shown[r][c] = card[c] }
+            }
+        }
+        page.tells = { moved in moved == 0 ? 21 : Double(moved) / 2 }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertEqual(page.joined.count, page.whole.count)
+        func outside(_ rows: PageStitch.Rows) -> [[UInt8]] {
+            rows.map { Array($0[..<columns.lowerBound] + $0[columns.upperBound...]) }
+        }
+        XCTAssertTrue(outside(page.joined) == outside(page.whole))
+    }
+
+    @MainActor
+    func testAShortLastMoveBesideAColumnThatSticksIsTaken() async {
+        // A table of contents on the left stays put while the page scrolls,
+        // and the last scroll moves the page only six rows.
+        let page = Page(length: 1680 + 1092 * 9 + 6)
+        let panel = Page.made(page.content, seed: 99)
+        page.effects.append { shown, where_, page in
+            for (r, row) in where_.enumerated() where row != nil {
+                for c in 0..<20 { shown[r][c] = panel[r - page.toolbar][c] }
+            }
+        }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+    }
+
+    @MainActor
+    func testAnAppThatNeverTellsAMoveIsNotBelievedThatThePageStayed() async {
+        // As Chrome before its page has loaded: everything stays put, it
+        // says, while the page scrolls; the pictures go on.
+        let page = Page(length: 12_000)
+        page.tells = { _ in 0 }
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertTrue(page.joined == page.whole)
+    }
+
+    @MainActor
+    func testAGridOfCardsIsNotTakenForTheBottom() async {
+        // Cards 400 rows tall, alike but for their names, and a page that
+        // moves a whole number of them at each scroll.
+        let page = Page(length: 10)
+        let card = Page.made(400, seed: 77)
+        page.rows = (0..<30).flatMap { n -> PageStitch.Rows in
+            var rows = card
+            for r in 20..<44 { rows[r] = (0..<PageStitch.samples).map { UInt8((n * 37 + $0 * 11 + r) % 200) } }
+            return rows
+        }
+        page.gain = 1200.0 / 1092.0
+        let result = await page.walk()
+        XCTAssertEqual(result.end, .bottom)
+        XCTAssertEqual(result.moved, page.maxOffset)
+        XCTAssertTrue(Page.shown(page.joined) == Page.shown(page.whole))
+    }
+
+    @MainActor
     func testAPageThatNeverEndsIsCut() async {
         let page = Page(length: 60_000)
         let result = await page.walk(maxLength: 10_000)
@@ -496,6 +622,39 @@ final class PageWalkTests: XCTestCase {
         XCTAssertEqual(result.end, .stopped)
         XCTAssertEqual(page.joined, Array(page.whole.prefix(page.joined.count)))
         XCTAssertGreaterThan(page.joined.count, page.window)
+    }
+
+    func testThingsOnThePageTellHowFarItMoved() {
+        // Most moved 300 points; a sticky header stayed; one jumped.
+        XCTAssertEqual(PageWalk<Int>.told(by: [300, 300.5, 0, 299.8, 0, 120]), 300)
+        // All stayed: the page did not move.
+        XCTAssertEqual(PageWalk<Int>.told(by: [0, 0, 0.2, 0]), 0)
+        // Too few, or no agreement: nothing is told.
+        XCTAssertNil(PageWalk<Int>.told(by: [0, 0]))
+        XCTAssertNil(PageWalk<Int>.told(by: [300]))
+        XCTAssertNil(PageWalk<Int>.told(by: [300, 120, 40, 0]))
+        XCTAssertNil(PageWalk<Int>.told(by: []))
+        // Up, too, as at the start.
+        XCTAssertEqual(PageWalk<Int>.told(by: [-200, -200, -201]), -200)
+    }
+
+    func testOnlyThingsThatMovedWithThePageTellThatItStayed() {
+        var moves = PageWalk<Int>.Moves<Int>(same: ==)
+        // Nothing has moved yet: three things that stayed tell nothing.
+        XCTAssertNil(moves.told(by: [(1, 0), (2, 0), (3, 0)]))
+        // Two lines moved 532 points; a bar fixed at the window's foot, with
+        // its text and two buttons, stayed.
+        XCTAssertEqual(moves.told(by: [(4, 532), (5, 532), (1, 0), (2, 0), (3, 0)]), 532)
+        XCTAssertTrue(moves.isStuck(1))
+        XCTAssertTrue(moves.isStuck(3))
+        XCTAssertFalse(moves.isStuck(4))
+        // Over white, only the bar is left: it does not tell that the page
+        // stayed, as it stays either way.
+        XCTAssertNil(moves.told(by: [(1, 0), (2, 0), (3, 0)]))
+        XCTAssertNil(moves.told(by: [(6, 504), (1, 0), (2, 0), (3, 0)]))
+        // At the page's end, the lines that moved before stay: it stayed.
+        XCTAssertEqual(moves.told(by: [(4, 0), (5, 0), (6, 0)]), 0)
+        XCTAssertNil(moves.told(by: [(4, 0), (7, 0), (8, 0)]))
     }
 
     func testWhatChangesByItselfDoesNotTellAMove() {

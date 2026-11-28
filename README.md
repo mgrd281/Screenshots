@@ -907,13 +907,20 @@ the send button uses.
 
 It goes all the way down. After each scroll it waits until the page is
 still, so pictures that load as they come into view and cards that fade in
-are there. What changes by itself, like a picture that loaded late, a video,
-or a column that sticks beside the one that scrolls, does not end it, nor
-does a tall band of one colour or a header that shrinks as the page
-scrolls, and a dot that pulses at the page's end does not keep it scrolling
-there. A feed that loads more as it reaches its end is followed, and a chat
-button at the window's foot shows once, at the end, not at every seam. A page too long for one picture, 40,000 pixels, goes on in a second
-picture, and a third, one below the other. Press ⌃⌥P again, choose Stop Capturing the
+are there. Where the app tells where the things on its page sit, as Safari,
+Chrome and Firefox do for VoiceOver, Snapfly asks it how far each scroll
+moved the page, so every line lands in its place, also across white taller
+than the window; it checks that against the pictures, and goes by the
+pictures alone where the app tells nothing. The Mac App Store edition
+can't ask other apps, so it always goes by the pictures. What changes by
+itself, like a picture that loaded late, a video, or a column that sticks
+beside the one that scrolls, does not end it, nor does a tall band of one
+colour or a header that shrinks as the page scrolls, and a dot that pulses
+at the page's end does not keep it scrolling there. A feed that loads more
+as it reaches its end is followed, and a chat button at the window's foot
+shows once, at the end, not at every seam. A page too long for one picture,
+40,000 pixels, goes on in a second picture, and a third, one below the
+other. Press ⌃⌥P again, choose Stop Capturing the
 Page, or click the note to stop early and keep what was taken. If the page
 never ends, like a feed, or keeps changing so no two views fit, a note says
 the picture was cut.
@@ -2140,6 +2147,7 @@ so macOS asks again for access to the Desktop after each rebuild.
 | `ShortcutTap.swift` | The screenshot and recording shortcuts heard while another app's menu is open, so the menu stays in the picture (with Accessibility) |
 | `FullPage.swift` | Captures a whole page by scrolling the window in front, in more than one picture when it is long |
 | `PageWalk.swift` | How a whole page is walked down: how far each scroll goes, waiting until the page is still, finding the move when something changed by itself, and the bottom |
+| `PageMeasure.swift` | How far a scroll moved the page, as the app tells it through Accessibility: a few things on it noted, and found again after the scroll |
 | `PaperPages.swift` | A long picture on sheets of A4 or US Letter for Make PDF, cut between lines |
 | `VideoQuality.swift` | How recordings and Studio's videos are compressed: HEVC, or H.264 where it cannot be written or for an MP4 to share, at a bit rate that follows the picture |
 | `PhoneHandoff.swift` | Offers the newest photo to the iPhone nearby with Handoff, and sends it when asked |

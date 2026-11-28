@@ -143,6 +143,60 @@ final class PageStitchTests: XCTestCase {
         }
     }
 
+    func testAMoveToldIsTakenWhereThePicturesAgree() throws {
+        // Told exactly, or a row off, the move that lines up is taken.
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 290)?.shift, 290)
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 291)?.shift, 290)
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 290)?.top, 30)
+        // Told wrongly, the pictures say otherwise.
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 200))
+        // Farther than the views share: nothing to go by.
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 380))
+        // White lines up at any move: the one told.
+        let blank = [UInt8](repeating: 250, count: PageStitch.samples)
+        let white = PageStitch.Rows(repeating: blank, count: 400)
+        XCTAssertEqual(PageStitch.check(from: white, to: white, shift: 250)?.shift, 250)
+        // What was seen changing by itself, like a video, does not go
+        // against the move; unseen, it does.
+        var moving = view(at: 290)
+        for i in 40..<100 { moving[i] = pageRow(9000 + i) }
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: moving, shift: 290))
+        let seen = (0..<400).map { (40..<100).contains($0) ? UInt64.max : 0 }
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: moving, shift: 290,
+                                        restless: ([UInt64](repeating: 0, count: 400), seen))?.shift, 290)
+    }
+
+    func testARowOrTwoBesideTheMoveToldIsNotTakenForSharingMore() {
+        // A page that changes slowly from row to row lines up a row or two
+        // off too. A button that pulses low in the earlier view goes against
+        // the move told, and as much against those beside it, which share a
+        // row or two more: none is taken, and the pictures decide.
+        func smooth(_ i: Int) -> [UInt8] { (0..<PageStitch.samples).map { UInt8((i / 4 + $0 * 5) % 200 + 20) } }
+        let bar = PageStitch.Rows(repeating: [UInt8](repeating: 240, count: PageStitch.samples), count: 30)
+        let previous = bar + (0..<370).map(smooth)
+        let next = bar + (0..<370).map { smooth($0 + 196) }
+        XCTAssertEqual(PageStitch.check(from: previous, to: next, shift: 196)?.shift, 196)
+        var pulsing = previous
+        for r in 300..<335 { pulsing[r] = row { ($0 * 97 + r * 31) % 200 + 20 } }
+        XCTAssertNil(PageStitch.check(from: pulsing, to: next, shift: 196))
+    }
+
+    func testAMoveToldIsTakenOverAPicturesFitThatTheViewsGoAgainstMore() {
+        // A button over the page goes against the move told; a fit the
+        // pictures found a hundred rows off goes against it more.
+        func smooth(_ i: Int) -> [UInt8] { (0..<PageStitch.samples).map { UInt8((i / 4 + $0 * 5) % 200 + 20) } }
+        let bar = PageStitch.Rows(repeating: [UInt8](repeating: 240, count: PageStitch.samples), count: 30)
+        var previous = bar + (0..<370).map(smooth)
+        let next = bar + (0..<370).map { smooth($0 + 196) }
+        for r in 300..<360 { previous[r] = row { ($0 * 97 + r * 31) % 200 + 20 } }
+        XCTAssertNil(PageStitch.check(from: previous, to: next, shift: 196))
+        XCTAssertEqual(PageStitch.check(from: previous, to: next, shift: 196, rival: 100)?.shift, 196)
+        // A rival a row or two off, or one the views agree with, is not
+        // gone against.
+        XCTAssertNil(PageStitch.check(from: previous, to: next, shift: 196, rival: 195))
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 200, rival: 290))
+    }
+
     func testFollowFindsNoMoveOnAPageThatChangedByItself() {
         var other: PageStitch.Rows = []
         for i in 0..<400 { other.append(row { j in (i * 53 + j * 29 + 11) % 197 }) }
