@@ -2245,3 +2245,11 @@
 "Terms of Use" = "AGB";
 "Privacy Policy" = "Datenschutz";
 "Withdrawal Policy" = "Widerrufsbelehrung";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "Der Zeitstempel konnte der Aufnahme nicht hinzugefügt werden.";
+"From %@" = "Ab %@";
+"Open Page" = "Seite öffnen";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "Die Seite, die beim Bildschirmfoto im Browser vorne offen war, wie Snapfly sie gelesen hat (nicht signiert):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "Die Seiten, die während der Aufnahme im Browser vorne offen waren, jede ab dem Moment, in dem sie geöffnet wurde, wie Snapfly sie gelesen hat (nicht signiert):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "Das Bildschirmfoto mit dem Zeitstempel, den Snapfly darauf gezeichnet hat (nicht signiert):";

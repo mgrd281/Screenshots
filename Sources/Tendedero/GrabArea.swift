@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import SwiftUI
 
 /// Bridges each photo to AppKit's drag and drop, so it can be dragged into
@@ -12,6 +13,7 @@ import SwiftUI
 ///
 /// Click copies, press and hold opens Markup, the corner cross discards, or
 /// unpins a pinned photo, and the paper plane in the opposite corner sends.
+/// A click on the page's address in a time band opens the page instead.
 /// ChatGPT, Claude, WhatsApp and Gmail stand in a row under the photo, which
 /// this view reaches down to. ⌘-click, or the circle opposite the
 /// cross, picks several, which go together.
@@ -84,6 +86,27 @@ struct GrabArea: NSViewRepresentable {
         view.covered = item.covered
         let lock = $overLock
         view.onLockHover = { inside in if lock.wrappedValue != inside { lock.wrappedValue = inside } }
+        // The page the time band names, and where its address is on the
+        // photo: a click there opens it. Found again only for a new picture.
+        if view.bandPicture !== item.thumb || view.bandStampOn != TimeStamp.isOn {
+            view.bandPicture = item.thumb
+            view.bandStampOn = TimeStamp.isOn
+            view.pages = line.pages(id)
+            view.bandLinks = nil
+            if item.isRecording {
+                // A recording's size is read from its file, a moment later.
+                let thumb = ObjectIdentifier(item.thumb)
+                Task { @MainActor [weak view] in
+                    let links = await line.recordingBandLinks(id)
+                    // Unless another picture came meanwhile.
+                    guard let view, view.bandPicture.map({ ObjectIdentifier($0) }) == thumb else { return }
+                    view.bandLinks = links
+                }
+            } else {
+                view.bandLinks = line.bandLinks(id)
+            }
+        }
+        view.onOpenPage = { url in line.openPage(url.absoluteString) }
         // A right-click on one of them: the questions and prompts from Settings.
         let questions = AIQuestions.offered()
         let prompts = AIPrompts.offered()
@@ -136,7 +159,19 @@ struct GrabArea: NSViewRepresentable {
                 return true
             }
         } : []
-        view.setAccessibilityCustomActions((pinned ? [send, pin] : [send, pin, takeDown]) + chatActions + [pick, earlier, later])
+        // The page the time band names, as a click on its address opens it;
+        // a recording's each, with when it was opened.
+        let pages = view.pages
+        let pageActions: [NSAccessibilityCustomAction] = pages.map { page in
+            let name = pages.count == 1 ? L("Open Page") : L("Open Page") + ": " + Self.pageTitle(page)
+            return NSAccessibilityCustomAction(name: name) {
+                MainActor.assumeIsolated { line.openPage(page.address) }
+                return true
+            }
+        }
+        let actions: [NSAccessibilityCustomAction] = (pinned ? [send, pin] : [send, pin, takeDown]) + chatActions
+            + pageActions + [pick, earlier, later]
+        view.setAccessibilityCustomActions(actions)
         view.menuProvider = {
             // Short, as a Mac app's own menus are: what is done most at the
             // top, the rest gathered in a few submenus by what it is for.
@@ -342,6 +377,22 @@ struct GrabArea: NSViewRepresentable {
             // Looking at it.
             Self.gap(menu)
             menu.addItem(ClosureMenuItem(L("Open"), symbol: "arrow.up.forward.app") { line.open(id) })
+            // The page the time band names, in the browser; a recording's
+            // each, with when it was opened.
+            let pages = line.pages(id)
+            if pages.count == 1, let page = pages.first {
+                let openPage = ClosureMenuItem(L("Open Page"), symbol: "globe") { line.openPage(page.address) }
+                openPage.toolTip = page.address
+                menu.addItem(openPage)
+            } else if let openPage = Self.group(L("Open Page"), symbol: "globe", { sub in
+                for page in pages {
+                    let entry = ClosureMenuItem(Self.pageTitle(page)) { line.openPage(page.address) }
+                    entry.toolTip = page.address
+                    sub.addItem(entry)
+                }
+            }) {
+                menu.addItem(openPage)
+            }
             menu.addItem(ClosureMenuItem(L("Quick Look"), symbol: "eye") { line.quickLook(id) })
             if isImage {
                 menu.addItem(ClosureMenuItem(L("Keep on Top"), symbol: "pip") { line.keepOnTop(id) })
@@ -389,6 +440,14 @@ struct GrabArea: NSViewRepresentable {
             }
             return menu
         }
+    }
+
+    /// A page the time band names, short: a recording's from when it was
+    /// opened, then its website.
+    private static func pageTitle(_ page: TimeProof.Seen.Page) -> String {
+        let site = StampSite.host(of: page.address) ?? page.address
+        guard let at = page.at else { return site }
+        return String(format: L("From %@"), TimeProof.moment(at)) + " · " + site
     }
 
     /// A separator, unless the menu is empty or already ends in one.
@@ -521,7 +580,23 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     var covered = false
     /// The pointer comes to rest on the lock, or leaves it.
     var onLockHover: (Bool) -> Void = { _ in }
+    /// The links in the photo's time band: a click on one opens its page,
+    /// rather than copying the photo.
+    var bandLinks: BandLinks? {
+        didSet { if bandLinks != oldValue { placeTips() } }
+    }
+    /// What the links were found for, so they are found again only for a
+    /// new picture or with the stamp turned on or off.
+    var bandPicture: NSImage?
+    var bandStampOn = false
+    /// The pages the time band names, for VoiceOver.
+    var pages: [TimeProof.Seen.Page] = []
+    var onOpenPage: (URL) -> Void = { _ in }
     private var tips: [NSView.ToolTipTag] = []
+    /// The page under a press that began on a link in the band.
+    private var pressedPage: URL?
+    /// The pointer shows a hand, over a link.
+    private var pointing = false
 
     private var downPoint: NSPoint?
     private var startedDrag = false
@@ -634,6 +709,32 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
                       width: width, height: Self.lockHitSize)
     }
 
+    /// The least height a link takes under the pointer, however small its
+    /// band is drawn on the photo.
+    static let linkReach: CGFloat = 6
+
+    /// The band's links where the photo shows them: inside the frame's inset,
+    /// and grown from the card's top, as the pointer on the card grows it.
+    private var linkRects: [(rect: NSRect, url: URL)] {
+        guard let bandLinks else { return [] }
+        let photo = CGSize(width: bounds.width - 2 * Frame.inset, height: cardHeight - 2 * Frame.inset)
+        guard photo.width > 0, photo.height > 0 else { return [] }
+        let grow = PeggedView.hoverScale
+        return bandLinks.places(on: photo, least: Self.linkReach).map { strip -> (rect: NSRect, url: URL) in
+            // Counted from the card's top left; the picture reads left to right in every language.
+            let card = strip.rect.offsetBy(dx: Frame.inset, dy: Frame.inset)
+            let shown = CGRect(x: bounds.midX + (card.minX - bounds.midX) * grow, y: card.minY * grow,
+                               width: card.width * grow, height: card.height * grow)
+            return (rect: NSRect(x: shown.minX, y: isFlipped ? shown.minY : bounds.height - shown.maxY,
+                                 width: shown.width, height: shown.height), url: strip.url)
+        }
+    }
+
+    /// The page of the link under a point in the band, if there is one.
+    private func page(at point: NSPoint) -> URL? {
+        linkRects.first { $0.rect.contains(point) }?.url
+    }
+
     // MARK: Tooltips and VoiceOver
 
     override func setFrameSize(_ newSize: NSSize) {
@@ -648,6 +749,7 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
                 addToolTip(sendRect, owner: self, userData: nil)]
         tips += chatRects.map { addToolTip($0, owner: self, userData: nil) }
         if !lockHelp.isEmpty { tips.append(addToolTip(lockRect, owner: self, userData: nil)) }
+        tips += linkRects.map { addToolTip($0.rect, owner: self, userData: nil) }
     }
 
     func view(_ view: NSView, stringForToolTip tag: NSView.ToolTipTag, point: NSPoint,
@@ -663,6 +765,8 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
             return String(format: L("More: %@"), ListFormatter.localizedString(byJoining: moreChats.map(\.name)))
         }
         if !lockHelp.isEmpty && lockRect.contains(point) { return lockHelp }
+        // A link says where it leads, as a browser does.
+        if let address = page(at: point) { return address.absoluteString }
         return sendHelp
     }
 
@@ -710,16 +814,22 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     override func mouseEntered(with event: NSEvent) {
         onHoverChange(true)
         followLock(event)
+        followLink(event)
     }
 
     override func mouseMoved(with event: NSEvent) {
         onHoverChange(true)
         followLock(event)
+        followLink(event)
     }
 
     override func mouseExited(with event: NSEvent) {
         onHoverChange(false)
         onLockHover(false)
+        if pointing {
+            pointing = false
+            NSCursor.arrow.set()
+        }
     }
 
     /// Over the lock, the places covered light up on the photo. The photo
@@ -727,6 +837,16 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
     /// afresh.
     private func followLock(_ event: NSEvent) {
         onLockHover(covered && lockRect.contains(convert(event.locationInWindow, from: nil)))
+    }
+
+    /// Over a link in the time band, the pointer is a hand, as over a link
+    /// anywhere; the corners keep their buttons.
+    private func followLink(_ event: NSEvent) {
+        let point = convert(event.locationInWindow, from: nil)
+        let over = page(at: point) != nil && !crossRect.contains(point) && !pickRect.contains(point)
+        guard over != pointing else { return }
+        pointing = over
+        (over ? NSCursor.pointingHand : NSCursor.arrow).set()
     }
 
     override func mouseDown(with event: NSEvent) {
@@ -763,11 +883,15 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
             showMore()
             return
         }
+        // On a link in the time band, a click opens its page instead.
+        let link = isPick(event) ? nil : page(at: point)
         if event.clickCount == 2 && !isPick(event) {
             downPoint = nil
-            onDoubleClick()
+            // The first click opened the page; the second does no more.
+            if link == nil { onDoubleClick() }
             return
         }
+        pressedPage = link
         downPoint = event.locationInWindow
         startedDrag = false
         didLongPress = false
@@ -820,10 +944,17 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
             if isPick(event) {
                 onPick()
             } else if event.clickCount == 1 {
-                if event.modifierFlags.contains(.option), let onCrop { onCrop() } else { onClick() }
+                if event.modifierFlags.contains(.option), let onCrop {
+                    onCrop()
+                } else if let pressedPage {
+                    onOpenPage(pressedPage)
+                } else {
+                    onClick()
+                }
             }
         }
         downPoint = nil
+        pressedPage = nil
         didLongPress = false
     }
 
@@ -897,6 +1028,130 @@ final class GrabView: NSView, NSDraggingSource, NSViewToolTipOwner {
         let scale = min(bounds.width / size.width, cardHeight / size.height)
         let w = size.width * scale, h = size.height * scale
         return NSRect(x: (bounds.width - w) / 2, y: stripHeight + (cardHeight - h) / 2, width: w, height: h)
+    }
+}
+
+/// Where the links of a time band are on a picture that carries one, so a
+/// click on the photo as it hangs follows them: each address's lines as a
+/// strip across the band, from 0 to 1 of the picture from its top left.
+struct BandLinks: Equatable {
+    struct Strip: Equatable {
+        var rect: CGRect
+        var url: URL
+    }
+
+    /// The band on the picture.
+    var band: CGRect
+    var strips: [Strip]
+    /// The picture's width over its height.
+    var aspect: CGFloat
+
+    /// The links of a band, in its pixels from its top left, where the band
+    /// sits at `band` on a picture `canvas` pixels large; nil without any.
+    static func make(_ links: [TimeStamp.Link], band: CGRect, canvas: CGSize) -> BandLinks? {
+        guard canvas.width > 0, canvas.height > 0, band.width > 0, band.height > 0 else { return nil }
+        // The lines of one address make one strip, the band's width.
+        var rows: [(url: URL, top: CGFloat, bottom: CGFloat)] = []
+        for link in links {
+            let top = band.minY + link.rect.minY, bottom = band.minY + link.rect.maxY
+            if let i = rows.firstIndex(where: { $0.url == link.url }) {
+                rows[i].top = min(rows[i].top, top)
+                rows[i].bottom = max(rows[i].bottom, bottom)
+            } else {
+                rows.append((url: link.url, top: top, bottom: bottom))
+            }
+        }
+        guard !rows.isEmpty else { return nil }
+        let place = CGRect(x: band.minX / canvas.width, y: band.minY / canvas.height,
+                           width: band.width / canvas.width, height: band.height / canvas.height)
+        let strips = rows.map { row in
+            Strip(rect: CGRect(x: place.minX, y: row.top / canvas.height, width: place.width,
+                               height: (row.bottom - row.top) / canvas.height), url: row.url)
+        }
+        return BandLinks(band: place, strips: strips, aspect: canvas.width / canvas.height)
+    }
+
+    /// A screenshot's band as the copy on the line has it (`Cover.covering`):
+    /// above the picture as drawn on and cut to the part kept, then set on
+    /// its backdrop, if it has one.
+    static func screenshot(_ url: URL, _ mark: TimeStamp.Mark) -> BandLinks? {
+        guard let size = uprightSize(of: url) else { return nil }
+        let drawing = Drawings.saved(url)
+        var width = size.width, height = size.height
+        if !drawing.isEmpty, let crop = drawing.crop, let kept = Drawing.pixels(of: crop, width: width, height: height) {
+            width = Int(kept.width)
+            height = Int(kept.height)
+        }
+        return screenshot(mark, width: width, height: height, backdrop: drawing.backdrop)
+    }
+
+    /// The band drawn above a picture `width` × `height` pixels large, and
+    /// the two set on a backdrop when there is one.
+    static func screenshot(_ mark: TimeStamp.Mark, width: Int, height: Int, backdrop: Backdrop?) -> BandLinks? {
+        guard width > 0, height > 0, let band = TimeStamp.band(mark, width: width), !band.links.isEmpty else { return nil }
+        let stamped = CGSize(width: CGFloat(width), height: CGFloat(height + band.image.height))
+        var canvas = stamped
+        var origin = CGPoint.zero
+        if let backdrop {
+            // The backdrop places the picture from the bottom left.
+            let layout = backdrop.layout(width: width, height: Int(stamped.height))
+            canvas = layout.canvas
+            origin = CGPoint(x: layout.picture.minX, y: layout.canvas.height - layout.picture.maxY)
+        }
+        let place = CGRect(origin: origin, size: CGSize(width: CGFloat(width), height: CGFloat(band.image.height)))
+        return make(band.links, band: place, canvas: canvas)
+    }
+
+    /// A recording's band on its first picture, which the line shows: drawn
+    /// into its pictures at their top, as wide as the video and as tall all
+    /// through it (`VideoStamp`).
+    static func recording(_ url: URL) async -> BandLinks? {
+        guard VideoStamp.isDrawnIn(url), let stamp = VideoStamp.stamp(for: url),
+              let track = try? await AVURLAsset(url: url).loadTracks(withMediaType: .video).first,
+              let natural = try? await track.load(.naturalSize) else { return nil }
+        let width = Int(abs(natural.width).rounded()), height = Int(abs(natural.height).rounded())
+        guard width > 0, height > 0,
+              let band = TimeStamp.band(VideoStamp.mark(at: 0, of: stamp), width: width) else { return nil }
+        let place = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(VideoStamp.bandHeight(stamp, width: width)))
+        return make(band.links, band: place, canvas: CGSize(width: CGFloat(width), height: CGFloat(height)))
+    }
+
+    /// A picture's size in pixels, the right way up.
+    static func uprightSize(of url: URL) -> (width: Int, height: Int)? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let width = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.intValue,
+              let height = (properties[kCGImagePropertyPixelHeight] as? NSNumber)?.intValue else { return nil }
+        // Orientations 5 to 8 turn it on its side.
+        let orientation = (properties[kCGImagePropertyOrientation] as? NSNumber)?.intValue ?? 1
+        return orientation >= 5 ? (width: height, height: width) : (width: width, height: height)
+    }
+
+    /// Whether a photo this size shows the picture: the same shape, give or
+    /// take the rounding of its pixels.
+    func fits(_ size: CGSize) -> Bool {
+        guard size.width > 0, size.height > 0 else { return false }
+        return abs(size.width / size.height - aspect) <= aspect * 0.015
+    }
+
+    /// Each strip on a photo drawn `photo` points large, from its top left,
+    /// at least `least` points tall where the band has the room, so a band
+    /// drawn small can still be clicked.
+    func places(on photo: CGSize, least: CGFloat) -> [Strip] {
+        let band = CGRect(x: self.band.minX * photo.width, y: self.band.minY * photo.height,
+                          width: self.band.width * photo.width, height: self.band.height * photo.height)
+        return strips.map { strip -> Strip in
+            var rect = CGRect(x: strip.rect.minX * photo.width, y: strip.rect.minY * photo.height,
+                              width: strip.rect.width * photo.width, height: strip.rect.height * photo.height)
+            if rect.height < least {
+                rect = rect.insetBy(dx: 0, dy: (rect.height - least) / 2)
+                // Kept on the band.
+                if rect.minY < band.minY { rect.origin.y = band.minY }
+                if rect.maxY > band.maxY { rect.origin.y = band.maxY - rect.height }
+                rect = rect.intersection(band)
+            }
+            return Strip(rect: rect, url: strip.url)
+        }
     }
 }
 

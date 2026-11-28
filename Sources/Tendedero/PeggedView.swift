@@ -93,6 +93,10 @@ struct PeggedView: View {
     /// Distance from the top of the hanging view (the clip) to the card.
     static let cardOffsetBelowTop: CGFloat = Layout.cardBelowTop
 
+    /// How much the card grows from its top under the pointer, which
+    /// GrabView follows to find what is clicked on the photo.
+    static let hoverScale: CGFloat = 1.035
+
     private var photoSize: CGSize { Self.photoSize(for: item.thumb.size) }
 
     private var card: some View {
@@ -205,7 +209,7 @@ struct PeggedView: View {
             // Holding presses the photo in slowly, so a long press feels like
             // it is building up to something; letting go springs back, or
             // eases back with Reduce Motion.
-            .scaleEffect(pressed ? 0.95 : (hovering ? 1.035 : 1), anchor: .top)
+            .scaleEffect(pressed ? 0.95 : (hovering ? Self.hoverScale : 1), anchor: .top)
             .animation(pressed ? .easeInOut(duration: 0.45)
                        : Motion.spring(response: 0.3, damping: 0.6, reduced: reduceMotion), value: pressed)
             .opacity(dragging ? 0.45 : 1)

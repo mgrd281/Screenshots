@@ -2408,10 +2408,11 @@ it does in a short wordless film (`SettingFilm`, drawn by
 
 ### Time stamp
 
-Evidence of when and where a screenshot was taken, when Stamp the date
-and time is on. Drawn into a copy saved next to the screenshot, onto the
-photo that hangs and into the copy that leaves the line: never into the
-screenshot itself.
+Evidence of when and where a screenshot or a recording was made, when
+Stamp the date and time is on. Drawn into a copy saved next to the
+screenshot, onto the photo that hangs and into the copy that leaves the
+line: never into the screenshot itself. A recording carries it in its
+pictures (below).
 
 - **Where.** A band above the picture, as wide as it; the image grows by
   the band's height, so nothing of the screenshot is covered.
@@ -2422,11 +2423,13 @@ screenshot itself.
      with monospaced digits, in the title colour;
   2. where the time came from: the PTB's atomic clock, or the Mac's clock
      when it could not be reached (regular, 0.86×, detail colour);
-  3. the website open in the browser in front, if one was (the same): its
-     host alone, like mail.google.com, never the rest of its address, since
-     the band is drawn after the covering (`StampSite`);
+  3. the whole address of the page open in the browser in front, if a
+     website was, at the owner's choice (November 2026), as evidence needs
+     it, without a user name or password (`StampSite`): SF Mono, 0.86×, in
+     link blue (sRGB 0.04, 0.36, 0.82, 6:1 on the band), broken anywhere
+     over three lines at most, the last ending in "…" if it must;
   4. the screenshot's SHA-256 fingerprint (SF Mono, 0.8×, code colour).
-  A line too long for the image ends in "…".
+  Any other line too long for the image ends in "…".
 - **Size.** The text is 0.95% of the image's width, at least 11 px; each
   line is 1.4× its text size, the padding 0.9× and the gap after the icon
   0.7× the title size. The icon is at most three title sizes tall. A
@@ -2435,6 +2438,32 @@ screenshot itself.
 - **Right to left.** The icon moves to the right and the lines align right.
 - **No shadow, no rounded corners.** It reads as a document's letterhead,
   not as something floating.
+- **On a recording** (`VideoStamp`). The same band, as wide as the video,
+  above its picture, the video taller by it. The time runs second by second
+  from the recording's first picture; the address follows the page in
+  front as it changes, and the line goes while no website is in front. No
+  fingerprint line: a video cannot hold its own. The band keeps one height
+  all through, the tallest any moment needs, rounded up to an even number
+  of pixels: each moment's band sits at its top, the band colour below it,
+  the hairline at its foot. Studio's own exports carry no band.
+- **Links.** The address is a link wherever one can be followed:
+  - in "… with time stamp.pdf", saved beside the stamped copy: one page
+    per picture, one point per pixel, one link per line of the address;
+  - on the line: a click on the address in a hanging photo's or
+    recording's band opens the page, on a strip as wide as the band and at
+    least 6 pt tall inside it, following the 1.035 hover growth, with the
+    pointing hand and the whole address as its tip; the rest of the band
+    copies, as the photo does, and the corner buttons keep their corners;
+  - in "Proof of Time.pdf" (Save Proof of Time…): A4, 56 pt margins, the
+    title 18 pt semibold, words 10 pt with 2 pt between lines, commands
+    8.5 pt SF Mono grey 0.25, addresses 9 pt SF Mono in link blue broken
+    anywhere, "From 0:12" 10 pt semibold, frames at most 260 by 200 pt with
+    a 0.5 pt grey 0.8 hairline, the stamped screenshot as wide as the page,
+    "n / N" 8 pt grey 0.5 at the foot when there are several pages; in
+    Arabic aligned right, commands and addresses still left to right.
+- **Open Page** follows Open in the photo's menu (`globe`) for a photo or
+  recording with a page; a recording that showed several gets a submenu,
+  "From 0:12 · host" each, the whole address as its tip.
 
 ### Signature: the line styles
 - **Clothesline**: rope, clips and swing.

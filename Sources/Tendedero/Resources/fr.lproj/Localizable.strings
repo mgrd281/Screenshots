@@ -2245,3 +2245,11 @@
 "Terms of Use" = "Conditions d’utilisation";
 "Privacy Policy" = "Politique de confidentialité";
 "Withdrawal Policy" = "Droit de rétractation";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "Impossible d’ajouter l’horodatage à l’enregistrement.";
+"From %@" = "À partir de %@";
+"Open Page" = "Ouvrir la page";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "La page ouverte dans le navigateur au premier plan lors de la capture, telle que Snapfly l’a lue (non signé) :";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "Les pages ouvertes dans le navigateur au premier plan pendant l’enregistrement, chacune à partir de son ouverture, telles que Snapfly les a lues (non signé) :";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "La capture avec l’horodatage que Snapfly y a dessiné (non signé) :";

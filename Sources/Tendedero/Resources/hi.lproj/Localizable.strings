@@ -2247,3 +2247,11 @@
 "Terms of Use" = "उपयोग की शर्तें";
 "Privacy Policy" = "गोपनीयता नीति";
 "Withdrawal Policy" = "अनुबंध से हटने का अधिकार";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "रिकॉर्डिंग पर समय की मुहर नहीं लगाई जा सकी।";
+"From %@" = "%@ से";
+"Open Page" = "पेज खोलें";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "स्क्रीनशॉट लेते समय सामने वाले ब्राउज़र में खुला पेज, जैसा Snapfly ने पढ़ा (हस्ताक्षरित नहीं):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "रिकॉर्डिंग के दौरान सामने वाले ब्राउज़र में खुले पेज, हर एक खुलने के समय से, जैसा Snapfly ने पढ़ा (हस्ताक्षरित नहीं):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "स्क्रीनशॉट, उस समय की मुहर के साथ जो Snapfly ने उस पर बनाई (हस्ताक्षरित नहीं):";

@@ -2245,3 +2245,11 @@
 "Terms of Use" = "利用規約";
 "Privacy Policy" = "プライバシーポリシー";
 "Withdrawal Policy" = "契約の撤回について";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "収録にタイムスタンプを付けられませんでした。";
+"From %@" = "%@ から";
+"Open Page" = "ページを開く";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "スクリーンショットを撮ったときに前面のブラウザで開いていたページ（Snapfly が読み取ったもの。署名されていません）：";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "収録中に前面のブラウザで開いていたページ。それぞれ開いた時点から（Snapfly が読み取ったもの。署名されていません）：";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "Snapfly がタイムスタンプを描き入れたスクリーンショット（署名されていません）：";

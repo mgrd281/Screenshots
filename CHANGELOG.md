@@ -6,6 +6,14 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- The time stamp shows the whole address of the page that was open, in
+  blue, as evidence needs it, and screen recordings get it too, in the
+  video itself: the time runs second by second by the PTB's atomic clock,
+  and the address follows the pages you visit. Click the address on the
+  line to open the page, or choose Open Page; the stamped copy is saved as
+  a PDF too, its address a link, and Save Proof of Time… adds a PDF with
+  every page as a link.
+
 - Capture Whole Page goes all the way down: it waits until the page is
   still after each scroll, so pictures that load late and cards that fade
   in are there, and something that changes by itself, a video or a column

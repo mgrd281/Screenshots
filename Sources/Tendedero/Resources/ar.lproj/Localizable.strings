@@ -2245,3 +2245,11 @@
 "Terms of Use" = "شروط الاستخدام";
 "Privacy Policy" = "سياسة الخصوصية";
 "Withdrawal Policy" = "حق الانسحاب";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "تعذّرت إضافة ختم الوقت إلى التسجيل.";
+"From %@" = "من %@";
+"Open Page" = "فتح الصفحة";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "الصفحة التي كانت مفتوحة في المتصفح في المقدمة عند التقاط الصورة، كما قرأها Snapfly (غير موقَّعة):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "الصفحات التي كانت مفتوحة في المتصفح في المقدمة أثناء التسجيل، كلٌّ منها منذ لحظة فتحها، كما قرأها Snapfly (غير موقَّعة):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "لقطة الشاشة مع ختم الوقت الذي رسمه Snapfly عليها (غير موقَّع):";

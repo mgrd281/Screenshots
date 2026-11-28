@@ -83,6 +83,9 @@ final class Trim: NSObject, NSWindowDelegate {
         export.outputURL = temp
         export.outputFileType = target.pathExtension.lowercased() == "mp4" ? .mp4 : .mov
         export.timeRange = CMTimeRange(start: start, end: end)
+        // The time stamp's moment and pages, read before the file is replaced.
+        let stamp = VideoStamp.record(of: target)
+        let drawn = VideoStamp.isDrawnIn(target)
         Task {
             await export.export()
             if export.status == .completed,
@@ -90,6 +93,8 @@ final class Trim: NSObject, NSWindowDelegate {
                 log.notice("Trimmed \(target.lastPathComponent, privacy: .private)")
                 // Studio's zooms, marks and clicks move with the new start.
                 StudioStore.trimmed(target, from: start.seconds, keeping: CMTimeSubtract(end, start).seconds)
+                // The time stamp's moment and pages, too.
+                VideoStamp.trimmed(target, from: start.seconds, kept: stamp, drawn: drawn)
                 onSaved(target)
             } else {
                 log.error("Could not trim \(target.lastPathComponent, privacy: .private): \(export.error?.localizedDescription ?? "", privacy: .private)")

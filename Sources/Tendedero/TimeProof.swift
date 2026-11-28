@@ -1,5 +1,6 @@
 import AppKit
 import AVFoundation
+import CoreText
 import CryptoKit
 
 /// When a recording was made, in a form that holds up outside the Mac: a
@@ -236,20 +237,29 @@ enum TimeProof {
         NSApp.activate(ignoringOtherApps: true)
         let text = page(record, file: url.lastPathComponent)
         let pageName = L("Proof of Time")
+        // The same words as a PDF, with what the time stamp kept of the
+        // moment, read now.
+        let words = paragraphs(record, file: url.lastPathComponent)
+        let kept = Self.seen(url)
+        let recording = isRecording(url)
+        let rightToLeft = TimeStamp.rightToLeft
         panel.begin { response in
             MainActor.assumeIsolated {
                 guard response == .OK, let target = panel.url else { return }
                 let note = Notice.show(L("Saving the proof of time…"), working: true)
-                DispatchQueue.global(qos: .userInitiated).async {
+                Task.detached(priority: .userInitiated) {
                     let saved = write(url, record, page: text, named: pageName, into: target)
-                    DispatchQueue.main.async {
-                        MainActor.assumeIsolated {
-                            Notice.end(note)
-                            if saved {
-                                Notice.savedCopy(target)
-                            } else {
-                                Notice.show(L("Could not save the proof of time."))
-                            }
+                    if saved {
+                        await writeDocument(of: url, words, kept, recording: recording, rightToLeft: rightToLeft,
+                                            title: pageName,
+                                            to: target.appendingPathComponent(pageName).appendingPathExtension("pdf"))
+                    }
+                    await MainActor.run {
+                        Notice.end(note)
+                        if saved {
+                            Notice.savedCopy(target)
+                        } else {
+                            Notice.show(L("Could not save the proof of time."))
                         }
                     }
                 }
@@ -278,10 +288,26 @@ enum TimeProof {
 
     // MARK: The page
 
+    /// One paragraph of the page, and how the PDF sets it: an empty one
+    /// stands for the room between parts.
+    struct Paragraph: Equatable, Sendable {
+        enum Kind: Sendable { case title, text, strong, code, link, gap }
+        var text: String
+        var kind: Kind
+        /// Where a link leads.
+        var url: URL? = nil
+    }
+
     /// What the proof says, what it proves and how to check it without
     /// Snapfly, in the Mac's language, with the time in UTC beside it.
     static func page(_ record: Record, file name: String, locale: Locale = .autoupdatingCurrent,
                      timeZone: TimeZone = .autoupdatingCurrent) -> String {
+        paragraphs(record, file: name, locale: locale, timeZone: timeZone).map(\.text).joined(separator: "\n") + "\n"
+    }
+
+    /// The page's paragraphs, as the text file and the PDF both have them.
+    static func paragraphs(_ record: Record, file name: String, locale: Locale = .autoupdatingCurrent,
+                           timeZone: TimeZone = .autoupdatingCurrent) -> [Paragraph] {
         let when = DateFormatter()
         when.locale = locale
         when.timeZone = timeZone
@@ -292,28 +318,30 @@ enum TimeProof {
         utc.timeZone = TimeZone(identifier: "UTC")
         utc.dateFormat = "yyyy-MM-dd HH:mm:ss 'UTC'"
 
-        var lines = [L("Proof of Time"), ""]
-        lines.append(String(format: L("File: %@"), name))
-        lines.append(String(format: L("Fingerprint (SHA-256): %@"), record.fingerprint))
-        lines.append("")
-        lines.append(String(format: L("Signed time: %@"), when.string(from: record.signed) + " · " + utc.string(from: record.signed)))
+        let gap = Paragraph(text: "", kind: .gap)
+        func text(_ words: String) -> Paragraph { Paragraph(text: words, kind: .text) }
+        var lines = [Paragraph(text: L("Proof of Time"), kind: .title), gap]
+        lines.append(text(String(format: L("File: %@"), name)))
+        lines.append(text(String(format: L("Fingerprint (SHA-256): %@"), record.fingerprint)))
+        lines.append(gap)
+        lines.append(text(String(format: L("Signed time: %@"), when.string(from: record.signed) + " · " + utc.string(from: record.signed))))
         if let accuracy = record.accuracy {
             let number = NumberFormatter()
             number.locale = locale
             number.maximumFractionDigits = 3
-            lines.append(String(format: L("Accuracy: ± %@ s"), number.string(from: NSNumber(value: accuracy)) ?? "\(accuracy)"))
+            lines.append(text(String(format: L("Accuracy: ± %@ s"), number.string(from: NSNumber(value: accuracy)) ?? "\(accuracy)")))
         }
-        lines.append(String(format: L("Time stamping authority: %@"), record.authority))
-        lines.append(record.qualified
+        lines.append(text(String(format: L("Time stamping authority: %@"), record.authority)))
+        lines.append(text(record.qualified
             ? L("A qualified electronic time stamp under the EU’s eIDAS regulation (Article 41).")
-            : L("A time stamp under RFC 3161, though not a qualified one."))
-        lines.append(String(format: L("Serial number: %@"), record.serial))
-        if record.began != nil || record.duration != nil { lines.append("") }
+            : L("A time stamp under RFC 3161, though not a qualified one.")))
+        lines.append(text(String(format: L("Serial number: %@"), record.serial)))
+        if record.began != nil || record.duration != nil { lines.append(gap) }
         if let began = record.began {
             let format = record.atomic
                 ? L("Recording began: %@, by the PTB’s atomic clock, as Snapfly read it (not signed).")
                 : L("Recording began: %@, by the Mac’s clock (not signed).")
-            lines.append(String(format: format, when.string(from: began)))
+            lines.append(text(String(format: format, when.string(from: began))))
         }
         if let duration = record.duration {
             let length = DateComponentsFormatter()
@@ -322,18 +350,342 @@ enum TimeProof {
             length.calendar = calendar
             length.unitsStyle = .full
             length.allowedUnits = [.hour, .minute, .second]
-            lines.append(String(format: L("Length: %@"), length.string(from: duration.rounded()) ?? ""))
+            lines.append(text(String(format: L("Length: %@"), length.string(from: duration.rounded()) ?? "")))
         }
-        lines.append("")
-        lines.append(L("What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows."))
-        lines.append("")
+        lines.append(gap)
+        lines.append(text(L("What it proves: this very file, byte for byte, existed no later than the signed time. Changed in any way, even by one byte, it no longer matches. It does not prove who made it or what it shows.")))
+        lines.append(gap)
         let answer = name + ".tsr"
-        lines.append(String(format: L("How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:"), answer))
-        lines.append("")
-        lines.append("openssl ts -reply -in \"\(answer)\" -text")
-        lines.append("openssl ts -verify -in \"\(answer)\" -data \"\(name)\" -CAfile \"root.pem\"")
-        lines.append("")
-        lines.append(L("“root.pem” stands for the authority’s root certificate, from its own website."))
-        return lines.joined(separator: "\n") + "\n"
+        lines.append(text(String(format: L("How to check it without Snapfly: “%@” is the authority’s signed answer (RFC 3161). Any program that reads RFC 3161 time stamps can check it against the file, OpenSSL for example:"), answer)))
+        lines.append(gap)
+        lines.append(Paragraph(text: "openssl ts -reply -in \"\(answer)\" -text", kind: .code))
+        lines.append(Paragraph(text: "openssl ts -verify -in \"\(answer)\" -data \"\(name)\" -CAfile \"root.pem\"", kind: .code))
+        lines.append(gap)
+        lines.append(text(L("“root.pem” stands for the authority’s root certificate, from its own website.")))
+        return lines
+    }
+
+    // MARK: The PDF
+
+    /// What the time stamp kept of the moment, beside the proof: the page in
+    /// front as a screenshot was taken, or the pages a recording showed,
+    /// each from when it was opened, and the stamp on a screenshot. Snapfly's
+    /// own reading, not signed.
+    struct Seen: Equatable, Sendable {
+        struct Page: Equatable, Sendable {
+            /// Seconds into the recording; nil for a screenshot.
+            var at: Double?
+            /// The page's whole address.
+            var address: String
+        }
+
+        var pages: [Page] = []
+        /// What the band on a screenshot says, to draw its picture with.
+        var stamp: TimeStamp.Mark?
+    }
+
+    /// What the time stamp kept of a file, while the stamp is on.
+    @MainActor
+    static func seen(_ url: URL) -> Seen {
+        guard TimeStamp.isOn else { return Seen() }
+        if isRecording(url) {
+            return Seen(pages: VideoStamp.record(of: url).map(pages(in:)) ?? [])
+        }
+        guard let stamp = TimeStamp.mark(for: url) else { return Seen() }
+        let address = TimeStamp.record(of: url)?.page.flatMap(StampSite.address(of:))
+        return Seen(pages: address.map { [Seen.Page(at: nil, address: $0)] } ?? [], stamp: stamp)
+    }
+
+    /// The websites a recording showed, each from when it was opened; a
+    /// moment with no website in front is left out.
+    static func pages(in record: VideoStamp.Record) -> [Seen.Page] {
+        var pages: [Seen.Page] = []
+        var previous: String?
+        for page in record.pages.sorted(by: { $0.at < $1.at }) {
+            let address = page.address.flatMap(StampSite.address(of:))
+            if let address, address != previous {
+                pages.append(Seen.Page(at: page.at.isFinite ? max(0, page.at) : 0, address: address))
+            }
+            previous = address
+        }
+        return pages
+    }
+
+    /// A moment into a recording as a player shows it: 0:12, 12:05, 1:02:03.
+    static func moment(_ seconds: Double) -> String {
+        let whole = seconds.isFinite ? Int(max(0, seconds).rounded(.down)) : 0
+        let hours = whole / 3600, minutes = whole % 3600 / 60, rest = whole % 60
+        return hours > 0 ? String(format: "%d:%02d:%02d", hours, minutes, rest) : String(format: "%d:%02d", minutes, rest)
+    }
+
+    /// One piece of the PDF, set down its pages in order.
+    enum Block {
+        case words(Paragraph)
+        /// A picture, no larger than `largest` in points, with links over it
+        /// in its pixels from its top left.
+        case picture(CGImage, links: [TimeStamp.Link], largest: CGSize)
+    }
+
+    /// The PDF's pieces: the page's words, then the pages in front with
+    /// their addresses as links, a recording's with a picture of it as each
+    /// was opened, and a screenshot's stamped picture.
+    /// - Parameters:
+    ///   - picture: the screenshot with its band, and where the band's links are.
+    ///   - frames: the recording as each page was opened, where a picture could be made.
+    static func blocks(_ paragraphs: [Paragraph], seen: Seen, recording: Bool, picture: TimeStamp.Band? = nil,
+                       frames: [CGImage?] = []) -> [Block] {
+        var blocks = paragraphs.map(Block.words)
+        if !seen.pages.isEmpty {
+            blocks.append(.words(Paragraph(text: "", kind: .gap)))
+            blocks.append(.words(Paragraph(text: recording
+                ? L("The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):")
+                : L("The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):"),
+                kind: .text)))
+            for (index, page) in seen.pages.enumerated() {
+                if recording, let at = page.at {
+                    blocks.append(.words(Paragraph(text: String(format: L("From %@"), moment(at)), kind: .strong)))
+                }
+                blocks.append(.words(Paragraph(text: page.address, kind: .link, url: URL(string: page.address))))
+                if index < frames.count, let frame = frames[index] {
+                    blocks.append(.picture(frame, links: [], largest: CGSize(width: 260, height: 200)))
+                }
+            }
+        }
+        if let picture {
+            blocks.append(.words(Paragraph(text: "", kind: .gap)))
+            blocks.append(.words(Paragraph(text: L("The screenshot with the time stamp Snapfly drew on it (not signed):"),
+                                           kind: .text)))
+            blocks.append(.picture(picture.image, links: picture.links,
+                                   largest: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)))
+        }
+        return blocks
+    }
+
+    /// A piece set on a page, in the page's points from its bottom left: a
+    /// frame of words or a picture, with its links.
+    struct Placed {
+        var page: Int
+        var frame: CTFrame?
+        var picture: CGImage?
+        var rect: CGRect
+        var links: [(rect: CGRect, url: URL)]
+    }
+
+    /// An A4 page, and the room round what is on it.
+    static let pageSize = CGSize(width: 595.28, height: 841.89)
+    private static let margin: CGFloat = 56
+
+    /// Sets the pieces down A4 pages, starting a new page wherever the next
+    /// does not fit, and a long paragraph goes on over the next.
+    static func layOut(_ blocks: [Block], rightToLeft: Bool) -> [Placed] {
+        let width = pageSize.width - 2 * margin
+        let pageTop = pageSize.height - margin
+        var placed: [Placed] = []
+        var page = 0
+        var top = pageTop
+        func newPage() {
+            page += 1
+            top = pageTop
+        }
+        for block in blocks {
+            switch block {
+            case .words(let paragraph):
+                if paragraph.kind == .gap {
+                    if top < pageTop { top -= 8 }
+                    continue
+                }
+                // A moment stays with the address after it.
+                if paragraph.kind == .strong, top - margin < 64, top < pageTop { newPage() }
+                let text = attributed(paragraph, rightToLeft: rightToLeft)
+                let setter = CTFramesetterCreateWithAttributedString(text)
+                var start = 0
+                while start < text.length {
+                    let rect = CGRect(x: margin, y: margin, width: width, height: max(0, top - margin))
+                    let frame = CTFramesetterCreateFrame(setter, CFRange(location: start, length: 0),
+                                                         CGPath(rect: rect, transform: nil), nil)
+                    let visible = CTFrameGetVisibleStringRange(frame)
+                    let lines = CTFrameGetLines(frame) as? [CTLine] ?? []
+                    guard visible.length > 0, !lines.isEmpty else {
+                        // Not a line fits here: on the next page, unless this one is empty.
+                        if top < pageTop {
+                            newPage()
+                            continue
+                        }
+                        break
+                    }
+                    var origins = [CGPoint](repeating: .zero, count: lines.count)
+                    CTFrameGetLineOrigins(frame, CFRange(location: 0, length: 0), &origins)
+                    var links: [(rect: CGRect, url: URL)] = []
+                    var bottom = top
+                    for (line, origin) in zip(lines, origins) {
+                        var ascent: CGFloat = 0, descent: CGFloat = 0, leading: CGFloat = 0
+                        let lineWidth = CGFloat(CTLineGetTypographicBounds(line, &ascent, &descent, &leading))
+                        let box = CGRect(x: rect.minX + origin.x, y: rect.minY + origin.y - descent,
+                                         width: lineWidth, height: ascent + descent)
+                        bottom = min(bottom, box.minY - leading)
+                        if let url = paragraph.url { links.append((rect: box, url: url)) }
+                    }
+                    placed.append(Placed(page: page, frame: frame, picture: nil, rect: rect, links: links))
+                    top = bottom
+                    start += visible.length
+                    if start < text.length { newPage() }
+                }
+                top -= paragraph.kind == .title ? 6 : 3
+            case let .picture(image, links, largest):
+                let w = CGFloat(image.width), h = CGFloat(image.height)
+                guard w > 0, h > 0 else { continue }
+                // Never larger than its pixels, nor than a page.
+                let scale = min(1, width / w, largest.width / w, largest.height / h, (pageTop - margin) / h)
+                let size = CGSize(width: w * scale, height: h * scale)
+                if top - margin < size.height, top < pageTop { newPage() }
+                let x = rightToLeft ? pageSize.width - margin - size.width : margin
+                let rect = CGRect(x: x, y: top - size.height, width: size.width, height: size.height)
+                let over = links.map { link in
+                    (rect: CGRect(x: rect.minX + link.rect.minX * scale, y: rect.maxY - link.rect.maxY * scale,
+                                  width: link.rect.width * scale, height: link.rect.height * scale), url: link.url)
+                }
+                placed.append(Placed(page: page, frame: nil, picture: image, rect: rect, links: over))
+                top = rect.minY - 10
+            }
+        }
+        return placed
+    }
+
+    /// Writes the pieces as a PDF of A4 pages, each numbered at its foot
+    /// when there are several.
+    static func writePDF(_ blocks: [Block], title: String, rightToLeft: Bool, to url: URL) -> Bool {
+        let placed = layOut(blocks, rightToLeft: rightToLeft)
+        var box = CGRect(origin: .zero, size: pageSize)
+        let info: [CFString: Any] = [kCGPDFContextCreator: "Snapfly", kCGPDFContextTitle: title]
+        guard let context = CGContext(url as CFURL, mediaBox: &box, info as CFDictionary) else { return false }
+        let count = (placed.map(\.page).max() ?? 0) + 1
+        for page in 0..<count {
+            context.beginPDFPage(nil)
+            for item in placed where item.page == page {
+                if let frame = item.frame {
+                    context.saveGState()
+                    context.textMatrix = .identity
+                    CTFrameDraw(frame, context)
+                    context.restoreGState()
+                }
+                if let picture = item.picture {
+                    context.saveGState()
+                    context.interpolationQuality = .high
+                    context.draw(picture, in: item.rect)
+                    // A hairline round it, so a picture with white edges keeps its shape on the page.
+                    context.setStrokeColor(CGColor(gray: 0.8, alpha: 1))
+                    context.setLineWidth(0.5)
+                    context.stroke(item.rect.insetBy(dx: -0.25, dy: -0.25))
+                    context.restoreGState()
+                }
+                for link in item.links {
+                    context.setURL(link.url as CFURL, for: link.rect)
+                }
+            }
+            if count > 1 { drawNumber(page + 1, of: count, in: context) }
+            context.endPDFPage()
+        }
+        context.closePDF()
+        return FileManager.default.fileExists(atPath: url.path)
+    }
+
+    /// "2 / 3", in the middle of the page's foot.
+    private static func drawNumber(_ number: Int, of count: Int, in context: CGContext) {
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key(kCTFontAttributeName as String): NSFont.monospacedDigitSystemFont(ofSize: 8, weight: .regular),
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: 0.5, alpha: 1),
+        ]
+        let line = CTLineCreateWithAttributedString(NSAttributedString(string: "\(number) / \(count)", attributes: attributes))
+        let width = CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
+        context.saveGState()
+        context.textMatrix = .identity
+        context.textPosition = CGPoint(x: (pageSize.width - width) / 2, y: margin / 2)
+        CTLineDraw(line, context)
+        context.restoreGState()
+    }
+
+    /// A paragraph in its size and weight. Commands and addresses read left
+    /// to right in every language, and break anywhere, as they have no
+    /// spaces to break at; the rest reads the Mac's way.
+    private static func attributed(_ paragraph: Paragraph, rightToLeft: Bool) -> NSAttributedString {
+        let font: NSFont
+        var color = CGColor(gray: 0.1, alpha: 1)
+        switch paragraph.kind {
+        case .title: font = .systemFont(ofSize: 18, weight: .semibold)
+        case .strong: font = .systemFont(ofSize: 10, weight: .semibold)
+        case .code:
+            font = .monospacedSystemFont(ofSize: 8.5, weight: .regular)
+            color = CGColor(gray: 0.25, alpha: 1)
+        case .link:
+            // Link blue, as the band has it.
+            font = .monospacedSystemFont(ofSize: 9, weight: .regular)
+            color = CGColor(srgbRed: 0.04, green: 0.36, blue: 0.82, alpha: 1)
+        case .text, .gap: font = .systemFont(ofSize: 10)
+        }
+        let latin = paragraph.kind == .code || paragraph.kind == .link
+        var alignment: CTTextAlignment = rightToLeft ? .right : .left
+        var breaking: CTLineBreakMode = latin ? .byCharWrapping : .byWordWrapping
+        var direction: CTWritingDirection = rightToLeft && !latin ? .rightToLeft : .leftToRight
+        var spacing: CGFloat = paragraph.kind == .text ? 2 : 1
+        let style = withUnsafeBytes(of: &alignment) { a in
+            withUnsafeBytes(of: &breaking) { b in
+                withUnsafeBytes(of: &direction) { d in
+                    withUnsafeBytes(of: &spacing) { s in
+                        let settings = [
+                            CTParagraphStyleSetting(spec: .alignment, valueSize: a.count, value: a.baseAddress!),
+                            CTParagraphStyleSetting(spec: .lineBreakMode, valueSize: b.count, value: b.baseAddress!),
+                            CTParagraphStyleSetting(spec: .baseWritingDirection, valueSize: d.count, value: d.baseAddress!),
+                            CTParagraphStyleSetting(spec: .lineSpacingAdjustment, valueSize: s.count, value: s.baseAddress!),
+                        ]
+                        return CTParagraphStyleCreate(settings, settings.count)
+                    }
+                }
+            }
+        }
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key(kCTFontAttributeName as String): font,
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String): color,
+            NSAttributedString.Key(kCTParagraphStyleAttributeName as String): style,
+        ]
+        return NSAttributedString(string: paragraph.text, attributes: attributes)
+    }
+
+    /// The PDF beside the page: its words, the pages in front with their
+    /// addresses as links, a recording's with a picture of it as each was
+    /// opened, and a screenshot's stamped picture.
+    nonisolated private static func writeDocument(of url: URL, _ paragraphs: [Paragraph], _ seen: Seen, recording: Bool,
+                                                  rightToLeft: Bool, title: String, to target: URL) async {
+        var picture: TimeStamp.Band?
+        if let stamp = seen.stamp, let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+           let image = CGImageSourceCreateImageAtIndex(source, 0, nil) {
+            picture = TimeStamp.stamped(image, stamp)
+        }
+        var pictures: [CGImage?] = []
+        if recording { pictures = await frames(of: url, at: seen.pages.map { $0.at ?? 0 }) }
+        let pieces = blocks(paragraphs, seen: seen, recording: recording, picture: picture, frames: pictures)
+        if !writePDF(pieces, title: title, rightToLeft: rightToLeft, to: target) {
+            log.error("Could not write the PDF of a proof of time")
+        }
+    }
+
+    /// The recording as it showed at each moment, small; nil where no
+    /// picture could be made. The first few pages have one, the rest their
+    /// address alone.
+    nonisolated private static func frames(of url: URL, at moments: [Double]) async -> [CGImage?] {
+        let generator = AVAssetImageGenerator(asset: AVURLAsset(url: url))
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = CGSize(width: 960, height: 960)
+        generator.requestedTimeToleranceBefore = .zero
+        generator.requestedTimeToleranceAfter = CMTime(seconds: 0.5, preferredTimescale: 600)
+        var pictures: [CGImage?] = []
+        for (index, moment) in moments.enumerated() {
+            guard index < 24 else {
+                pictures.append(nil)
+                continue
+            }
+            let frame = try? await generator.image(at: CMTime(seconds: moment, preferredTimescale: 600)).image
+            pictures.append(frame)
+        }
+        return pictures
     }
 }

@@ -14,7 +14,9 @@ import UniformTypeIdentifiers
 /// what Settings › General chooses: none, the Mac's own, the microphone, or
 /// both mixed into one track. The microphone is asked for only when chosen.
 /// Where the pointer goes, clicks and types meanwhile is noted for Studio,
-/// which opens on the recording once it hangs, unless turned off.
+/// which opens on the recording once it hangs, unless turned off. With the
+/// time stamp on, when it began and the page in front as it changes are
+/// noted too, for the band drawn above its picture (`VideoStamp`).
 @MainActor
 final class Recording {
     static let shared = Recording()
@@ -30,6 +32,8 @@ final class Recording {
     private var recorder: Recorder?
     /// What is done while recording, for Studio.
     private var studio: StudioCapture?
+    /// When it began and the pages it shows, with the time stamp on.
+    private var stamp: VideoStamp.Sampler?
     /// Recorded without the Mac's pointer, which Snapfly draws (Smooth pointer).
     private var pointerHidden = false
     private var file: URL?
@@ -69,6 +73,12 @@ final class Recording {
                 self.studio = studio
                 self.pointerHidden = hidden
                 showControls(for: region, frame: setup.frame)
+                // Asked as it starts, while the moment and the page are fresh.
+                if TimeStamp.isOn {
+                    let stamp = VideoStamp.Sampler()
+                    stamp.start()
+                    self.stamp = stamp
+                }
             } catch {
                 log.error("Could not record the screen: \(error.localizedDescription, privacy: .public)")
                 isRecording = false
@@ -85,6 +95,9 @@ final class Recording {
         let studio = studio
         self.studio = nil
         studio?.stop()
+        let stamp = stamp
+        self.stamp = nil
+        stamp?.stop()
         let pointerHidden = pointerHidden
         self.pointerHidden = false
         hideControls()
@@ -107,6 +120,12 @@ final class Recording {
                 }
                 saved = FileManager.default.fileExists(atPath: file.path)
             }
+            // When its first picture was taken, by the atomic clock once that
+            // has answered, and the pages it showed, for its time stamp.
+            var moment: VideoStamp.Record?
+            if saved, let stamp, TimeStamp.isOn, let first = recorder.firstPicture {
+                moment = await stamp.record(since: first)
+            }
             isRecording = false
             onChange()
             guard saved, let url = keep(file, from: frame) else {
@@ -115,6 +134,8 @@ final class Recording {
                 Notice.show(L("Could not save the recording."), on: nil)
                 return
             }
+            // Kept with the file before it hangs, so the line knows its band.
+            let stamped = moment.map { VideoStamp.keep($0, with: url) } ?? false
             // What was done, timed from the first picture, for Studio; made
             // without the Mac's pointer, the recording is kept as it was made
             // for Studio to draw its own on, and the one on the line gets the
@@ -126,10 +147,14 @@ final class Recording {
                 drawsPointer = events.drawsPointer
                 StudioStore.setEvents(events, for: url)
             }
+            // Studio works from the recording as it was made, without the
+            // band, so what it noted stays where it was.
+            if stamped, StudioStore.cleanSource(for: url) == nil { StudioStore.keepClean(url) }
             // For its proof of time, which says when it began.
             TimeProof.began(url, at: began)
             onFinish(url)
-            if drawsPointer { SmoothPointer.addPointer(to: url) }
+            // Snapfly's pointer and the band are drawn in together, in one pass.
+            if drawsPointer || stamped { SmoothPointer.addPointer(to: url) }
             // Studio is part of Snapfly Pro; without it, nothing opens and nothing asks.
             if Studio.opensAfterRecording && ProGate.isOpen(.studio) {
                 // Once it has flown to the line.

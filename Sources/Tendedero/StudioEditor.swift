@@ -56,7 +56,9 @@ final class StudioEditor: NSObject, NSWindowDelegate {
         // Opened now, so none waits for Studio to close any more.
         waiting = nil
         Task { @MainActor in
-            let asset = AVURLAsset(url: url)
+            // The recording as it was made, which Studio plays and exports:
+            // the one on the line may be taller by the time stamp's band.
+            let asset = AVURLAsset(url: StudioStore.cleanSource(for: url) ?? url)
             guard let duration = try? await asset.load(.duration).seconds, duration > 0,
                   let track = try? await asset.loadTracks(withMediaType: .video).first,
                   let natural = try? await track.load(.naturalSize), natural.width > 0, natural.height > 0 else {

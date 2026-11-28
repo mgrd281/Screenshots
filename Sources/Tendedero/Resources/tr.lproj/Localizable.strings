@@ -2245,3 +2245,11 @@
 "Terms of Use" = "Kullanım Koşulları";
 "Privacy Policy" = "Gizlilik Politikası";
 "Withdrawal Policy" = "Cayma Hakkı";
+
+/* Time stamp: the page as a link, on recordings and in PDFs */
+"Could not add the time stamp to the recording." = "Zaman damgası kayda eklenemedi.";
+"From %@" = "%@ itibarıyla";
+"Open Page" = "Sayfayı Aç";
+"The page open in the browser in front as the screenshot was taken, as Snapfly read it (not signed):" = "Ekran görüntüsü alınırken öndeki tarayıcıda açık olan sayfa, Snapfly’ın okuduğu şekliyle (imzalı değil):";
+"The pages open in the browser in front during the recording, each from when it was opened, as Snapfly read them (not signed):" = "Kayıt sırasında öndeki tarayıcıda açık olan sayfalar, her biri açıldığı andan itibaren, Snapfly’ın okuduğu şekliyle (imzalı değil):";
+"The screenshot with the time stamp Snapfly drew on it (not signed):" = "Snapfly’ın üzerine çizdiği zaman damgasıyla ekran görüntüsü (imzalı değil):";
