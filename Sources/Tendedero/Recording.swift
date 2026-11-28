@@ -130,7 +130,8 @@ final class Recording {
             TimeProof.began(url, at: began)
             onFinish(url)
             if drawsPointer { SmoothPointer.addPointer(to: url) }
-            if Studio.opensAfterRecording {
+            // Studio is part of Snapfly Pro; without it, nothing opens and nothing asks.
+            if Studio.opensAfterRecording && ProGate.isOpen(.studio) {
                 // Once it has flown to the line.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                     MainActor.assumeIsolated { StudioEditor.shared.open(url, justRecorded: true) }

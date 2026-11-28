@@ -3,7 +3,7 @@
 // tests read the site; they never change it.
 const { test, expect } = require("@playwright/test");
 
-const pages = ["", "privacy.html", "support.html"];
+const pages = ["", "privacy.html", "terms.html", "withdrawal.html", "support.html"];
 const languages = [["", "en", "ltr"], ["de/", "de", "ltr"], ["ar/", "ar", "rtl"]];
 const themes = ["sunset", "emerald", "orange"];
 
@@ -42,7 +42,7 @@ for (const [dir, lang, direction] of languages) for (const path of pages) {
 const lookOf = (page) => page.evaluate(() => document.documentElement.dataset.look || "classic");
 const edgeOf = (page) => page.evaluate(() => getComputedStyle(document.body, "::after").content);
 
-for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for (const path of ["", "privacy.html"]) {
+for (const look of ["classic", "bold"]) for (const [dir, lang] of languages) for (const path of ["", "privacy.html", "terms.html", "withdrawal.html"]) {
   test(`${lang} ${path || "home"} loads cleanly in the ${look} look`, async ({ page }) => {
     await page.addInitScript((l) => { try { localStorage.setItem("snapfly-look", l); } catch (e) {} }, look);
     const errors = watchErrors(page);
@@ -346,6 +346,23 @@ test("an example covers parts of the receipt, and Done locks it", async ({ page 
   await expect(win.locator(".cover-box")).toHaveCount(0);
 });
 
+// The cover switches only change the preview: their pane is no form, so no
+// key pressed on a switch can send it and reload the page.
+test("the cover switches change the preview and never reload the page", async ({ page }) => {
+  await page.goto("", { waitUntil: "networkidle" });
+  const pane = page.locator("[data-cover]");
+  expect(await pane.evaluate((e) => !e.closest("form") && !e.querySelector("form")), "not inside a form").toBe(true);
+  await page.evaluate(() => { window.snapflyStillHere = true; });
+  const names = page.locator("[data-invoice] [data-pd='names']");
+  await expect(names).toHaveClass(/covered/);
+  await pane.locator("input[data-kind][value='names']").focus();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Space");
+  await expect(names).not.toHaveClass(/covered/);
+  expect(await page.evaluate(() => window.snapflyStillHere), "the same page, not a new one").toBe(true);
+  expect(new URL(page.url()).search, "nothing sent in the address").toBe("");
+});
+
 // The styles section offers the app's eight line styles: each tile sets
 // the stage's style, names it in the caption, and shows what holds the
 // photos: a wire, a filmstrip, or a fan whose outer photos lean out.
@@ -505,3 +522,98 @@ for (const [dir, lang, direction] of languages) {
     for (const t of turned) expect(t).toBe(direction === "rtl" ? "matrix(-1, 0, 0, 1, 0, 0)" : "none");
   });
 }
+
+// The terms and the withdrawal page, in each language's own words: every
+// footer leads to both, right after the privacy policy.
+const legal = {
+  en: { terms: "Terms", withdrawal: "Withdrawal", withdraw: "Withdraw from contract", cancel: "Cancel contracts here" },
+  de: { terms: "AGB", withdrawal: "Widerruf", withdraw: "Vertrag widerrufen", cancel: "Verträge hier kündigen" },
+  ar: { terms: "الشروط", withdrawal: "الانسحاب", withdraw: "الانسحاب من العقد", cancel: "إلغاء الاشتراك من هنا" },
+};
+
+for (const [dir, lang] of languages) {
+  test(`${lang}: every footer links to the terms and the withdrawal page`, async ({ page }) => {
+    for (const path of pages) {
+      await page.goto(dir + path);
+      const footer = page.locator(".footer");
+      for (const [file, words] of [["terms.html", legal[lang].terms], ["withdrawal.html", legal[lang].withdrawal]]) {
+        const link = footer.getByRole("link", { name: words, exact: true });
+        await expect(link, `${path || "home"} → ${file}`).toHaveAttribute("href", file);
+        expect((await page.request.get(new URL(file, page.url()).href)).status(), file).toBe(200);
+      }
+      const order = await footer.locator(".footer-links a").evaluateAll((all) => all.map((a) => a.getAttribute("href")));
+      expect(order.slice(1, 5), `${path || "home"}: after the privacy policy`).toEqual(["privacy.html", "terms.html", "withdrawal.html", "support.html"]);
+    }
+  });
+}
+
+// The withdrawal page leads straight to Apple, who sells Snapfly Pro: first
+// to withdraw, in the accent, then to cancel, quieter but still a button,
+// both on the first screen and at the reading start, in every look.
+for (const look of ["classic", "bold"]) for (const [dir, lang, direction] of languages) {
+  test(`${lang}: the withdrawal page leads to Apple to withdraw and to cancel, in the ${look} look`, async ({ page }) => {
+    await page.addInitScript((l) => { try { localStorage.setItem("snapfly-look", l); } catch (e) {} }, look);
+    const errors = watchErrors(page);
+    await page.goto(dir + "withdrawal.html", { waitUntil: "networkidle" });
+    expect(await lookOf(page)).toBe(look);
+    const row = page.locator(".doc .contact");
+    const withdraw = row.locator("a.btn.btn-primary");
+    const cancel = row.locator("a.btn:not(.btn-primary)");
+    await expect(withdraw).toHaveCount(1);
+    await expect(cancel).toHaveCount(1);
+    await expect(withdraw).toHaveText(legal[lang].withdraw);
+    await expect(withdraw).toHaveAttribute("href", "https://reportaproblem.apple.com/");
+    await expect(cancel).toHaveText(legal[lang].cancel);
+    await expect(cancel).toHaveAttribute("href", "https://apps.apple.com/account/subscriptions");
+    const height = await page.evaluate(() => innerHeight);
+    const [a, b] = [await withdraw.boundingBox(), await cancel.boundingBox()];
+    for (const box of [a, b]) {
+      expect(box.height, "a pill a finger can take").toBeGreaterThanOrEqual(48);
+      expect(box.y + box.height, "on the first screen").toBeLessThanOrEqual(height);
+    }
+    expect(await cancel.evaluate((e) => getComputedStyle(e).backgroundColor), "cancelling looks like a button").not.toBe("rgba(0, 0, 0, 0)");
+    if (Math.abs(a.y - b.y) < 1) expect(direction === "rtl" ? a.x > b.x : a.x < b.x, "withdrawing at the reading start").toBe(true);
+    else expect(a.y, "withdrawing first").toBeLessThan(b.y);
+    expect(errors).toEqual([]);
+  });
+}
+
+// Both pages lead to Apple's own pages in the reader's language where Apple
+// has them, and every language numbers the same sections in the same order.
+const appleTerms = { en: "ie", de: "de", ar: "ie" };
+const appleCancelling = { en: "en-us", de: "de-de", ar: "ar-ae" };
+for (const [dir, lang] of languages) {
+  test(`${lang}: the terms and the withdrawal page link to Apple in their language, section by section`, async ({ page }) => {
+    const doc = page.locator(".doc");
+    const links = () => doc.locator("a").evaluateAll((all) => all.map((a) => a.getAttribute("href")));
+    const numbers = async () => (await doc.locator("section > h2").allTextContents()).map((h) => parseInt(h, 10));
+    const terms = `https://www.apple.com/legal/internet-services/itunes/${appleTerms[lang]}/terms.html`;
+
+    await page.goto(dir + "terms.html");
+    const fromTerms = await links();
+    for (const href of [terms, "https://apps.apple.com/account/subscriptions",
+      "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/", "withdrawal.html", "privacy.html"]) {
+      expect(fromTerms, `terms → ${href}`).toContain(href);
+    }
+    expect(await numbers()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+
+    await page.goto(dir + "withdrawal.html");
+    const fromWithdrawal = await links();
+    for (const href of [terms, "https://www.apple.com/legal/internet-services/itunes/de/terms.html",
+      `https://support.apple.com/${appleCancelling[lang]}/118428`, "mailto:rightofwithdrawal@apple.com"]) {
+      expect(fromWithdrawal, `withdrawal → ${href}`).toContain(href);
+    }
+    expect(await numbers()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    await expect(doc.locator("blockquote"), "the model form").toHaveCount(1);
+    // In Arabic, Apple's company name keeps its own order and its full stop.
+    if (lang === "ar") await expect(doc.locator("bdi", { hasText: "Apple Distribution International Ltd." }).first()).toBeVisible();
+  });
+}
+
+test("the sitemap lists the terms and the withdrawal page in every language", async ({ request }) => {
+  const xml = await (await request.get("sitemap.xml")).text();
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  expect(locs.length).toBe(languages.length * pages.length);
+  const home = locs[0];
+  for (const [dir] of languages) for (const file of ["terms.html", "withdrawal.html"]) expect(locs).toContain(home + dir + file);
+});

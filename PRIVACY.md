@@ -118,6 +118,16 @@ or turn on syncing with your iPhone (below).
   iCloud database for a minute or so: the devices' names and an iCloud
   identifier that names no one, sealed with the code, and taken down again.
   Disconnect… on the Mac takes that account off the share.
+- **Snapfly Pro, only if you subscribe.** Snapfly Pro, the optional
+  subscription, is bought in the app through Apple's App Store. Apple
+  handles the payment and your Apple account under its own privacy policy.
+  The developer receives no name, email address or payment details from
+  Apple, only its sales and subscription reports, which show figures such as
+  purchases by country and product, not who made them. To know whether Pro
+  is open, Snapfly from the App Store asks the App Store on your device
+  whether a subscription is active, and the App Store may check that with
+  Apple. Snapfly keeps only the answer, on the device, and sends nothing
+  about it to the developer. Snapfly from the website never asks.
 - **Your files stay yours.** Snapfly reads screenshots in the folders you let it
   watch, and the photos and PDFs you bring to it yourself, and copies, sends or
   deletes them only when you ask it to. A photo or PDF you bring stays where it
@@ -300,6 +310,16 @@ Mac Ja, teilt dein Mac seine synchronisierten Bildschirmfotos über iCloud nur
 mit diesem Account. Zum Verbinden liegen für etwa eine Minute kurze, mit dem
 Code versiegelte Notizen in Snapflys öffentlicher iCloud-Datenbank: die Namen
 der Geräte und eine iCloud-Kennung, die niemanden nennt.
+Snapfly Pro, das optionale Abonnement, kaufst du in der App über Apples App
+Store. Apple verarbeitet die Zahlung und deinen Apple Account nach seiner
+eigenen Datenschutzrichtlinie. Von Apple erhält der Entwickler weder deinen
+Namen noch deine E-Mail-Adresse noch Zahlungsdaten, nur Apples Verkaufs- und
+Abonnementberichte; sie zeigen Zahlen wie die Käufe nach Land und Produkt,
+aber nicht, wer gekauft hat. Um zu wissen, ob Pro freigeschaltet ist, fragt
+Snapfly aus dem App Store den App Store auf deinem Gerät, ob ein Abonnement
+aktiv ist, und der App Store kann das bei Apple prüfen. Snapfly speichert nur
+die Antwort, auf dem Gerät, und sendet nichts davon an den Entwickler.
+Snapfly von der Website fragt nie.
 Snapfly liest nur Bildschirmfotos in den Ordnern, die du freigibst, und Fotos und
 PDFs, die du der App selbst gibst, und kopiert, sendet oder löscht sie nur, wenn
 du es willst. Fotos verlassen die Leine ohne Aufnahmeort und Kameradaten.

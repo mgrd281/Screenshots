@@ -31,7 +31,7 @@ jobs:
       - name: Check the pages
         run: |
           # Every page is there, and nothing is loaded from another host.
-          for page in index privacy support; do
+          for page in index privacy terms withdrawal support; do
             for dir in "" de/ ar/; do
               test -s "website/_site/${dir}${page}.html"
             done

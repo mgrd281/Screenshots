@@ -144,6 +144,7 @@ enum SendLog {
 
     /// Asks where to save the table, as a CSV file a spreadsheet opens.
     static func export(_ entries: [Sent], from window: NSWindow?) {
+        guard ProGate.allows(.sendLog) else { return }
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.commaSeparatedText]
         panel.nameFieldStringValue = L("Sent with Snapfly") + ".csv"

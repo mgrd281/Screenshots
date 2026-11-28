@@ -85,6 +85,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // The captures CI takes of the Pro window, in debug builds: that
+        // window alone, drawn into a picture, and nothing else starts.
+        if ProPreview.requested {
+            ProPreview.run()
+            return
+        }
+        // Once Pro has begun, the App Store edition hears from the start of
+        // purchases made, approved or renewed elsewhere, and keeps its answer
+        // on Pro current. Until then it asks the App Store nothing.
+        if Edition.appStore && Plan.hasBegun() && !ProSample.requested { ProStore.shared.start() }
+
         let host = NSHostingView(rootView: LineView(line: line))
         host.sizingOptions = []
         // The strip takes photos and PDFs dropped on it from other apps.

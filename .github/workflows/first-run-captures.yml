@@ -1,9 +1,11 @@
 # Shows the iPhone's first run without an iPhone: builds the app for the
 # simulator, plays the first run from a fresh install, and keeps still
 # frames, a recording and how soon it showed, beside main's build as it was
-# before; then Protect Picture on the made-up invoice. They go to the
-# "first-run-captures" pre-release on the Releases page, for review. Runs
-# when the first run or Protect Picture changes, and by hand.
+# before; then Protect Picture on the made-up invoice, and the Snapfly Pro
+# screen on made-up prices, on the iPhone and, drawn by the app itself, on
+# the Mac. They go to the "first-run-captures" pre-release on the Releases
+# page, for review. Runs when the first run, Protect Picture or the Pro
+# screen changes, and by hand.
 name: First Run Captures
 
 on:
@@ -17,6 +19,13 @@ on:
       - "iOS/Snapfly/ProtectView.swift"
       - "iOS/Snapfly/EditorParts.swift"
       - "iOS/Snapfly/SendToApps.swift"
+      - "Sources/Tendedero/Shared/ProPlan.swift"
+      - "Sources/Tendedero/Shared/ProHero.swift"
+      - "iOS/Snapfly/ProScreen.swift"
+      - "iOS/Snapfly/ProStore.swift"
+      - "Sources/Tendedero/ProWindow.swift"
+      - "Sources/Tendedero/ProStore.swift"
+      - "scripts/pro-mac-captures.sh"
       - ".github/workflows/first-run-captures.yml"
   workflow_dispatch:
 
@@ -38,6 +47,16 @@ jobs:
       - name: Capture the first run on the simulator
         run: scripts/first-run-captures.sh
 
+      # The Pro window on the Mac, from the website's edition in debug, which
+      # draws it into a picture and quits. A picture more, never a reason to
+      # stop: it runs after a failed iPhone step too, and its own failure
+      # leaves the run green.
+      - name: Capture the Pro window on the Mac
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 30
+        run: scripts/pro-mac-captures.sh
+
       - name: Keep the captures with the run
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,7 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag=first-run-captures
-          notes="The iPhone's first run on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: still frames, a recording, and main's build before it; then Protect Picture on the made-up invoice (editor-*). For review; not a download of Snapfly."
+          notes="The iPhone's first run on the simulator, made by CI from ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}: still frames, a recording, and main's build before it; then Protect Picture on the made-up invoice (editor-*); then the Snapfly Pro screen on made-up prices, on the iPhone (pro-*, with a recording of how it comes in) and on the Mac (pro-mac-*). For review; not a download of Snapfly."
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release edit "$tag" --notes "$notes" --prerelease
           else

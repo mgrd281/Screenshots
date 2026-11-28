@@ -66,7 +66,13 @@ final class HistoryModel: ObservableObject {
         case photos, orders, sent, workspace
     }
 
-    @Published var page = Page.photos
+    @Published var page = Page.photos {
+        didSet {
+            // Orders and Sent are part of Snapfly Pro; refused, the photos show again.
+            if page == .orders, !ProGate.allows(.orderBinder) { page = .photos }
+            if page == .sent, !ProGate.allows(.sendLog) { page = .photos }
+        }
+    }
     @Published var entries: [History.Entry] = []
     @Published var sent: [SendLog.Sent] = []
     @Published var thumbs: [String: NSImage] = [:]

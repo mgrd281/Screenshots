@@ -523,6 +523,7 @@ final class Line: ObservableObject {
 
     /// Edit in Studio, from a recording's menu.
     func studio(_ id: UUID) {
+        guard ProGate.allows(.studio) else { return }
         guard let item = items.first(where: { $0.id == id && !$0.falling && $0.isRecording }) else { return }
         StudioEditor.shared.open(item.url)
     }
@@ -745,6 +746,7 @@ final class Line: ObservableObject {
     /// under a band with the shop's name and logo, the order and the day.
     /// The order shows unless order numbers are covered.
     func sendWithHeader(_ id: UUID) {
+        guard ProGate.allows(.shopHeader) else { return }
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         guard ShopHeader.isSet else {
             Notice.show(L("Add your shop's name or logo under Line in Settings."))
@@ -992,6 +994,7 @@ final class Line: ObservableObject {
 
     /// Order Details: the order a screenshot shows, its parts ready to copy.
     func orderDetails(_ id: UUID) {
+        guard ProGate.allows(.orderCard) else { return }
         showCard(.order, for: id, target: Languages.own)
     }
 
@@ -1432,6 +1435,7 @@ final class Line: ObservableObject {
     /// over a photo, and the part of it to keep, drawn on what leaves the
     /// line. The file stays as it is.
     func drawOn(_ id: UUID) {
+        guard ProGate.allows(.markup) else { return }
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let url = item.url
         DrawEditor.shared.edit(url) { [weak self] copy in
@@ -1451,6 +1455,7 @@ final class Line: ObservableObject {
     /// Background…: the photo set on a colour, with room round it, rounded
     /// corners and a shadow, on what leaves the line. The file stays as it is.
     func background(_ id: UUID) {
+        guard ProGate.allows(.backgrounds) else { return }
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let url = item.url
         let before = Drawings.saved(url).backdrop
@@ -1504,6 +1509,7 @@ final class Line: ObservableObject {
     /// on the photo shown large. It is kept as the crop of the photo's
     /// drawing and cut from what leaves the line; the file stays as it is.
     func crop(_ id: UUID) {
+        guard ProGate.allows(.markup) else { return }
         guard let item = items.first(where: { $0.id == id && !$0.falling }), item.isImage else { return }
         let url = item.url
         let before = Drawings.saved(url).crop
@@ -1563,6 +1569,7 @@ final class Line: ObservableObject {
     /// Copy Link, from a photo's menu: the photo as it leaves the line, or
     /// the recording or PDF, behind a link that works for seven days.
     func copyLink(_ id: UUID) {
+        guard ProGate.allows(.shareLinks) else { return }
         guard let item = items.first(where: { $0.id == id && !$0.falling }) else { return }
         guard item.isRecording || !PrivateDetails.stillCovering(item.url, PrivateDetails.details) else {
             Notice.show(L("Still covering the private details…"))

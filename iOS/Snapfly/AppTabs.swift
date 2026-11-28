@@ -35,6 +35,7 @@ struct ContentView: View {
     @ObservedObject private var coverer = QuickCoverer.shared
     @ObservedObject private var batch = BatchCover.shared
     @ObservedObject private var firstRun = FirstRunCoordinator.shared
+    @ObservedObject private var pro = ProPresenter.shared
     /// The tabs are made once the first run that opens Snapfly is over, so
     /// reading Photos and starting sync never hold up its first seconds.
     @State private var appReady = !FirstRunCoordinator.shared.showing
@@ -94,6 +95,8 @@ struct ContentView: View {
                 .ignoresSafeArea()
         }
         .fullScreenCover(item: $projects.shown) { _ in ProjectCover() }
+        // Snapfly Pro over everything, as a locked feature or More asks for it.
+        .fullScreenCover(item: $pro.shown) { ProScreen(request: $0) }
     }
 }
 

@@ -111,6 +111,13 @@ colors:
   phone-scan-chip-check-ink: "#8A4A0C" # its words, 6.2:1; #F6B36B in dark (8.0:1)
   phone-scan-quick: "#FFFFFF"       # the quick actions' cards and the empty Zuletzt card; #17191D in dark
   phone-scan-recent-ground: "#E9ECEF" # behind a recent document's covered page; #22252B in dark
+  # Snapfly Pro's drawing (Shared/ProHero.swift), at the owner's request (November 2026). Its paper stays paper in dark mode, as the documents drawn under More do.
+  pro-paper: "#FFFFFF"              # the Mac's Pro hero (ProWindow.swift): the receipt and the middle card, in light and dark
+  pro-paper-line: "#DBDBDB"         # gray 0.86: their printed lines
+  pro-ink: "#1F1F1F"                # gray 0.12: their bold print and the cover over a detail, as cover-ink
+  pro-screen: "#242424"             # gray 0.14: the recording card; its play symbol white at 90%, its zoom frame white at 60%, its track white at 25%
+  phone-pro-mint: "#E7F4EE"         # the iPhone's Pro hero (ProScreen.swift): the photo's field and the locked feature's tile on the white middle card, the same in light and dark (phone-hide-accent-soft turns dark at night; this does not)
+  phone-pro-screen: "#1A1A1A"       # white 0.1: the iPhone's recording card, in light and dark
 typography:
   field:
     fontFamily: "SF Pro, system-ui"
@@ -161,6 +168,9 @@ rounded:
   phone-scan-recent-page: "5pt"  # the page inside a recent document's frame
   phone-scan-recent: "18pt"      # a recent document's frame
   phone-project-page: "4pt"      # a page small in the pages' overview (3pt in the editor's strip)
+  pro-stage: "16pt"              # the stage behind the Mac's Pro hero, as rounded.card
+  pro-plan: "12pt"               # a plan in the Mac's Pro window and the quiet boxes in its place, as rounded.inner
+  phone-pro-hero: "32pt"         # the stage of the iPhone's Pro hero
   full: "999pt"
 spacing:
   hairline: "2pt"
@@ -247,6 +257,12 @@ components:
     rounded: "7pt"                 # one of the five pages across the top of Studio's inspector (Edit `timeline.selection`, Draw `pencil.tip.crop.circle`, Captions `captions.bubble`, Appearance `paintpalette`, Save `square.and.arrow.down`), 4pt apart, 12pt in, 8pt above and below: the symbol (14pt medium) over its name (10pt medium); chosen, both in the accent on the accent at 12%, as `studio-shape-tile`
   studio-shape-tile:
     rounded: "7pt"                 # one of Studio's five shapes (the recording's own, 1:1, 16:9, 4:5, 9:16), a row sharing the inspector's width 4pt apart: its outline (1.5pt `.secondary`, rounded 2) drawn to its proportions in 26pt within a 30pt square, over its name in 10pt medium; chosen, both in the accent on the accent at 12%
+  pro-hero:
+    canvas: "340pt × 220pt"        # the Pro screen's drawing (ProHero), the same on the Mac and the iPhone, in its own units scaled whole to fit and centred, laid out from the left in every language, hidden from VoiceOver: a line from (14, 18) to (326, 18) sagging toward (170, 38), 1.5pt with round caps; 7 × 15pt capsule clips on it at x 86, 170 and 260; from each clip, 4pt under its centre and turning about it, a card with one shadow (black at the palette's share, radius 8, y 4): the receipt 78 × 102 (corners 8, at −6°: the shop, three lines with the middle one covered, the total), the middle card 112 × 140 (corners 10, upright: the locked feature's symbol 24pt semibold on a 54pt tile with corners of 15 and two lines under it, or, without one, a photo inset 7 with corners of 6, two hills, a sun in a dashed 2pt box and a 2.5pt arrow to it) and the recording 86 × 66 (corners 8, at +7°: a 16pt play symbol, a dashed zoom frame, a 3pt progress capsule 40% along); the seal, a 54pt circle in a 3.5pt ring, centred 2pt under the middle card's foot and pinned to it, lock.fill (lock.open.fill once Pro is open) 22pt semibold white
+  pro-window:
+    size: "820pt × 620pt"          # the Mac's Pro window, not resizable: a 340pt column at the leading side for the hero's stage (rounded.pro-stage, 12pt in, the accent at 10% inside 1pt of .primary at 6%, reaching up under the clear title bar, the drawing 250pt high and 8pt in at its middle), the words in the rest (28pt in at the sides, 40pt from the top, 16pt from the foot), and the links along the foot, at least 40pt high under a 0.5pt line of .primary at 8%
+  pro-plan:
+    height: "112pt"                # at least: a plan in the Pro window, as the AI assistants' tiles: rounded.pro-plan, 12pt in, side by side 12pt apart and as tall as the tallest; the name 13pt semibold with checkmark.circle.fill in the accent (circle in .secondary at 50%) 14pt at its trailing end; the price billed 17pt semibold, 4pt below; its period 11pt .secondary; then the trial ("1 week free") or the year's savings ("Saves 16%") 11pt semibold .primary, and a year by the month 11pt .secondary; chosen, the accent at 8% inside a 2pt accent ring, else .primary at 3% (6% under the pointer) inside 1pt of .primary at 12%
   phone-dock-icon:
     size: "44pt"                   # a tool on the iPhone editor's bar; glyph 18pt semibold; the tool in hand: phone-protect-tint on a 36pt circle of phone-protect at 14%, which glides to the next tool chosen
   phone-glass:
@@ -339,6 +355,10 @@ components:
     height: "44pt"                 # at least: subheadline medium white on a phone-project-toast capsule, 18pt in (12pt at the trailing end), Undo, then Redo, in subheadline semibold phone-project-toast-action, a shadow of black 20%, radius 10, y 4, 16pt from the screen's sides, 12pt over the bar; it rises on a spring (0.35 s, damping 0.85), only fades with Reduce Motion, stays 6 s, and VoiceOver reads it out
   phone-project-indicator:
     height: "28pt"                 # "3 / 12" over a PDF's page as it opens: footnote semibold, figures of one width, 12pt in, a glass capsule; gone after 1.5 s in 0.4 s (0.15 s with Reduce Motion)
+  phone-pro-hero:
+    height: "29% of the screen, 186–250pt"   # the iPhone's Pro hero, 16pt in from the sides under 52pt kept for the close button: the pro-hero drawing on a stage of phone-more-hero with rounded.phone-pro-hero and its 1pt phone-more-hero-edge, which also clips the cards as they hang in
+  phone-pro-plan:
+    height: "128pt"                # at least: a plan on the iPhone's Pro screen, two side by side sharing the width 12pt apart and as tall as each other (one above the other at the accessibility sizes), on phone-hide-card with rounded.phone-hide-card, 16pt in, 4pt between its lines: the name in subheadline semibold phone-hide-text with checkmark.circle.fill in phone-more-glyph (circle in phone-hide-secondary at 50%), title 3, at its trailing end; the price billed in title 2 bold phone-hide-text on one line, down to 70%; its period in subheadline phone-hide-secondary; then the trial or the year's savings in footnote semibold phone-more-glyph, and a year by the month in footnote phone-hide-secondary; chosen, a 2.5pt phone-more-glyph ring, else 1pt of phone-hide-separator; pressed as More's tiles are
   draw-swatch:
     size: "18pt"                   # an ink, with a 1pt hairline of .primary at 18%; chosen: a 2pt accent ring 3pt out
   draw-handle:
@@ -564,12 +584,15 @@ design with monospaced digits.
 | Body | 13 pt, +2 pt leading | Regular | Translations, descriptions, settings rows |
 | Label | 12 pt | Medium | Language menu, result count, keycaps |
 | Caption | 11 pt | Regular, or Semibold when selected | Notes under results, style tiles, "Copied" |
+| Pro title | 28 pt, rounded | Bold | The Pro window's title, "Snapfly Pro", Pro in the accent |
 | Glyph | 8–10 pt | Bold | SF Symbols on corner buttons and the tag |
 
 ### Named Rules
 - **Weight before size.** Hierarchy comes from Semibold against Regular and
   from `.secondary` against `.primary`, not from big type. Snapfly has no
-  display sizes.
+  display sizes but two names: About's, "Snapfly" in 34 pt rounded bold,
+  and, at the owner's request (November 2026), the Pro window's title,
+  "Snapfly Pro" in 28 pt rounded bold.
 - **Never below 11 pt for words.** Glyphs may be 8–10 pt. Text may not.
 - **Long words.** Labels must survive German (lineLimit plus
   `minimumScaleFactor(0.8)` on tight tiles) and Arabic.
@@ -1806,6 +1829,9 @@ apps.
   `.tertiary`. Then one line, "Made by" in `.secondary` before the maker's
   name in semibold, and "© year name" in callout `.tertiary` under it;
   Check for Updates… as a regular `.bordered` button, in both editions.
+  Once Pro has begun (`Plan.hasBegun()`), Snapfly Pro… as a regular button
+  8 pt under it, which opens the Pro window to subscribe, restore or
+  cancel; until then it is not there.
   No monogram, no card, nothing else: help lives in Support.
 - **Support pane** (`Support.swift`), between Permissions and About, with
   `lifepreserver.fill` in the sidebar. A grouped form of rows, each a 28 pt
@@ -1892,6 +1918,98 @@ apps.
     hour and minute, monospaced digits), Photo, Sent to, Covered (the kinds'
     titles in `.secondary`) and Message. Its context menu has Remove from
     History. Export… opens a save panel for "Sent with Snapfly.csv".
+- **Snapfly Pro window** (`ProWindow.swift`, `ProStore.swift`, the drawing
+  in `Shared/ProHero.swift`), at the owner's request (November 2026), as
+  `pro-window`. A locked feature opens it (`ProGate.allows`): the first
+  time on a day the window, and for the rest of that day a note (`Notice`,
+  4 s), "Studio is part of Snapfly Pro.", whose click opens it. What runs on
+  its own (Cover a folder at launch, Studio after a recording, the AI apps'
+  server) asks in silence (`ProGate.isOpen`) and says nothing. Once Pro has
+  begun, Settings › About opens it too. Nothing is locked until
+  `Plan.proStarts` is set, so today only the captures show it
+  (`-SnapflyProPreview`, debug builds).
+  - **The window**: titled and closable, not resizable, its title hidden in
+    a clear title bar ("Snapfly Pro" for VoiceOver and the Window menu),
+    moved by its background, floating over the line as the editors do,
+    centred, Snapfly brought forward; on `windowBackgroundColor`. Return
+    presses the one prominent button, Escape closes it.
+  - **The stage**, at the leading side: the `pro-hero` drawing, without a
+    stage of its own, in `pro-paper` with `pro-paper-line` and `pro-ink`,
+    the recording `pro-screen`, the line `.primary` at 35% and its clips
+    at 55%, the marks and the seal in the accent, the photo's field and
+    the feature's tile the accent at 15%, the seal ringed in the window's
+    background, shadows black at 18%. At its foot, 16 pt in and 20 pt up,
+    centred: `checkmark.shield.fill` in the accent and "Covering private
+    details stays free, always." in 11 pt medium `.secondary`.
+  - **The words**, at the trailing side, from the leading edge:
+    - with a locked feature, while Pro is not open, a chip 10 pt above the
+      title: `lock.fill` in the accent and "Studio is part of Snapfly Pro."
+      in 11 pt semibold `.primary`, 8 by 3 pt in, on a capsule of the
+      accent at 10%; the words in ink, so they read in every accent colour;
+    - the title, "Snapfly Pro" with Pro in the accent (the Mac's
+      `StressedText`), 28 pt bold rounded, two lines at most, down to 80%,
+      a header for VoiceOver; "Welcome to Snapfly Pro" just after buying,
+      "You have Snapfly Pro" while it is on, "Everything stays yours" where
+      Snapfly was used before Pro began, cross-fading;
+    - 6 pt under it, 13 pt `.secondary` with 2 pt between lines: who Pro is
+      for ("For everyone who sends orders, receipts and guides from the Mac
+      every day."), that every Pro feature is open on the Mac once it is,
+      or why everything stays open.
+  - **What Pro adds**, 16 pt under, a scroll view taking the room left:
+    each group's name (`ProCatalog`) in 11 pt semibold `.secondary`, 14 pt
+    above but the first and 6 below, a header; its features 8 pt apart,
+    each one element: a 24 pt ink tile (`InkTile`, corners 6, the symbol
+    12 pt semibold), 10 pt before its name in 13 pt semibold over what it
+    does in 11 pt `.secondary`, never cut. The locked feature's row stands
+    on the accent at 8%, corners 8, reaching 6 pt past it so nothing
+    moves, and is scrolled to the middle as the window opens. The list
+    fades out over its last 20 pt (a mask, not a colour), so a row cut
+    short reads as more to scroll to; the last row clears the fade.
+  - **The plans**, 14 pt under, while Pro can be bought: `pro-plan` tiles,
+    the year first and chosen at first. While the prices are asked for,
+    two quiet tiles of faint bars (`.primary` at 8%) with a small spinner
+    where the check goes, read as "Asking the App Store for the prices…";
+    nothing shimmers. In their place, a quiet box with the plain tile's
+    look and height: without prices, `exclamationmark.triangle.fill` in
+    orange, "Prices could not be loaded. Check the connection and try
+    again." in 13 pt and Try Again; with Pro on, its renewal ("Renews on
+    November 27, 2027.") in 13 pt over Cancel Subscription and Withdraw
+    from Contract, regular buttons opening Apple's pages; in the edition
+    from the website, `info.circle` in `.secondary` and "Snapfly Pro is
+    bought in Snapfly from the Mac App Store. This copy comes from the
+    website, so it cannot subscribe." For whoever keeps everything,
+    nothing: the words above say it.
+  - Under them, in 11 pt `.secondary`: what Subscribe does, 10 pt above
+    (the renewal, "Free for 1 week, then €39.99 a year, renewing until
+    you cancel.", and how to cancel), or, while the family is asked, that
+    Pro opens once they approve; who sells Pro, 4 pt under it (10 pt
+    without it; not for whoever keeps everything); then the App Store's
+    last word, `info.circle` in the accent and 11 pt words, 8 pt above.
+  - **The buttons**, 14 pt under, at the trailing edge: Not Now (bordered, Escape; off while the App Store's sheet is open)
+    and the one prominent button (Return), never shortened: Subscribe
+    ("Kostenpflichtig abonnieren" in German; off until the prices are
+    there, a small spinner in it while the sheet is open), Waiting for
+    approval (off), or Done once Pro is open or this copy cannot
+    subscribe, alone, Escape still closing.
+  - **The foot**: Restore Purchases first while Pro can be bought (off
+    while it asks), then Terms of Use · Privacy Policy · Withdrawal Policy ·
+    Withdraw from Contract · Cancel Subscription, 11 pt links 20 pt tall to
+    the pointer, 8 pt apart with dots of `.secondary` between them (unheard
+    by VoiceOver), centred, in two rows (three over two) where one is too
+    narrow. Each opens in the browser and is read as a link: the website's
+    terms, privacy policy and withdrawal page in the Mac's language
+    (`ProLinks`), then Apple's withdrawal (reportaproblem.apple.com) and
+    the App Store's subscriptions. Every word the contract needs is in
+    reach without scrolling.
+  - **Buying** opens the App Store's own sheet, on the window from macOS
+    15.2 (`purchase(confirmIn:)`). The lock opens only once the App Store
+    has verified the purchase.
+  - **Motion**: the drawing plays `pro.line`, `pro.hang`, `pro.seal`, then
+    `pro.sway`, from the start each time the window opens; the column's
+    parts come in on `pro.appear`; phases, notes and the chosen ring change
+    on `spring.row`. Bought: `pro.unlock`, and VoiceOver hears "Welcome to
+    Snapfly Pro" at high priority; the App Store's notes are announced too.
+    With Reduce Motion or Low Power Mode it is still and complete.
 - **The week's line** (`CoverTally`), at the top of Settings › Privacy, on
   its own: `checkmark.shield` and one sentence in `.secondary`, "In the last
   7 days, Snapfly covered 143 details in 38 photos you sent." It counts the
@@ -2363,7 +2481,11 @@ else is shared.
   inside a surface.
 - **Don't** exaggerate shadows or add glows. Follow the shadow table above.
 - **Don't** add gradients that do no work. The brand gradient is for the icon
-  only. The one exception is the tiny glass-edge highlight.
+  only. The exceptions are the tiny glass-edge highlight and, on the
+  iPhone, the badge on the Photos tab's picture (`PhotoHero`), from
+  `phone-protect-light` to `phone-protect-pressed`, top leading to bottom
+  trailing, whose recipe the Pro screen's seal takes at the owner's
+  request (November 2026). On the Mac the seal is the accent alone.
 - **Don't** add badges beyond the semantic ones: pin, count, lock, copied,
   and the play button and PDF capsule that say what kind of file it is.
 - **Don't** space ad hoc. Use the 4 pt rhythm, and set gaps on the stack, not
@@ -2376,6 +2498,20 @@ else is shared.
   Always On badges and its two timing cards (above).
 - **Don't** add decoration without a job: no emoji as icons, no ornamental
   dividers, no confetti.
+- **Don't** loop motion. The hanging photos' small sway is the one loop,
+  and, at the owner's request (November 2026), the same sway of the cards
+  on the Pro screen's drawing (`pro.sway`: ±1.1° on 5.6 s, easing in,
+  stopped with Reduce Motion and Low Power Mode). Nothing on the Pro
+  screen blinks, glows or pulses.
+- **Don't** set words in display sizes. About's name (34 pt rounded bold)
+  is one exception; the Pro window's title, "Snapfly Pro" in 28 pt rounded
+  bold with Pro in the accent, is the other, at the owner's request
+  (November 2026).
+- **Don't** show a number Snapfly cannot stand behind. A price is only what
+  the App Store gives, in its own currency and words. At the owner's
+  request (November 2026) the yearly plan says how much it saves ("Saves
+  16%"), worked out from the App Store's own two prices, rounded down, and
+  shown only from 5%; never a saving Snapfly did not compute.
 - **Don't** steal focus from the app in front, or block with a modal what a
   card can say.
 
@@ -3004,11 +3140,12 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     (a little document in the look chosen, the look's name) and Detection
     (`text.viewfinder`, a status dot and "Apple Intelligence on", grey and
     off when it is off or not on this iPhone).
-  - **Features**, one card of 56pt rows, 16pt in: AI Assistant
-    (`sparkles`, its name or Off), Send to Apps (`paperplane`, how many),
-    Double Tap the Back (`hand.tap`) and, where the build has iCloud, Mac
-    and iCloud (`laptopcomputer.and.iphone`, On or Off), each with
-    `chevron.forward`, hairlines from the words.
+  - **Features**, one card of 56pt rows, 16pt in: once Pro has begun,
+    Snapfly Pro first (`checkmark.seal`, no value), which opens its
+    screen; AI Assistant (`sparkles`, its name or Off), Send to Apps
+    (`paperplane`, how many), Double Tap the Back (`hand.tap`) and, where
+    the build has iCloud, Mac and iCloud (`laptopcomputer.and.iphone`, On
+    or Off), each with `chevron.forward`, hairlines from the words.
   - **Help**: Introduction (`hand.wave`) and Watch the Demo
     (`play.circle`) side by side, or one above the other when they do not
     fit, each on `phone-hide-card` with `rounded.phone-more-button`, the
@@ -3115,6 +3252,122 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     0.15 s cross-fades, covers fade in, no stagger, the documents
     cross-fade instead of sliding, the system's push, and the numbers
     still change.
+- **Snapfly Pro** (`ProScreen.swift`, `ProStore.swift`, the drawing in
+  `Shared/ProHero.swift`), at the owner's request (November 2026): the
+  screen a locked feature opens, and once Pro has begun the row in More's
+  Features. Nothing is locked until `Plan.proStarts` is set, so today only
+  the captures show it (`-SnapflyPro <phase>`, debug builds). A full-screen
+  cover over the tabs on `phone-hide-ground`, laid out for 390 by 844 and
+  holding on the smallest iPhone and at the accessibility sizes, in More's
+  tokens (`phone-hide-*`, `phone-more-*`) and `phone-pro-*`.
+  - **Close**, in the top trailing corner, 8pt down and 16pt in, over the
+    page: the `phone-hide-close` recipe (its glyph no larger than at
+    xxxLarge), read "Close" and first by VoiceOver.
+  - **The hero** (`phone-pro-hero`), at the top of the page under 52pt kept
+    for Close: the `pro-hero` drawing in More's colours, white paper
+    (`phone-paper`, `phone-paper-line`, `phone-paper-text`), the line white
+    at 50% and its clips at 90%, the marks `phone-protect`, the photo's
+    field and the feature's tile `phone-pro-mint`, the recording
+    `phone-pro-screen`, the seal from `phone-protect-light` to
+    `phone-protect-pressed` ringed in `phone-more-hero`, shadows black at
+    28%. With a locked feature the middle card shows its symbol; from More,
+    a photo marked as Draw and Crop would mark it.
+  - **The words**, 24pt under, 24pt in, centred, 400pt wide at most, 10pt
+    apart:
+    - with a locked feature, while Pro is not open, a chip: `lock.fill` and
+      "Studio is part of Snapfly Pro." in footnote semibold
+      `phone-hide-accent` (4.7:1) on `phone-hide-accent-soft`, 12 by 6pt in,
+      with `rounded.phone-more-button`: a capsule on one line, soft corners
+      on two;
+    - the title, "Snapfly Pro" with Pro in `phone-protect` (`StressedText`),
+      large title heavy, tracked −0.6, `phone-hide-text`, two lines at most,
+      down to 70% and no larger than at xxLarge, a header for VoiceOver;
+      "Welcome to Snapfly Pro" just after buying, "You have Snapfly Pro"
+      while it is on, "Everything stays yours" where Snapfly was used before
+      Pro began;
+    - under it in body `phone-hide-secondary`: who Pro is for; once bought,
+      that every Pro feature is open on the Mac; while it is on, its renewal
+      ("Renews on November 27, 2027."); for whoever keeps everything, why.
+    - A new title and line give way as on the first run (`words.change`).
+  - **The top**: the close button's row, 8pt down, stands on
+    `phone-hide-ground` reaching up behind the status bar, so the page
+    scrolls away under the ground, never under the clock or the button.
+  - **The plans**, 24pt under, 16pt in, while Pro can be bought: the App
+    Store's plans as `phone-pro-plan` tiles, the year first and chosen at
+    first. While the prices are asked for, two still tiles of
+    `phone-hide-button-off` bars (56 by 10, 92 by 20, 44 by 10, 10pt apart),
+    nothing shimmering, over a spinner and "Asking the App Store for the
+    prices…" in footnote `phone-hide-secondary`, read as one. Without
+    prices, one `phone-hide-card` card with `rounded.phone-hide-card`:
+    `exclamationmark.triangle.fill` in title 3 `phone-hide-warning`, "Prices
+    could not be loaded. Check the connection and try again." in
+    subheadline, and Try Again in subheadline semibold `phone-hide-accent`,
+    44pt to the finger. At the accessibility sizes the tiles stand one
+    above the other and what Subscribe does is said under them, so the bar
+    keeps to its button.
+  - **While Pro is on**, in the plans' place: one `phone-hide-card` card
+    with `rounded.phone-hide-row` of two 56pt rows as More's Features have
+    them: Cancel Subscription (`xmark.circle`), which opens the App Store's
+    own sheet (`manageSubscriptionsSheet`), and Withdraw from Contract
+    (`arrow.uturn.backward.circle`), which opens Apple's page
+    (reportaproblem.apple.com).
+  - **What Pro adds**, 32pt under: a `MoreHeading` 16pt in, then each group
+    (Orders and Receipts, Pictures and Videos, Sharing and Routines;
+    `ProCatalog`), its name in footnote semibold `phone-hide-secondary`,
+    20pt in, 16pt above and 8pt below, a header, over one `phone-hide-card`
+    card with `rounded.phone-hide-row`. A feature is a row at least 64pt
+    high, 16 by 12pt in, read as one: its `phone-symbol-tile`, 14pt before
+    its name in body semibold `phone-hide-text` over what it does in
+    subheadline `phone-hide-secondary`, never cut; hairlines of
+    `phone-hide-separator` inset to the words. The locked feature's row
+    stands on `phone-hide-accent-soft`, its tile `phone-protect` with a
+    white glyph (4.5:1 in light and dark); the page does not scroll to it,
+    since the chip names it. Then, 20pt under and 24pt in, centred:
+    `checkmark.shield.fill` in `phone-protect-tint` and "Covering private
+    details stays free, always." in subheadline semibold `phone-hide-text`.
+  - **The foot**, 28pt under, centred, 4pt apart: Restore Purchases in
+    footnote semibold `phone-hide-accent` (a small spinner beside it while
+    it asks; gone once Pro is open); the links in footnote
+    `phone-hide-accent`, each 44pt to the finger, on one line with dots of
+    `phone-hide-secondary` between them, or one under another where the
+    line has no room: Terms of Use, Privacy Policy and Withdrawal Policy
+    (the website's pages in the language Snapfly shows, `ProLinks`), then
+    Withdraw from Contract (Apple's page) and Cancel Subscription (the App
+    Store's sheet); then who sells Pro in footnote `phone-hide-secondary`,
+    24pt in, 8pt above. 32pt under the foot.
+  - **The bar at the foot**, over the page on `phone-hide-ground` with a
+    0.5pt `phone-hide-separator` line on top, 16pt in, 12pt above and 8pt
+    below, 8pt apart: a note when there is one (`info.circle` in
+    `phone-protect-tint` and footnote `phone-hide-text`: restored, nothing
+    found, or failed, announced to VoiceOver), the one button, then what
+    pressing it does. The button is `ProtectButtonStyle` as wide as the
+    bar, 3pt taller inside as Try It Now is: Subscribe ("Kostenpflichtig
+    abonnieren" in German) with a light impact, or Done once Pro is open.
+    Its words grow with Dynamic Type up to xxxLarge and no further, so it
+    stays one line and the bar never covers the page.
+    While it cannot be pressed (the prices not there, the App Store's sheet
+    open with a spinner beside Subscribe, Waiting for approval while the
+    family is asked) it is More's waiting pill, `phone-hide-button-off-text`
+    on `phone-hide-button-off` (6.5:1), never pale words on a pale green.
+    Under it, while a plan is chosen, in footnote `phone-hide-secondary`,
+    centred: the renewal ("Free for 1 week, then €39.99 a year, renewing
+    until you cancel.") and how to cancel; while the family is asked, that
+    Pro opens once they approve. The price billed is the largest price on
+    the screen; a year by the month stays small under it.
+  - **The states** (`ProPhase`): loading, offers, unavailable, buying,
+    pending, welcome, subscribed and keeps; elsewhere is the Mac's alone.
+    The seal's lock is open for welcome, subscribed and keeps, and the chip
+    and Restore Purchases go then.
+  - **Motion**: the hero plays `pro.line`, `pro.hang`, `pro.seal`, then
+    `pro.sway`, each time the screen opens; its parts come in on
+    `pro.appear`; a plan's ring changes on `motion.toggle` with a selection
+    haptic (none for the first choice made as the prices come); notes and
+    states change on `motion.change`. Bought: `pro.unlock`, a success
+    haptic, and VoiceOver hears "Welcome to Snapfly Pro". With Reduce
+    Motion or Low Power Mode it is still and complete.
+  - **VoiceOver** reads it as a page: Close first, the drawing hidden, the
+    title a header, a plan one element and selected when chosen, each
+    feature one element, the web links as links.
 - **The share extension** (`iOS/Share`), in any app's share sheet: the
   system's sheet with an inline "Snapfly", Cancel and Done (semibold), on
   `systemGroupedBackground`, 16 pt in. The covered picture fitted whole,
@@ -3773,7 +4026,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
 > describe the base styles in `site.css` that those two looks restyle.
 
 The site in `website/` (GitHub Pages) sells the app and hosts the privacy
-policy and support pages that App Store Connect links to. It extends this
+policy and support pages that App Store Connect links to, and the terms
+and the withdrawal page for Snapfly Pro. It extends this
 system to a web page. The brief and direction contract are in
 `website/BRIEF.md`. Everything below is taken from what ships in
 `build.py`, `static/site.css` and `static/site.js`.
@@ -4002,6 +4256,23 @@ system to a web page. The brief and direction contract are in
     the words, 38 px in. In every language (`NEW_PARTS_LANGS`); in Arabic
     the glyph leads from the right, and the two that point (the message
     and the paper plane) turn round.
+  - **The terms and the withdrawal page** (`terms.html` and
+    `withdrawal.html`, AGB and Widerruf in German; November 2026) are
+    documents as the privacy policy is: the title (German's long ones with
+    a soft hyphen), the day they last changed (`LEGAL_UPDATED`), the
+    summary card, then numbered sections, eleven and eight, the same in
+    every language. Every footer links to both, right after Privacy. The
+    withdrawal page puts Apple's two pages first, under its summary, as a
+    `.contact` row of pills: Withdraw from contract (`.btn.btn-primary`,
+    reportaproblem.apple.com) at the reading start, then Cancel contracts
+    here (`.btn-secondary`, the App Store's subscriptions); words only, no
+    icons, one above the other where the row has no room. Its EU model
+    withdrawal form is a `blockquote` on a card like the summary's:
+    `--fill`, a 16 radius, 20 by 24 px in, 18 px above, its list 0.9em
+    from its lines. In Arabic, Latin runs of more than one word (Apple
+    Distribution International Ltd., the address, the emails, Standard
+    EULA) are in `<bdi>`. Both rules start with `:root`, so they hold in
+    every look.
 - **The postal pieces.** All of them print in the theme's postal ink and
   are hidden from assistive technology; the words they carry are said
   elsewhere on the page.
@@ -4346,6 +4617,9 @@ system to a web page. The brief and direction contract are in
   No Apple logo: Apple keeps it for its own badges, and the real App
   Store badge goes beside it once Snapfly is in the store. Other primary
   buttons are pills in the accent with white text, at least 48 tall.
+  Beside one, a quieter pill (`.btn-secondary`, the withdrawal page's
+  Cancel contracts here): `--fill-2` with `--ink` words, `--ink` at 14%
+  under the pointer, in every look.
 - **Type.**
   - The system stack only: SF Pro and SF Arabic on Apple devices, SF Mono
     (`ui-monospace`) for the postmark's time. No web fonts, so nothing is

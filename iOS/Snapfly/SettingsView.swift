@@ -4,9 +4,9 @@ import SwiftUI
 /// part. The hero card says how much is covered, in the look chosen, with
 /// three chips to the look, the owner's details and their rules; then
 /// Protection, four tiles (What Is Covered, Always Hide, Cover Style,
-/// Detection); Features, one list (AI Assistant, Send to Apps, the back tap,
-/// Mac and iCloud); and Help, with the version. Every setting is kept where
-/// it always was (`MoreStore`).
+/// Detection); Features, one list (Snapfly Pro once Pro has begun, AI
+/// Assistant, Send to Apps, the back tap, Mac and iCloud); and Help, with the
+/// version. Every setting is kept where it always was (`MoreStore`).
 struct SettingsView: View {
     /// As the More tab, with a large title and no Done; else a sheet.
     var inTab = false
@@ -370,6 +370,13 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 12) {
             MoreHeading(title: L("Features"))
             VStack(spacing: 0) {
+                // Snapfly Pro, once Pro has begun: its screen over everything.
+                if Plan.hasBegun() {
+                    featureRow(L("Snapfly Pro"), symbol: "checkmark.seal", value: nil, identifier: "more-feature-pro") {
+                        ProPresenter.shared.show()
+                    }
+                    MoreDivider()
+                }
                 feature(L("AI Assistant"), symbol: "sparkles", value: assistant ?? L("Off"), page: .assistant)
                 MoreDivider()
                 feature(L("Send to Apps"), symbol: "paperplane", value: sendApps.chosen.count.formatted(), page: .apps)
@@ -387,9 +394,13 @@ struct SettingsView: View {
     }
 
     private func feature(_ title: String, symbol: String, value: String?, page: MorePage) -> some View {
-        Button {
-            open(page)
-        } label: {
+        featureRow(title, symbol: symbol, value: value, identifier: "more-feature-\(page)") { open(page) }
+    }
+
+    /// A row of Features: a grey tile, its name, a value and the way on.
+    private func featureRow(_ title: String, symbol: String, value: String?, identifier: String,
+                            action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             HStack(spacing: 12) {
                 SymbolTile(symbol: symbol, base: 32, ground: SnapflyTokens.moreNeutralTile,
                            glyph: SnapflyTokens.moreNeutralGlyph)
@@ -416,7 +427,7 @@ struct SettingsView: View {
         .buttonStyle(RowPressStyle())
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
-        .accessibilityIdentifier("more-feature-\(page)")
+        .accessibilityIdentifier(identifier)
     }
 
     // MARK: Help

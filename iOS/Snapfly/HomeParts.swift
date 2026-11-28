@@ -208,6 +208,16 @@ enum SnapflyTokens {
     /// A link on the paper.
     static let morePaperLink = Color(red: 0, green: 98 / 255, blue: 204 / 255)
 
+    // MARK: Snapfly Pro
+
+    /// The field of the photo drawn on the Pro screen's line, and the tile
+    /// of the locked feature's symbol: a mint, the same in light and dark,
+    /// as the paper it is on stays paper.
+    static let proMint = Color(red: 231 / 255, green: 244 / 255, blue: 238 / 255)
+    /// The recording on the Pro screen's line: a near-black screen, in
+    /// light and dark alike.
+    static let proScreen = Color(white: 0.1)
+
     /// A colour as its hex, and another at night.
     private static func color(_ hex: UInt32, dark: UInt32) -> Color {
         func ui(_ hex: UInt32) -> UIColor {

@@ -118,7 +118,7 @@ struct AIAssistantPane: View {
     /// cover text, and getting only what is covered.
     private var aiAppsSection: some View {
         Section {
-            Toggle(isOn: $aiAppsMayAsk) {
+            Toggle(isOn: aiAppsChoice) {
                 SettingText(.letAIAppsUseSnapfly, L("Let AI apps use Snapfly"),
                             L("Claude on this Mac can ask Snapfly for the newest screenshot, any photo or PDF on the line, or text to cover. It gets only what is covered, as you chose under Privacy."))
             }
@@ -138,7 +138,19 @@ struct AIAssistantPane: View {
         }
     }
 
+    /// The switch for AI apps. Turning it on is part of Snapfly Pro; refused,
+    /// the window is drawn again so the switch goes back.
+    private var aiAppsChoice: Binding<Bool> {
+        Binding {
+            aiAppsMayAsk
+        } set: { on in
+            guard !on || ProGate.allows(.aiApps) else { prefs.refresh(); return }
+            aiAppsMayAsk = on
+        }
+    }
+
     private func connectClaude() {
+        guard ProGate.allows(.aiApps) else { return }
         switch ClaudeConnect.connect() {
         case .connected:
             aiAppsMayAsk = true

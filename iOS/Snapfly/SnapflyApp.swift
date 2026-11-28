@@ -12,6 +12,10 @@ struct SnapflyApp: App {
         _ = FirstRunCoordinator.launched
         // Whoever used Snapfly before Pro begins keeps every feature.
         Plan.recordFirstLaunch()
+        // Once Pro has begun, whether it is on, as the App Store says, kept
+        // current from the start. Until then, and for the made-up Pro screen
+        // of the captures, nothing asks the App Store.
+        if Plan.hasBegun() && !ProSample.requested { ProStore.shared.start() }
         // Preparing photos ahead of time goes on in the background only if
         // the owner turned it on; iOS needs to know what to call, at launch.
         PhotoIndexer.registerBackground()

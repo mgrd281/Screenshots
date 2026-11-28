@@ -95,8 +95,8 @@ the website's footer. Both stay.
   - The privacy policy for the store listing is the website's privacy page
     (below). `PRIVACY.md` is the short version in the repository.
 - **Website.** `website/` builds https://mgrd281.github.io/Screenshots/ (English),
-  `/de/` and `/ar/`: the landing page, `privacy.html` and `support.html`, the
-  URLs App Store Connect links to.
+  `/de/` and `/ar/`: the landing page, `privacy.html`, `terms.html`,
+  `withdrawal.html` and `support.html`, the URLs App Store Connect links to.
   - `python3 website/build.py` writes it to `website/_site/` (standard
     library only). The **Website** workflow builds it at every push and
     publishes it from `main` on GitHub Pages.
