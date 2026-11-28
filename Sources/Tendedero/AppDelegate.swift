@@ -131,6 +131,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         Capture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Capture.shared.onAsk = { [weak self] url in self?.hangCapture(url, asking: true) }
         FullPage.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
+        FullPage.shared.onPDF = { [weak self] urls, said in self?.makePagePDF(urls, saying: said) }
         ChatCapture.shared.onCapture = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onFinish = { [weak self] url in self?.hangCapture(url) }
         Recording.shared.onChange = { [weak self] in
@@ -834,6 +835,50 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: The capture flying to the line
 
+    /// Capture Whole Page as PDF: once the page's pictures hang and their
+    /// private details are covered, a PDF of them hangs too, picked and
+    /// copied, ready to send. Two minutes at most are waited for. A picture
+    /// of it that left the line meanwhile, sent or let go by a full line,
+    /// leaves the PDF without it, and a note says so. Then what the capture
+    /// had to say, like that the page was cut. A note that shows then is
+    /// not hidden for these: they follow once it has gone. When the PDF
+    /// could not be made, that is said first.
+    private func makePagePDF(_ urls: [URL], saying said: String?, since: Date = Date(), note: UUID? = nil) {
+        let note = note ?? Notice.show(L("Making the PDF…"), working: true)
+        // Every picture hung before this was first called.
+        let hung = urls.filter { url in line.items.contains { $0.url == url && !$0.falling } }
+        guard hung.allSatisfy({ PrivateDetails.readied($0) }) || Date().timeIntervalSince(since) > 120 else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.makePagePDF(urls, saying: said, since: since, note: note)
+            }
+            return
+        }
+        var notes: [String] = []
+        if hung.isEmpty {
+            notes.append(L("The page's pictures left the line first, so the PDF could not be made."))
+        } else {
+            if hung.count < urls.count {
+                notes.append(L("Part of the page left the line first, so the PDF holds only what is still on it."))
+            }
+            if let said { notes.append(said) }
+        }
+        let told = notes
+        let finish = { (made: Bool) in
+            Notice.end(note)
+            if made || hung.isEmpty {
+                Notice.showAfterOthers(told, lasting: 6)
+            } else {
+                // No PDF: that first, then what the capture had to say.
+                Notice.showAfterOthers([L("Could not make the PDF.")] + (said.map { [$0] } ?? []), lasting: 6)
+            }
+        }
+        if hung.isEmpty {
+            finish(false)
+        } else {
+            line.makePDF(of: hung, then: finish)
+        }
+    }
+
     /// A new screenshot lifts off from where it was taken and flies to its
     /// place on the line. Without a known capture area it simply drops in.
     /// - Parameter asking: taken to ask an AI chat about: once it has
@@ -1299,7 +1344,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             } else {
                 Capture.shared.start(mode: .record)
             }
-        case .page: FullPage.shared.start()
+        case .page:
+            if FullPage.shared.isRunning {
+                FullPage.shared.stop()
+            } else {
+                FullPage.shared.start()
+            }
         case .ask: Capture.shared.start(mode: .ask)
         case .text: Capture.shared.start(mode: .text)
         }
@@ -1659,9 +1709,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
             timerItem.submenu = seconds
             menu.addItem(timerItem)
-            let pageItem = Self.item(L("Capture Whole Page"), MenuSymbol.wholePage) { FullPage.shared.start(after: 0.2) }
-            Self.show(Shortcut.current(.page), on: pageItem)
-            menu.addItem(pageItem)
+            if FullPage.shared.isRunning {
+                menu.addItem(Self.item(L("Stop Capturing the Page"), MenuSymbol.stop) { FullPage.shared.stop() })
+            } else {
+                let pageItem = Self.item(L("Capture Whole Page"), MenuSymbol.wholePage) {
+                    FullPage.shared.start(after: 0.2)
+                }
+                Self.show(Shortcut.current(.page), on: pageItem)
+                menu.addItem(pageItem)
+                // The same, and a PDF of it on paper pages, ready to send.
+                menu.addItem(Self.item(L("Capture Whole Page as PDF"), MenuSymbol.wholePagePDF) {
+                    FullPage.shared.start(after: 0.2, asPDF: true)
+                })
+            }
             // A chat from its first message to its last: a picture of each
             // view, and a video of the scroll that stops by itself.
             if ChatCapture.shared.isRunning {

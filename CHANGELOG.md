@@ -6,6 +6,20 @@ keeps a download of each version.
 
 ## 1.1.0
 
+- Capture Whole Page goes all the way down: it waits until the page is
+  still after each scroll, so pictures that load late and cards that fade
+  in are there, and something that changes by itself, a video or a column
+  that sticks, no longer ends it early, nor does a tall band of one colour
+  or a header that shrinks, and a dot that pulses at the page's end does
+  not keep it scrolling there. A feed that loads more as it reaches its
+  end is followed. A chat button at the window's foot
+  shows once, at the end. A page too long for one picture goes on in the
+  next, one below the other; a note says when a page had to be cut. Press
+  ⌃⌥P again or click the note to stop early.
+- Capture Whole Page as PDF, in the menu: a PDF of the whole page on sheets
+  of A4 or US Letter, every pixel kept and cut between lines, private
+  details covered, ready to send. Make PDF on a whole page does the same.
+
 - The Snapfly Pro screen is ready for later, on the Mac and the iPhone:
   what Pro will add, its prices as the App Store gives them, and the
   terms, the privacy policy and Apple's own pages to withdraw and to

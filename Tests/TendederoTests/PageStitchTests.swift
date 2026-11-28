@@ -56,6 +56,14 @@ final class PageStitchTests: XCTestCase {
         let step = try XCTUnwrap(PageStitch.step(from: window(0), to: window(120), expected: 120))
         XCTAssertEqual(step.top, 30)
         XCTAssertEqual(step.shift, 120)
+        // A whole page asks for rows with something on them: plain ones
+        // line up at any move.
+        XCTAssertNil(PageStitch.step(from: window(0), to: window(120), expected: 120, telling: 8))
+    }
+
+    func testNoMoveIsTriedFartherThanThePageCouldGo() {
+        XCTAssertEqual(PageStitch.step(from: view(at: 0), to: view(at: 150), expected: 160, farthest: 176)?.shift, 150)
+        XCTAssertNil(PageStitch.step(from: view(at: 0), to: view(at: 150), expected: 100, farthest: 116))
     }
 
     func testSlicesKeepTheToolbarOnce() {
@@ -71,7 +79,74 @@ final class PageStitchTests: XCTestCase {
     func testSlicesKeepABottomBarAtTheEnd() {
         let steps = [PageStitch.Step(top: 30, bottom: 20, shift: 200)]
         let slices = PageStitch.slices(height: 400, steps: steps)
-        XCTAssertEqual(slices.map(\.rows), [0..<380, 180..<380, 380..<400])
+        XCTAssertEqual(slices.map(\.rows), [0..<380, 180..<400])
+    }
+
+    func testEachSeamLeavesTheFreshRowsToTheNextView() {
+        // The views share 370 - 200 = 170 rows: at most half go to the next.
+        let steps = [PageStitch.Step(top: 30, bottom: 0, shift: 200), PageStitch.Step(top: 30, bottom: 0, shift: 300)]
+        XCTAssertEqual(PageStitch.seam(after: steps[0], height: 400, fresh: 60), 340)
+        XCTAssertEqual(PageStitch.seam(after: steps[0], height: 400, fresh: 500), 315)
+        let slices = PageStitch.slices(height: 400, steps: steps, fresh: 60)
+        XCTAssertEqual(slices.map(\.view), [0, 1, 2])
+        XCTAssertEqual(slices.map(\.rows), [0..<340, 140..<365, 65..<400])
+        // Nothing twice, nothing left out: the page from its top to row 370 + 500.
+        XCTAssertEqual(slices.reduce(0) { $0 + $1.rows.count }, 400 + 200 + 300)
+    }
+
+    func testAMoveIsFoundPastFreshRowsThatChanged() throws {
+        // The lowest rows of the view before were still loading.
+        var before = view(at: 0)
+        for i in 330..<400 { before[i] = [UInt8](repeating: 200, count: PageStitch.samples) }
+        XCTAssertNil(PageStitch.step(from: before, to: view(at: 150), expected: 150))
+        let step = try XCTUnwrap(PageStitch.step(from: before, to: view(at: 150), expected: 150, fresh: 70))
+        XCTAssertEqual(step.shift, 150)
+    }
+
+    func testAMoveIsFollowedPastAColumnThatStays() throws {
+        // The left third of the window stays put while the rest scrolls.
+        func window(_ offset: Int) -> PageStitch.Rows {
+            var rows = view(at: offset)
+            for i in 30..<rows.count {
+                for j in 0..<16 { rows[i][j] = UInt8((i * 37 + j * 11) % 200) }
+            }
+            return rows
+        }
+        XCTAssertNil(PageStitch.step(from: window(0), to: window(130), expected: 130))
+        let step = try XCTUnwrap(PageStitch.follow(from: window(0), to: window(130), expected: 130))
+        XCTAssertEqual(step.top, 30)
+        XCTAssertEqual(step.shift, 130)
+    }
+
+    func testASparseTableIsFollowedByItsTrueMoveNotTheOneAsked() throws {
+        // A table, most cells blank, its lines 26 rows tall every 50, beside
+        // a column that stays; at the page's end the last move falls short.
+        var state: UInt64 = 1
+        func next() -> Int {
+            state = state &* 6364136223846793005 &+ 1442695040888963407
+            return Int(state >> 33)
+        }
+        var table: PageStitch.Rows = []
+        while table.count < 4000 {
+            let cells = (0..<PageStitch.samples).map { _ in next() % 100 < 30 }
+            for _ in 0..<26 { table.append(row { c in cells[c] ? 40 + next() % 150 : 250 }) }
+            for _ in 0..<24 { table.append([UInt8](repeating: 250, count: PageStitch.samples)) }
+        }
+        let column = (0..<1680).map { r in row { c in (r * 37 + c * 11) % 200 } }
+        func window(_ offset: Int) -> PageStitch.Rows {
+            (0..<1680).map { r in Array(column[r].prefix(12)) + table[offset + r].dropFirst(12) }
+        }
+        for short in [300, 500, 900] {
+            let step = try XCTUnwrap(PageStitch.follow(from: window(2000 - short), to: window(2000),
+                                                       expected: 1092, fresh: 240, farthest: 1108))
+            XCTAssertEqual(step.shift, short)
+        }
+    }
+
+    func testFollowFindsNoMoveOnAPageThatChangedByItself() {
+        var other: PageStitch.Rows = []
+        for i in 0..<400 { other.append(row { j in (i * 53 + j * 29 + 11) % 197 }) }
+        XCTAssertNil(PageStitch.follow(from: view(at: 0), to: other, expected: 300))
     }
 
     func testOneViewIsTheWholePicture() {
@@ -87,14 +162,18 @@ final class PageStitchTests: XCTestCase {
         XCTAssertFalse(PageStitch.alike(view(at: 100), []))
     }
 
-    func testComposeStacksTheRows() throws {
+    func testStripsStackIntoTheWholePage() throws {
         let context = try XCTUnwrap(CGContext(data: nil, width: 4, height: 10, bitsPerComponent: 8, bytesPerRow: 0,
                                               space: CGColorSpace(name: CGColorSpace.sRGB)!,
                                               bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
         context.setFillColor(CGColor(gray: 0.5, alpha: 1))
         context.fill(CGRect(x: 0, y: 0, width: 4, height: 10))
         let image = try XCTUnwrap(context.makeImage())
-        let joined = try XCTUnwrap(PageStitch.compose([image, image], steps: [.init(top: 2, bottom: 0, shift: 6)]))
+        let top = try XCTUnwrap(PageStitch.strip(of: image, rows: 0..<8))
+        let rest = try XCTUnwrap(PageStitch.strip(of: image, rows: 2..<10))
+        XCTAssertEqual(top.height, 8)
+        XCTAssertNil(PageStitch.strip(of: image, rows: 10..<12))
+        let joined = try XCTUnwrap(PageStitch.stack([top, rest]))
         XCTAssertEqual(joined.height, 16)
         XCTAssertEqual(joined.width, 4)
     }

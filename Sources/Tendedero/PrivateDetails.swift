@@ -417,6 +417,27 @@ enum PrivateDetails {
         return inProgress.contains(key)
     }
 
+    /// Whether a screenshot hung a moment ago is read: its covered copy is
+    /// made, or is not being made in the background, so taking it now does
+    /// not read it again on the main thread. Capture Whole Page as PDF waits
+    /// for this before it makes the PDF.
+    static func readied(_ url: URL) -> Bool {
+        guard !isDocument(url), isImage(url) else { return true }
+        // The time it is stamped with is still being asked for.
+        if TimeStamp.isPending(url) { return false }
+        let chosen = details
+        let hand = Self.hand(url), stamp = TimeStamp.mark(for: url), clean = strips(url), drawing = Drawings.saved(url)
+        if !chosen.isEmpty || alwaysHides || !hand.isEmpty || stamp != nil || clean || !drawing.isEmpty,
+           let key = key(for: url, chosen, hand, stamp, clean, drawing) {
+            guard let done = cached(key) else { return !inProgress.contains(key) }
+            // Covered, or read with nothing found, when it leaves as a fresh file.
+            if done != url { return true }
+        }
+        // Nothing to change: it leaves as a fresh file, made in the background too.
+        guard let plain = plainKey(url, chosen) else { return true }
+        return cached(plain) != nil || !inProgress.contains(plain)
+    }
+
     // MARK: A PDF from outside
 
     /// Its protected copy, made now if it is not ready yet, so nothing
