@@ -23,7 +23,7 @@ final class FirstRunCoordinator: ObservableObject {
     private init() {
         showing = (UserDefaults.standard.integer(forKey: Self.key) < Self.version || Self.frozenMoment != nil)
             && !EditorSample.requested && !AlwaysHideSample.requested && !MoreSample.requested && !ScanDemo.requested
-            && !DocumentPhotoDemo.requested && !ProjectDemo.requested
+            && !DocumentPhotoDemo.requested && !ProjectDemo.requested && !ProSample.requested
     }
 
     /// From Settings: shown again, from its start.
