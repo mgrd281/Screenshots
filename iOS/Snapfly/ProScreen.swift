@@ -561,7 +561,10 @@ struct ProScreen: View {
                 .transition(.opacity)
                 .accessibilityElement(children: .combine)
             }
+            // One line of words up to the largest size before the accessibility
+            // sizes, so the bar never covers the page.
             mainButton
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             if !typeSize.isAccessibilitySize, let words = finePrint {
                 finePrintText(words)
             }
@@ -674,6 +677,8 @@ struct ProScreen: View {
         .frame(maxWidth: .infinity, alignment: .trailing)
         .padding(.horizontal, 16)
         .padding(.top, 8)
+        // The page scrolls away under the ground, never under the clock or the button.
+        .background(SnapflyTokens.hideGround.ignoresSafeArea(edges: .top))
     }
 }
 

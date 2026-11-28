@@ -1960,7 +1960,9 @@ apps.
     12 pt semibold), 10 pt before its name in 13 pt semibold over what it
     does in 11 pt `.secondary`, never cut. The locked feature's row stands
     on the accent at 8%, corners 8, reaching 6 pt past it so nothing
-    moves, and is scrolled to the middle as the window opens.
+    moves, and is scrolled to the middle as the window opens. The list
+    fades out over its last 20 pt (a mask, not a colour), so a row cut
+    short reads as more to scroll to; the last row clears the fade.
   - **The plans**, 14 pt under, while Pro can be bought: `pro-plan` tiles,
     the year first and chosen at first. While the prices are asked for,
     two quiet tiles of faint bars (`.primary` at 8%) with a small spinner
@@ -1981,16 +1983,14 @@ apps.
     Pro opens once they approve; who sells Pro, 4 pt under it (10 pt
     without it; not for whoever keeps everything); then the App Store's
     last word, `info.circle` in the accent and 11 pt words, 8 pt above.
-  - **The buttons**, 14 pt under: Restore Purchases as a 12 pt link at the
-    leading edge while Pro can be bought (off while it asks), taking a
-    second line rather than shortening the buttons; at the trailing edge
-    Not Now (bordered, Escape; off while the App Store's sheet is open)
+  - **The buttons**, 14 pt under, at the trailing edge: Not Now (bordered, Escape; off while the App Store's sheet is open)
     and the one prominent button (Return), never shortened: Subscribe
     ("Kostenpflichtig abonnieren" in German; off until the prices are
     there, a small spinner in it while the sheet is open), Waiting for
     approval (off), or Done once Pro is open or this copy cannot
     subscribe, alone, Escape still closing.
-  - **The foot**: Terms of Use · Privacy Policy · Withdrawal Policy ·
+  - **The foot**: Restore Purchases first while Pro can be bought (off
+    while it asks), then Terms of Use · Privacy Policy · Withdrawal Policy ·
     Withdraw from Contract · Cancel Subscription, 11 pt links 20 pt tall to
     the pointer, 8 pt apart with dots of `.secondary` between them (unheard
     by VoiceOver), centred, in two rows (three over two) where one is too
@@ -3287,6 +3287,9 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
       that every Pro feature is open on the Mac; while it is on, its renewal
       ("Renews on November 27, 2027."); for whoever keeps everything, why.
     - A new title and line give way as on the first run (`words.change`).
+  - **The top**: the close button's row, 8pt down, stands on
+    `phone-hide-ground` reaching up behind the status bar, so the page
+    scrolls away under the ground, never under the clock or the button.
   - **The plans**, 24pt under, 16pt in, while Pro can be bought: the App
     Store's plans as `phone-pro-plan` tiles, the year first and chosen at
     first. While the prices are asked for, two still tiles of
@@ -3338,6 +3341,8 @@ green pill below. Its tokens are `SnapflyTokens` in `HomeParts.swift`.
     pressing it does. The button is `ProtectButtonStyle` as wide as the
     bar, 3pt taller inside as Try It Now is: Subscribe ("Kostenpflichtig
     abonnieren" in German) with a light impact, or Done once Pro is open.
+    Its words grow with Dynamic Type up to xxxLarge and no further, so it
+    stays one line and the bar never covers the page.
     While it cannot be pressed (the prices not there, the App Store's sheet
     open with a spinner beside Subscribe, Waiting for approval while the
     family is asked) it is More's waiting pill, `phone-hide-button-off-text`

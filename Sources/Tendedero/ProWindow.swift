@@ -322,11 +322,21 @@ private struct ProView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                // Room for the marked row's fill, which reaches past the words.
+                // Room for the marked row's fill, which reaches past the words,
+                // and for the last row to clear the fade at the foot.
                 .padding(.horizontal, 6)
-                .padding(.bottom, 6)
+                .padding(.bottom, 20)
             }
             .padding(.horizontal, -6)
+            // The rows fade out at the list's foot, so a row cut short reads
+            // as more to scroll to, never as cut off by the plans.
+            .mask {
+                VStack(spacing: 0) {
+                    Color.black
+                    LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                        .frame(height: 20)
+                }
+            }
             .onAppear {
                 guard let feature = model.feature else { return }
                 scroller.scrollTo(feature, anchor: .center)
@@ -483,22 +493,6 @@ private struct ProView: View {
     /// still closes.
     private var buttons: some View {
         HStack(spacing: 8) {
-            if [.offers, .unavailable, .loading].contains(store.phase) {
-                Button {
-                    Task { await store.restore() }
-                } label: {
-                    // Where the words run long, as in German, it takes a
-                    // second line rather than cut the buttons' words short.
-                    Text(L("Restore Purchases"))
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(minHeight: 20)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.link)
-                .font(.system(size: 12))
-                .disabled(store.restoring)
-            }
             Spacer(minLength: 8)
             if closesOnly {
                 // Escape closes it too, as Done does.
@@ -567,15 +561,44 @@ private struct ProView: View {
                 .fill(Color.primary.opacity(0.08))
                 .frame(height: 0.5)
             ViewThatFits(in: .horizontal) {
-                linkRow(links[...])
+                HStack(spacing: 8) {
+                    restoreLink
+                    linkRow(links[...])
+                }
                 VStack(spacing: 4) {
-                    linkRow(links[..<3])
+                    HStack(spacing: 8) {
+                        restoreLink
+                        linkRow(links[..<3])
+                    }
                     linkRow(links[3...])
                 }
                 .padding(.vertical, 8)
             }
             .frame(maxWidth: .infinity, minHeight: 40)
             .padding(.horizontal, 16)
+        }
+    }
+
+    /// Restore Purchases, first along the foot while there is something to
+    /// buy, so the buttons keep their words whole in every language.
+    @ViewBuilder private var restoreLink: some View {
+        if [.offers, .unavailable, .loading].contains(store.phase) {
+            HStack(spacing: 8) {
+                Button {
+                    Task { await store.restore() }
+                } label: {
+                    Text(L("Restore Purchases"))
+                        .frame(minHeight: 20)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.link)
+                .disabled(store.restoring)
+                Text(verbatim: "·")
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+            }
+            .font(.system(size: 11))
+            .fixedSize()
         }
     }
 
