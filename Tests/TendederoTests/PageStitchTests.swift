@@ -143,6 +143,29 @@ final class PageStitchTests: XCTestCase {
         }
     }
 
+    func testAMoveToldIsTakenWhereThePicturesAgree() throws {
+        // Told exactly, or a row off, the move that lines up is taken.
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 290)?.shift, 290)
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 291)?.shift, 290)
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 290)?.top, 30)
+        // Told wrongly, the pictures say otherwise.
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 200))
+        // Farther than the views share: nothing to go by.
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: view(at: 290), shift: 380))
+        // White lines up at any move: the one told.
+        let blank = [UInt8](repeating: 250, count: PageStitch.samples)
+        let white = PageStitch.Rows(repeating: blank, count: 400)
+        XCTAssertEqual(PageStitch.check(from: white, to: white, shift: 250)?.shift, 250)
+        // What was seen changing by itself, like a video, does not go
+        // against the move; unseen, it does.
+        var moving = view(at: 290)
+        for i in 40..<100 { moving[i] = pageRow(9000 + i) }
+        XCTAssertNil(PageStitch.check(from: view(at: 0), to: moving, shift: 290))
+        let seen = (0..<400).map { (40..<100).contains($0) ? UInt64.max : 0 }
+        XCTAssertEqual(PageStitch.check(from: view(at: 0), to: moving, shift: 290,
+                                        restless: ([UInt64](repeating: 0, count: 400), seen))?.shift, 290)
+    }
+
     func testFollowFindsNoMoveOnAPageThatChangedByItself() {
         var other: PageStitch.Rows = []
         for i in 0..<400 { other.append(row { j in (i * 53 + j * 29 + 11) % 197 }) }

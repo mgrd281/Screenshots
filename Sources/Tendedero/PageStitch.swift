@@ -104,13 +104,7 @@ enum PageStitch {
         guard height > 0 else { return nil }
         // Nothing moved: the end of the page.
         if (0..<height).allSatisfy({ same(previous[$0], next[$0]) }) { return Step(top: 0, bottom: 0, shift: 0) }
-        // Bars that stay put are a part of the window, never most of it; a
-        // plain stretch of page can look still too, and must not pass for one.
-        let most = height * 35 / 100
-        var top = 0
-        while top < most, same(previous[top], next[top]) { top += 1 }
-        var bottom = 0
-        while bottom < most, same(previous[height - 1 - bottom], next[height - 1 - bottom]) { bottom += 1 }
+        let (top, bottom) = bars(previous, next)
         let middle = height - top - bottom
         guard middle > 8 else { return nil }
 
@@ -140,6 +134,87 @@ enum PageStitch {
         return best.map { Step(top: top, bottom: bottom, shift: $0.shift) }
     }
 
+    /// The rows at the top and at the foot that stayed put between two
+    /// views, like the toolbar and a bar at the window's foot. Bars that stay
+    /// put are a part of the window, never most of it; a plain stretch of
+    /// page can look still too, and must not pass for one.
+    static func bars(_ previous: Rows, _ next: Rows) -> (top: Int, bottom: Int) {
+        let height = min(previous.count, next.count)
+        let most = height * 35 / 100
+        var top = 0
+        while top < most, same(previous[top], next[top]) { top += 1 }
+        var bottom = 0
+        while bottom < most, same(previous[height - 1 - bottom], next[height - 1 - bottom]) { bottom += 1 }
+        return (top, bottom)
+    }
+
+    /// How `next` follows `previous` when the app itself tells how far its
+    /// content moved, as `PageWalk` reads it: that move, when what both views
+    /// show agrees, or else one a row or two beside it that does, as apps
+    /// round; the bars as in `step`. Every row both share counts, the lowest
+    /// too, which tell a short last move. Nil when they go against it: more
+    /// than a fifth of the rows with something on them that both share
+    /// differ, but for what stayed where it was, like a chat button, and
+    /// what was seen changing by itself (`restless`, a row of bits for each
+    /// view), like a video. Nil too when they share too little to tell: an
+    /// eighth of what scrolls, or a few rows with something on them.
+    static func check(from previous: Rows, to next: Rows, shift told: Int, fresh: Int = 0,
+                      restless: ([UInt64], [UInt64]) = ([], [])) -> Step? {
+        let height = min(previous.count, next.count)
+        guard told > 0, height > 0 else { return nil }
+        func bits(_ masks: [UInt64], _ r: Int) -> UInt64 { masks.indices.contains(r) ? masks[r] : 0 }
+        func shows(_ row: [UInt8]) -> Bool { (row.max() ?? 0) - (row.min() ?? 0) > 12 }
+        var (top, bottom) = bars(previous, next)
+        func overlap(_ shift: Int) -> Int {
+            let middle = height - top - bottom
+            return middle - shift - leftOut(fresh, middle: middle, expected: shift)
+        }
+        func roomy(_ shift: Int) -> Bool { overlap(shift) >= max(16, (height - top - bottom) / 8) }
+        // A plain stretch of page looks still too: plain rows at the inner
+        // edge of the bars go back to the page while the views would share
+        // too little at the move told.
+        while !roomy(told), bottom > 0, !shows(previous[height - bottom]), !shows(next[height - bottom]) {
+            bottom -= 1
+        }
+        while !roomy(told), top > 0, !shows(previous[top - 1]), !shows(next[top - 1]) { top -= 1 }
+        // Of the rows both share at a move, those with something on them,
+        // and those of them that differ.
+        func tally(_ shift: Int) -> (shown: Int, differing: Int)? {
+            guard shift > 0, overlap(shift) >= 16 else { return nil }
+            var shown = 0, differing = 0
+            for i in 0..<overlap(shift) {
+                let p = top + shift + i, n = top + i
+                let a = previous[p], b = next[n]
+                guard shows(a) || shows(b) else { continue }
+                shown += 1
+                // What stayed where it was shows something of its own: a
+                // plain row is the same anywhere.
+                let stayed = shows(a) ? next[p] : b
+                let changing = bits(restless.0, p) | bits(restless.1, n) | bits(restless.1, p)
+                guard a.count == b.count, a.count == stayed.count else { differing += 1; continue }
+                if a.indices.contains(where: { c in
+                    !(c < 64 && changing & (1 << UInt64(c)) != 0) && abs(Int(a[c]) - Int(b[c])) > 6
+                        && abs(Int(a[c]) - Int(stayed[c])) > 6
+                }) { differing += 1 }
+            }
+            return (shown, differing)
+        }
+        // Rows with something on them tell; plain ones only that nothing
+        // goes against it, which counts once the views share enough.
+        func fits(_ shift: Int, _ t: (shown: Int, differing: Int)) -> Bool {
+            t.shown >= 8 ? t.differing * 5 <= t.shown : roomy(shift)
+        }
+        if let t = tally(told), fits(told, t) { return Step(top: top, bottom: bottom, shift: told) }
+        var best: (shift: Int, shown: Int, differing: Int)?
+        for shift in [told - 1, told + 1, told - 2, told + 2] where roomy(shift) {
+            guard let t = tally(shift), t.shown >= 8, fits(shift, t) else { continue }
+            if best == nil || t.differing * best!.shown < best!.differing * t.shown {
+                best = (shift, t.shown, t.differing)
+            }
+        }
+        return best.map { Step(top: top, bottom: bottom, shift: $0.shift) }
+    }
+
     /// How many of the lowest rows of a view to leave out when it is matched
     /// with the next, of the `fresh` asked: never more than half of what the
     /// two views share at the move expected, so enough is left to go by.
@@ -165,11 +240,7 @@ enum PageStitch {
               previous.prefix(height).allSatisfy({ $0.count == width }),
               next.prefix(height).allSatisfy({ $0.count == width }) else { return nil }
         if (0..<height).allSatisfy({ same(previous[$0], next[$0]) }) { return Step(top: 0, bottom: 0, shift: 0) }
-        let most = height * 35 / 100
-        var top = 0
-        while top < most, same(previous[top], next[top]) { top += 1 }
-        var bottom = 0
-        while bottom < most, same(previous[height - 1 - bottom], next[height - 1 - bottom]) { bottom += 1 }
+        let (top, bottom) = bars(previous, next)
         let middle = height - top - bottom
         guard middle > 8 else { return nil }
         let fresh = leftOut(fresh, middle: middle, expected: expected)

@@ -12,7 +12,9 @@ keeps a download of each version.
   that sticks, no longer ends it early, nor does a tall band of one colour
   or a header that shrinks, and a dot that pulses at the page's end does
   not keep it scrolling there. A feed that loads more as it reaches its
-  end is followed. A chat button at the window's foot
+  end is followed. Where the app tells it, as Safari, Chrome and Firefox
+  do, Snapfly reads how far each scroll moved the page, so every line
+  lands in its place, also across white taller than the window. A chat button at the window's foot
   shows once, at the end. A page too long for one picture goes on in the
   next, one below the other; a note says when a page had to be cut. Press
   ⌃⌥P again or click the note to stop early.

@@ -62,7 +62,7 @@ final class FullPage {
         stopAsked = false
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             Task { @MainActor in
-                await self.capture(window, asPDF: asPDF)
+                await self.capture(window, of: app.processIdentifier, bundle: app.bundleIdentifier, asPDF: asPDF)
                 self.isRunning = false
             }
         }
@@ -85,7 +85,8 @@ final class FullPage {
         return nil
     }
 
-    private func capture(_ target: (id: CGWindowID, frame: CGRect), asPDF: Bool) async {
+    private func capture(_ target: (id: CGWindowID, frame: CGRect), of pid: pid_t, bundle: String?,
+                         asPDF: Bool) async {
         let note = Notice.show(L("Capturing the whole page… Click to stop."), working: true) {
             FullPage.shared.stopAsked = true
         }
@@ -125,6 +126,10 @@ final class FullPage {
         // Only the columns that scroll are compared, so a part that stays
         // beside them, like a list beside a chat, does not hide the move.
         let band = Scrolling.compared(found.band)
+        // How far each scroll moved the page, as the app itself tells it,
+        // where it does.
+        let measure = PageMeasure(pid: pid, bundle: bundle, frame: target.frame, over: over, band: found.band)
+        defer { measure?.finish() }
 
         func shot() async -> (picture: CGImage, rows: PageStitch.Rows)? {
             guard let image = try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config),
@@ -164,7 +169,9 @@ final class FullPage {
                 if height + piece.height > Self.maxHeight { close() }
                 strips.append(piece)
                 height += piece.height
-            }))
+            },
+            mark: { measure?.mark() },
+            measured: { measure?.measured() }))
         close()
         var parts: [URL] = []
         for task in saving {
