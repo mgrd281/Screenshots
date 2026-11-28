@@ -157,9 +157,12 @@ enum PageStitch {
     /// differ, but for what stayed where it was, like a chat button, and
     /// what was seen changing by itself (`restless`, a row of bits for each
     /// view), like a video. Nil too when they share too little to tell: an
-    /// eighth of what scrolls, or a few rows with something on them.
+    /// eighth of what scrolls, or a few rows with something on them. Given
+    /// a `rival`, a move the pictures found otherwise, the move told all the
+    /// same when the views go against that one too, and more, as a bar or a
+    /// button over the page can make them go against both.
     static func check(from previous: Rows, to next: Rows, shift told: Int, fresh: Int = 0,
-                      restless: ([UInt64], [UInt64]) = ([], [])) -> Step? {
+                      restless: ([UInt64], [UInt64]) = ([], []), rival: Int? = nil) -> Step? {
         let height = min(previous.count, next.count)
         guard told > 0, height > 0 else { return nil }
         func bits(_ masks: [UInt64], _ r: Int) -> UInt64 { masks.indices.contains(r) ? masks[r] : 0 }
@@ -204,15 +207,25 @@ enum PageStitch {
         func fits(_ shift: Int, _ t: (shown: Int, differing: Int)) -> Bool {
             t.shown >= 8 ? t.differing * 5 <= t.shown : roomy(shift)
         }
-        if let t = tally(told), fits(told, t) { return Step(top: top, bottom: bottom, shift: told) }
+        let atTold = tally(told)
+        if let t = atTold, fits(told, t) { return Step(top: top, bottom: bottom, shift: told) }
         var best: (shift: Int, shown: Int, differing: Int)?
         for shift in [told - 1, told + 1, told - 2, told + 2] where roomy(shift) {
             guard let t = tally(shift), t.shown >= 8, fits(shift, t) else { continue }
+            // Beside the move told, fewer rows must differ than at it, as
+            // when the app rounded: more rows shared, with as many that
+            // differ, like a pulsing button, is no better fit.
+            if let a = atTold, a.shown >= 8, t.differing >= a.differing { continue }
             if best == nil || t.differing * best!.shown < best!.differing * t.shown {
                 best = (shift, t.shown, t.differing)
             }
         }
-        return best.map { Step(top: top, bottom: bottom, shift: $0.shift) }
+        if let best { return Step(top: top, bottom: bottom, shift: best.shift) }
+        if let rival, abs(rival - told) > 2, let t = atTold, let r = tally(rival), r.differing * 5 > r.shown,
+           t.differing * max(r.shown, 1) < r.differing * max(t.shown, 1) {
+            return Step(top: top, bottom: bottom, shift: told)
+        }
+        return nil
     }
 
     /// How many of the lowest rows of a view to leave out when it is matched

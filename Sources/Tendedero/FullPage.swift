@@ -129,7 +129,6 @@ final class FullPage {
         // How far each scroll moved the page, as the app itself tells it,
         // where it does.
         let measure = PageMeasure(pid: pid, bundle: bundle, frame: target.frame, over: over, band: found.band)
-        defer { measure?.finish() }
 
         func shot() async -> (picture: CGImage, rows: PageStitch.Rows)? {
             guard let image = try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config),

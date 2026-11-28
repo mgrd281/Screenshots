@@ -42,13 +42,8 @@ final class PageMeasure {
     /// The window, from the top left of the main screen.
     private let frame: CGRect
     private var noted: [Noted] = []
-    /// Those that stayed put when the page last moved, like a sticky
-    /// header: they tell nothing of a move.
-    private var stuck: [AXUIElement] = []
-    /// What the app had asked of its own accessibility before, given back
-    /// once the page is taken.
-    private var manual: CFTypeRef?
-    private var wokeIt = false
+    /// Which stayed put when the page moved, and which moved with it.
+    private var moves = PageWalk<CGImage>.Moves<AXUIElement> { CFEqual($0, $1) }
 
     /// Nil without the Accessibility permission, and in the Mac App Store
     /// edition.
@@ -68,18 +63,15 @@ final class PageMeasure {
         AXUIElementSetMessagingTimeout(app, 0.3)
         self.frame = frame
         points = Self.points(in: frame, over: over, band: band)
-        // Chrome, Edge, Brave and Firefox build what they tell VoiceOver
-        // once someone asks the app what it is; apps made with Electron,
-        // once asked to by name, given back as it was at the end.
+        // Chrome, Edge, Brave, apps made with Electron and Firefox build
+        // what they tell VoiceOver once someone asks the app what it is.
+        // Nothing is switched on by name: Electron cannot tell whether it
+        // was on, so switching it off after would take it from another tool
+        // that had turned it on.
         var role: CFTypeRef?
         _ = AXUIElementCopyAttributeValue(app, kAXRoleAttribute as CFString, &role)
-        var before: CFTypeRef?
-        if AXUIElementCopyAttributeValue(app, Self.manualAttribute, &before) == .success { manual = before }
-        wokeIt = AXUIElementSetAttributeValue(app, Self.manualAttribute, kCFBooleanTrue) == .success
         #endif
     }
-
-    private static let manualAttribute = "AXManualAccessibility" as CFString
 
     /// Browsers made with WebKit, as Safari is, and with Firefox's engine.
     private static let webKit: Set<String> = [
@@ -91,43 +83,52 @@ final class PageMeasure {
         "net.waterfox.waterfox", "app.zen-browser.zen", "org.mozilla.floorp", "io.gitlab.librewolf-community",
     ]
 
-    /// Gives the app back its accessibility as it was.
-    func finish() {
-        guard wokeIt else { return }
-        _ = AXUIElementSetAttributeValue(app, Self.manualAttribute, manual ?? (kCFBooleanFalse as CFTypeRef))
-        wokeIt = false
-    }
-
     /// Notes where the things on the page are now: those noted before that
-    /// are still wholly in view and moved with the page, where they are now,
-    /// and more found down the window while there are few.
+    /// still count and moved with the page, where they are now, the lowest
+    /// ten, and ten more found down the window, the lowest first, as they
+    /// stay in view longest as the page scrolls down. What stayed put when
+    /// the page last moved, like a bar fixed at the window's foot, is not
+    /// noted again.
     func mark() {
         let started = Date()
-        noted = noted.compactMap { old in
-            guard !stuck.contains(where: { CFEqual($0, old.element) }),
-                  let now = read(old.element), now.says == old.says, counts(now.frame) else { return nil }
+        let carried = noted.compactMap { old -> Noted? in
+            guard !isStuck(old.element), let now = read(old.element), now.says == old.says,
+                  counts(now.frame) else { return nil }
             return now
-        }
-        for point in points where noted.count < 10 {
+        }.sorted { $0.frame.maxY > $1.frame.maxY }.prefix(10)
+        var found: [Noted] = []
+        for point in points where found.count < 10 {
             // A slow app is not waited for long.
             if Date().timeIntervalSince(started) > 0.4 { break }
-            guard let element = thing(at: point), !noted.contains(where: { CFEqual($0.element, element) }),
-                  let found = read(element), inView(found.frame) else { continue }
-            noted.append(found)
-            if pageMoves, page == nil { page = area(holding: element).map { ($0, 0) } }
+            guard let element = thing(at: point), !isStuck(element),
+                  !carried.contains(where: { CFEqual($0.element, element) }),
+                  !found.contains(where: { CFEqual($0.element, element) }),
+                  let seen = read(element), inView(seen.frame) else { continue }
+            found.append(seen)
+            if pageMoves, page == nil, let area = area(holding: element), !isStuck(area) {
+                page = (area, 0)
+            }
         }
+        // Those found now first, as they are the likeliest still in view
+        // once the page has scrolled, should the app be slow to answer.
+        noted = found + Array(carried)
         if let held = page?.element {
             page = Self.top(of: held).map { (held, $0) }
         }
     }
 
+    private func isStuck(_ element: AXUIElement) -> Bool {
+        moves.isStuck(element)
+    }
+
     /// How far the page moved since `mark`, in points, down when positive,
     /// as the things noted then tell it (`PageWalk.told(by:)`): only those
     /// still wholly in view, as tall as they were and saying what they did.
-    /// Nil when they do not agree, or are gone.
+    /// That it stayed, only as two things or more tell it that moved with
+    /// the page before. Nil when they do not agree, or are gone.
     func measured() -> Double? {
         let started = Date()
-        var deltas: [(element: AXUIElement, delta: Double)] = []
+        var deltas: [(thing: AXUIElement, delta: Double)] = []
         for old in noted {
             if Date().timeIntervalSince(started) > 0.4 { break }
             guard let now = read(old.element), now.says == old.says, counts(now.frame),
@@ -140,11 +141,8 @@ final class PageMeasure {
         if let page, let now = Self.top(of: page.element) {
             deltas += [(page.element, page.y - now), (page.element, page.y - now)]
         }
-        let told = PageWalk<CGImage>.told(by: deltas.map(\.delta))
-        if let told, told != 0 {
-            stuck += deltas.filter { abs($0.delta) < 0.75 }.map(\.element)
-            if let held = page?.element, stuck.contains(where: { CFEqual($0, held) }) { page = nil }
-        }
+        let told = moves.told(by: deltas)
+        if let held = page?.element, isStuck(held) { page = nil }
         return told
     }
 
@@ -233,7 +231,8 @@ final class PageMeasure {
     }
 
     /// Three columns down the part that scrolls, most rows low in the
-    /// window, below its toolbar.
+    /// window, below its toolbar, the lowest first: they stay in view
+    /// longest as the page scrolls down.
     nonisolated static func points(in frame: CGRect, over: CGPoint, band: Range<Int>?) -> [CGPoint] {
         let width = frame.width / CGFloat(PageStitch.samples)
         var xs = [over.x]
@@ -242,7 +241,7 @@ final class PageMeasure {
         } else {
             xs += [0.3, 0.7].map { frame.minX + frame.width * $0 }
         }
-        return [0.3, 0.45, 0.55, 0.65, 0.72, 0.79, 0.86, 0.92].flatMap { part in
+        return [0.92, 0.86, 0.79, 0.72, 0.65, 0.55, 0.45, 0.3].flatMap { part in
             xs.map { CGPoint(x: $0, y: frame.minY + frame.height * CGFloat(part)) }
         }
     }

@@ -182,12 +182,44 @@ struct PageWalk<Picture> {
             // both views show agrees; else as the pictures tell it.
             var found: PageStitch.Step?
             var told = false
+            // The move the app told, in rows, for the views compared now.
+            var toldRows: Int?
+            // Asked again for a later view, as the page may have moved on
+            // since the first: how far it is from where it was at the mark.
+            func retold(_ a: View, _ b: View) async -> PageStitch.Step? {
+                guard toldRows != nil, let points = await surface.measured(),
+                      Int((points * scale).rounded()) > 0 else {
+                    toldRows = nil
+                    return nil
+                }
+                toldRows = Int((points * scale).rounded())
+                guard let toldRows,
+                      let step = PageStitch.check(from: a.rows, to: b.rows, shift: toldRows,
+                                                  restless: (a.restless, b.restless)),
+                      !Self.sitsStill(a, b, beside: step) else { return nil }
+                return step
+            }
+            // A fit the pictures find far from the move told gives way to
+            // it when what both views show goes against it more.
+            func heeded(_ fit: PageStitch.Step?, _ a: View, _ b: View) -> PageStitch.Step? {
+                guard let fit, fit.shift > 0, let toldRows, abs(fit.shift - toldRows) > 2 else { return fit }
+                return PageStitch.check(from: a.rows, to: b.rows, shift: toldRows, restless: (a.restless, b.restless),
+                                        rival: fit.shift) ?? fit
+            }
             if let points = await surface.measured() {
                 let rows = Int((points * scale).rounded())
                 if rows > 0 {
                     tells = true
+                    toldRows = rows
                     found = PageStitch.check(from: current.rows, to: next.rows, shift: rows,
                                              restless: (current.restless, next.restless))
+                    if let step = found, Self.sitsStill(current, next, beside: step) {
+                        // Something that moves by itself, like a wall of
+                        // cards that scrolls on its own, told the move, while
+                        // the page stayed where it was.
+                        found = nil
+                        told = true
+                    }
                 } else if rows == 0 {
                     // It stayed where it was, if the pictures agree, or, as
                     // the app has told moves before, unless they clearly say
@@ -200,14 +232,17 @@ struct PageWalk<Picture> {
                 }
             }
             if found == nil, !told {
-                found = match(current, next, expected: expected, keys: keys)
+                found = heeded(match(current, next, expected: expected, keys: keys), current, next)
             }
             if found == nil, !told {
                 // Still loading, or moving: once more, a little later, at
                 // the same place.
                 if let again = await look() {
                     next = again
-                    found = match(current, next, expected: expected, keys: keys)
+                    found = await retold(current, next)
+                    if found == nil {
+                        found = heeded(match(current, next, expected: expected, keys: keys), current, next)
+                    }
                 }
             }
             // Whether the scroll left the page where it was, with only a
@@ -223,7 +258,8 @@ struct PageWalk<Picture> {
                 if let again, Self.samePlace(current.rows, again.rows, through: max(start, bar), below: bar) {
                     await surface.scroll(-step)
                     if let after = await look(),
-                       let fit = match(again, after, expected: expected, keys: false) {
+                       let fit = await retold(again, after)
+                           ?? heeded(match(again, after, expected: expected, keys: false), again, after) {
                         current = again
                         next = after
                         found = fit
@@ -254,9 +290,10 @@ struct PageWalk<Picture> {
                 // Last, a longer move than asked, strictly: a header above
                 // the page shrank, or a script added to the scroll.
                 if let half = await look(),
-                   let fit = match(current, half, expected: halfway, keys: keys)
-                       ?? PageStitch.step(from: current.rows, to: half.rows, expected: halfway, fresh: freshRows,
-                                          telling: 8) {
+                   let fit = await retold(current, half)
+                       ?? heeded(match(current, half, expected: halfway, keys: keys)
+                           ?? PageStitch.step(from: current.rows, to: half.rows, expected: halfway,
+                                              fresh: freshRows, telling: 8), current, half) {
                     next = half
                     found = fit
                 }
@@ -346,12 +383,30 @@ struct PageWalk<Picture> {
         }
         // Leaving out what stayed put, a page of cards in a grid lines up
         // a card further, as if it had not moved, and something that
-        // pulses, a row or two: neither is a move.
+        // pulses, a row or two: neither is a move. A short last move
+        // beside a column that sticks is one, where the page did not stay
+        // and all that both views share agrees with it.
         guard let followed = PageStitch.follow(from: current, to: next, expected: expected, fresh: fresh,
                                                farthest: farthest) else { return nil }
         if followed.shift == 0, !Self.sat(seen, following) { return nil }
-        if followed.shift > 0, followed.shift < 16, expected >= 64 { return nil }
+        if followed.shift > 0, followed.shift < 16, expected >= 64,
+           Self.sat(seen, following) || Self.unmoved(current, next, below: followed.top)
+               || PageStitch.check(from: current, to: next, shift: followed.shift,
+                                   restless: (seen.restless, following.restless)) == nil {
+            return nil
+        }
         return followed
+    }
+
+    /// Whether the page sat where it was between two views although a move
+    /// was told and fits: something on it moves by itself, like a wall of
+    /// cards that scrolls on its own, and much of what both show, an eighth
+    /// of what scrolls, is where it was.
+    static func sitsStill(_ a: View, _ b: View, beside step: PageStitch.Step) -> Bool {
+        guard sat(a, b) else { return false }
+        let middle = min(a.rows.count, b.rows.count) - step.top - step.bottom
+        let still = PageStitch.Step(top: step.top, bottom: step.bottom, shift: 0)
+        return told(a.rows, b.rows, at: still) >= max(16, middle / 8)
     }
 
     /// How far the page moved, in points, down when positive, from how far
@@ -374,6 +429,45 @@ struct PageWalk<Picture> {
         guard best.count >= 2, best.count * 10 >= moved.count * 6 else { return nil }
         let group = moved[best]
         return group[group.startIndex + group.count / 2]
+    }
+
+    /// What the things on a page told of its moves so far, as
+    /// `PageMeasure` keeps it: those that stayed put when it moved, like a
+    /// sticky header or a bar fixed at the window's foot, tell nothing of a
+    /// move, and only those that moved with it tell that it stayed.
+    struct Moves<Thing> {
+        /// Whether two answers from the app are the same thing.
+        let same: (Thing, Thing) -> Bool
+        private(set) var stuck: [Thing] = []
+        private(set) var moving: [Thing] = []
+
+        init(same: @escaping (Thing, Thing) -> Bool) {
+            self.same = same
+        }
+
+        func isStuck(_ thing: Thing) -> Bool {
+            stuck.contains { same($0, thing) }
+        }
+
+        /// How far the page moved, as `told(by:)` reads it from how far each
+        /// thing moved up, noting which stayed put and which moved with it.
+        /// That it stayed, only as two things or more tell it that moved
+        /// with the page when it last moved.
+        mutating func told(by deltas: [(thing: Thing, delta: Double)]) -> Double? {
+            let told = PageWalk.told(by: deltas.map(\.delta))
+            if let told, told != 0 {
+                for still in deltas where abs(still.delta) < 0.75 && !isStuck(still.thing) {
+                    stuck.append(still.thing)
+                }
+                moving = deltas.filter { abs($0.delta - told) <= 1.5 }.map(\.thing)
+            }
+            if told == 0, deltas.filter({ seen in
+                abs(seen.delta) < 0.75 && moving.contains(where: { same($0, seen.thing) })
+            }).count < 2 {
+                return nil
+            }
+            return told
+        }
     }
 
     /// Whether the page sat where it was between two views, as far as
